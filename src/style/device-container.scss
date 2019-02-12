@@ -1,0 +1,36 @@
+@import 'global';
+
+/*.profile-container-view {
+  font-size: 0.8em;
+}*/
+
+.device-container {
+  width: 90%;
+}
+
+@media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
+  .device-container {
+    width: 100% !important;
+  }
+}
+
+@media only screen and (max-width: 760px),
+  (min-device-width: 768px) and (max-device-width: 1024px) {
+  .device-container {
+    width: 95% !important;
+  }
+}
+
+/* iPads (portrait and landscape) ----------- */
+@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
+  .device-container {
+    width: 95% !important;
+  }
+}
+
+/* iPads (portrait and landscape) ----------- */
+@media only screen and (min-device-width: 1024px) and (max-device-width: 1366px) {
+  .device-container {
+    width: 90% !important;
+  }
+}

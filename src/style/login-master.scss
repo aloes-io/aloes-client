@@ -1,0 +1,106 @@
+@import "global";
+
+.login-title {
+  text-align: center;
+  font-weight: $font-weight-bold;
+  font-size: 1.2em;
+}
+
+.login-subtitle {
+  text-align: center;
+}
+
+button.btn.login {
+  width: 46%;
+  margin-left: 2%;
+  margin-bottom: 8%;
+  background-color: $primary;
+  font-weight: $btn-font-weight;
+  color: white;
+  height: $btn-height;
+  padding: $btn-padding;
+  border-radius: $btn-border-radius;
+  border: 1px solid transparent;
+  box-shadow: $btn-shadow;
+  -webkit-transition: box-shadow 150ms ease;
+  transition: box-shadow 150ms ease;
+}
+
+button.btn.login:hover {
+  background-color: white;
+  border-color: white;
+  color: $primary;
+}
+
+a.forgot-pass {
+  text-align: center;
+  cursor: pointer;
+  font-weight: $btn-font-weight;
+}
+
+button.btn.send {
+  width: 46%;
+  margin-left: 2%;
+  margin-right: 2%;
+  background-color: $primary;
+  font-weight: $btn-font-weight;
+  color: white;
+  height: $btn-height;
+  padding: $btn-padding;
+  border-radius: $btn-border-radius;
+  border: 1px solid transparent;
+  box-shadow: $btn-shadow;
+  -webkit-transition: box-shadow 150ms ease;
+  transition: box-shadow 150ms ease;
+}
+
+button.btn.send:hover {
+  background-color: white;
+  border-color: white;
+  color: $primary;
+}
+
+button.btn.cancel {
+  width: 46%;
+  margin-right: 2%;
+  background-color: white;
+  border-color: white;
+  color: $primary;
+  font-weight: $btn-font-weight;
+  height: $btn-height;
+  padding: $btn-padding;
+  border-radius: $btn-border-radius;
+  border: 1px solid transparent;
+  box-shadow: $btn-shadow;
+  -webkit-transition: box-shadow 150ms ease;
+  transition: box-shadow 150ms ease;
+}
+
+button.btn.cancel:hover {
+  background-color: $primary;
+  border-color: $primary;
+  color: white;
+}
+
+button.return-button {
+  width: 46%;
+  margin-left: 2%;
+  margin-right: 2%;
+  margin-bottom: 8%;
+  background-color: white;
+  font-weight: $btn-font-weight;
+  color: $primary;
+  height: $btn-height;
+  padding: $btn-padding;
+  border-radius: $btn-border-radius;
+  border: 1px solid transparent;
+  box-shadow: $btn-shadow;
+  -webkit-transition: box-shadow 150ms ease;
+  transition: box-shadow 150ms ease;
+}
+
+button.btn.return-button:hover {
+  background-color: $primary;
+  border-color: $primary;
+  color: white;
+}

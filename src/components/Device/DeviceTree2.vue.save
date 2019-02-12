@@ -1,0 +1,352 @@
+<template lang="html">
+  <svg
+    :ref="`deviceTree-${deviceId}`"
+    :id="`device-tree-${deviceId}`"
+    :viewBox="`0 0 ${updatedWidth} ${updatedHeight}`"
+    pointer-events="all"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+  >
+    <defs>
+      <filter
+        id="circle-shadow-selected"
+        y="-10"
+        x="-10"
+        height="40"
+        width="150"
+      >
+        <feOffset in="SourceAlpha" dx="1" dy="1" result="offset1" />
+        <feGaussianBlur in="offset2" stdDeviation="1" result="blur1" />
+        <feMerge>
+          <feMergeNode in="blur2" />
+          <feMergeNode in="SourceGraphic" />
+        </feMerge>
+      </filter>
+      <filter id="circle-shadow" y="-10" x="-10" height="40" width="150">
+        <feOffset in="SourceAlpha" dx="2" dy="2" result="offset2" />
+        <feGaussianBlur in="offset2" stdDeviation="2" result="blur2" />
+        <feMerge>
+          <feMergeNode in="blur2" />
+          <feMergeNode in="SourceGraphic" />
+        </feMerge>
+      </filter>
+    </defs>
+    <!-- <g :id="watchSensorsLinks"></g>
+    <g :id="watchSensorsNodes"></g> -->
+    <g v-if="nodes && nodes !== null" :id="`nodes-${deviceId}`" class="nodes">
+      <circles
+        v-for="node in nodes"
+        :key="node.data.id"
+        :r="nodeSize"
+        :x="node.vx"
+        :y="node.vy"
+        filter="url(#circle-shadow)"
+        :fill="$store.state.style.palette.blue"
+        :transform="nodeTransform(node.data)"
+      />
+      <!--  -->
+    </g>
+    <g v-if="links && links !== null" :ref="`links-${deviceId}`" class="links">
+      <path
+        v-for="link in links"
+        :key="link.id"
+        stroke-width="5"
+        stroke="black"
+        fill="none"
+        :d="buildPath(link)"
+      />
+    </g>
+    <g
+      v-if="nodes && nodes !== null"
+      :ref="`images-${deviceId}`"
+      class="images"
+    >
+      <image
+        v-for="node in nodes"
+        :height="nodeSize / 2"
+        :width="nodeSize / 2"
+        :transform="nodeTransform(node.data)"
+        style="cursor :pointer;"
+        cross-origin="anonymous"
+        v-bind="{ 'xlink:href': imageUrl }"
+        @mouseenter.prevent.stop="mouseEnter(node.data)"
+        @mouseleave.prevent.stop="mouseLeave(node.data)"
+        @click.prevent.stop="mouseClick(node.data)"
+      />
+    </g>
+  </svg>
+</template>
+
+<script type="text/javascript">
+import { drag } from "d3-drag";
+import { json } from "d3-fetch";
+import {
+  forceSimulation,
+  forceCenter,
+  forceCollide,
+  forceLink,
+  forceManyBody
+} from "d3-force";
+import { hierarchy } from "d3-hierarchy";
+import { event, select } from "d3-selection";
+
+export default {
+  name: "DeviceTree",
+
+  props: {
+    width: {
+      type: Number,
+      required: false,
+      default: 500
+    },
+    height: {
+      type: Number,
+      required: false,
+      default: 500
+    },
+    clientUrl: {
+      type: String,
+      required: false,
+      default: "http://localhost:8080"
+    },
+    source: {
+      type: String,
+      required: false,
+      default: "/data/device-tree.json"
+    },
+    device: {
+      type: String,
+      default: null
+    }
+  },
+
+  data() {
+    return {
+      watchSensors: this.$props.source,
+      deviceProps: null,
+      updatedHeight: null,
+      updatedWidth: null,
+      graphNodes: null,
+      nodes: null,
+      graphLinks: null,
+      nodeSimulation: null,
+      imageUrl: "/icons/aloes/dither.png"
+    };
+  },
+
+  computed: {
+    nodeSize() {
+      return this.$props.width / 15;
+    },
+    deviceId() {
+      if (this.deviceProps !== null) {
+        return this.deviceProps.id;
+      }
+      return 1;
+    },
+    // nodes: {
+    //   get() {
+    //     return this.graphNodes;
+    //   },
+    //   set(value) {
+    //     this.graphNodes = value;
+    //   },
+    // },
+    links: {
+      get() {
+        return this.graphLinks;
+      },
+      set(value) {
+        this.graphLinks = value;
+      }
+    },
+    watchSensorsNodes() {
+      if (this.nodes) {
+        return select(`nodes-${this.deviceId}`)
+          .selectAll("circle")
+          .on("mouseover", function(d) {
+            select(this).attr("filter", "url(#circle-shadow-selected)");
+          })
+          .on("mouseout", function(d) {
+            select(this).attr("filter", "url(#circle-shadow)");
+          })
+          .call(
+            drag()
+              .on("start", this.dragstarted)
+              .on("drag", this.dragged)
+              .on("end", this.dragended)
+          );
+      }
+      return null;
+    }
+  },
+
+  watch: {
+    width: {
+      handler(width) {
+        this.updatedWidth = width;
+      },
+      immediate: true
+    },
+    height: {
+      handler(height) {
+        this.updatedHeight = height;
+      },
+      immediate: true
+    },
+    device: {
+      handler(value) {
+        if (value && value !== null) {
+          this.deviceProps = JSON.parse(value);
+        } else {
+          select(`#device-tree-${this.deviceId}`).empty();
+        }
+      },
+      immediate: true
+    },
+    nodes: {
+      handler(value) {
+        console.log("nodes", value);
+        if (value && value !== null) {
+          this.graphNodes = value;
+        }
+      },
+      immediate: true
+    }
+  },
+
+  mounted() {
+    //  this.mountElements()
+    this.initDeviceTree();
+  },
+
+  updated() {
+    if (this.nodes && this.links) {
+      this.nodeSimulation.nodes(this.nodes).on("tick", this.watchSensorsTicked);
+    }
+  },
+
+  beforeDestroy() {
+    this.elementsMounted = false;
+    //  this.nodeSimulation = null;
+    select(`#device-tree-${this.deviceId}`).empty();
+    //select(`#device-tree-${this.deviceId}`).selectAll("*").remove();
+  },
+
+  methods: {
+    mountElements() {
+      this.elementsMounted = true;
+    },
+
+    async initDeviceTree() {
+      let graph = {};
+      if (this.deviceProps) {
+        this.deviceProps.children = this.deviceProps.sensors;
+        delete this.deviceProps.sensors;
+        graph = this.deviceProps;
+      } else {
+        graph = await json(this.watchSensors);
+      }
+      const root = hierarchy(graph);
+      this.nodes = root.descendants();
+      this.links = root.links(this.nodes);
+
+      console.log("initDeviceTree", graph);
+      console.log("initDeviceTree", root);
+      // console.log("initDeviceTree", nodes);
+      // console.log("initDeviceTree", links);
+
+      this.nodeSimulation = forceSimulation(this.nodes)
+        .alphaDecay(0.005)
+        .alpha(0.2)
+        .force(
+          "link",
+          forceLink(this.links)
+            .id(d => d.id)
+            .distance(d => this.nodeSize * 3)
+            .strength(d => 0.2)
+            .iterations(2)
+        )
+        .force("charge", forceManyBody(this.nodes).strength(-100))
+        .force(
+          "center",
+          forceCenter(this.updatedWidth / 2, this.updatedHeight / 2)
+        )
+        .force(
+          "collisionForce",
+          forceCollide(5)
+            .strength(-50)
+            .iterations(1)
+        )
+        .alphaTarget(0.4);
+    },
+
+    nodeTransform(node) {
+      const maxNodeSize = this.nodeSize * 1.2;
+      if (!node || node === null) {
+        return `translate(${(-1 * this.nodeSize) / 2}, ${(-1 * this.nodeSize) /
+          2})`;
+      }
+      node.x = Math.max(
+        maxNodeSize,
+        Math.min(this.updatedWidth - (this.nodeSize || 16), node.x)
+      );
+      node.y = Math.max(
+        maxNodeSize,
+        Math.min(this.updatedHeight - (this.nodeSize || 16), node.y)
+      );
+      return `translate(${node.x},${node.y})`;
+    },
+
+    buildPath(node) {
+      const nodeX = node.target.x - node.source.x;
+      const nodeY = node.target.y - node.source.y;
+      const nodeR = Math.sqrt(nodeX * nodeX + nodeY * nodeY);
+      return `M ${node.source.x}, ${node.source.y} A ${nodeR}, ${nodeR} 0 0,1 ${
+        node.target.x
+      }, ${node.target.y}`;
+    },
+
+    watchSensorsTicked(d) {
+      //  console.log("tick", this.nodes[0]);
+      // this.watchSensorsLinks.attr("d", (d) => {
+      //   const dx = d.target.x - d.source.x;
+      //   const dy = d.target.y - d.source.y;
+      //   const dr = Math.sqrt(dx * dx + dy * dy);
+      //   return "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y;
+      // });
+      //  this.watchSensorsNodes.attr("transform", this.nodeTransform);
+      //  this.watchSensorsImages.attr("transform", this.nodeTransform);
+    },
+
+    mouseClick(...args) {
+      this.$emit("node-clicked", ...args);
+    },
+
+    mouseEnter(...args) {
+      this.$emit("node-selected", ...args);
+    },
+
+    mouseLeave(...args) {
+      this.$emit("node-deselected", ...args);
+    },
+
+    dragstarted(d) {
+      if (!event.active) this.nodeSimulation.alphaTarget(0.3).restart();
+      d.fx = d.x;
+      d.fy = d.y;
+    },
+
+    dragged(d) {
+      d.fx = event.x;
+      d.fy = event.y;
+    },
+
+    dragended(d) {
+      if (!event.active) this.nodeSimulation.alphaTarget(0);
+      d.fx = null;
+      d.fy = null;
+    }
+  }
+};
+</script>

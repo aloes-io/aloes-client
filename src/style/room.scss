@@ -1,0 +1,26 @@
+@import "global";
+
+div.card.room-card.show {
+  margin-top: 2%;
+  margin-bottom: 2%;
+  cursor: pointer;
+  padding: $card-padding;
+  border-radius: $card-border-radius;
+  border: 1px solid transparent;
+  box-shadow: $mini-card-shadow;
+  -webkit-transition: box-shadow 150ms ease;
+  transition: box-shadow 150ms ease;
+  font-size: 90%;
+}
+
+div.card.room-card.show:hover {
+  box-shadow: $mini-card-shadow-selected;
+}
+
+div.card.room-card.hide {
+  display: none;
+}
+
+img.room-avatar {
+  max-height: 40px;
+}

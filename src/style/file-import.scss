@@ -1,0 +1,169 @@
+@import "global";
+
+.file-import {
+}
+
+button.btn {
+  background-color: $primary;
+  color: white;
+  height: 50px;
+  font-weight: $btn-font-weight;
+  padding: $btn-padding;
+  border-radius: $btn-border-radius;
+  border: 1px solid transparent;
+  box-shadow: $btn-shadow;
+  -webkit-transition: box-shadow 150ms ease;
+  transition: box-shadow 150ms ease;
+}
+
+button.btn:hover {
+  background-color: white;
+  color: $primary;
+  border-color: $primary;
+}
+
+button.btn:disabled {
+  background-color: $secondary;
+  color: $primary;
+  border-color: $secondary;
+}
+
+button.btn.header-button {
+  font-size: 90%;
+  width: 100%;
+}
+
+button.btn.avatar-button {
+  font-size: 90%;
+  width: 100%;
+}
+
+form.file-uploader {
+  padding: 0;
+  width: 100%;
+}
+
+input.input-file {
+  opacity: 0 !important;
+  left: 0px !important;
+  position: absolute;
+  height: 10vh;
+  cursor: pointer;
+  padding: $input-padding;
+}
+
+input.input-file:hover {
+  cursor: pointer;
+}
+
+label.add-file {
+  font-size: 90%;
+  height: 50px;
+  width: 100%;
+  text-align: center;
+  font-weight: $btn-font-weight;
+  padding: 0.8rem 0.5rem;
+  border-radius: $btn-border-radius;
+  background-color: $primary;
+  color: white;
+  i {
+    color: $white;
+    fill: $white;
+    font-size: 2rem;
+    opacity: 0.6;
+  }
+}
+
+label.add-file:hover {
+  cursor: pointer;
+  background-color: white;
+  border-color: $primary;
+  color: $primary;
+  i {
+    color: black;
+    fill: black;
+    opacity: 0.8;
+  }
+}
+
+.header-upload {
+  max-width: 600px;
+  max-height: 285px;
+  margin-top: 2%;
+  margin-bottom: 3%;
+}
+
+.avatar-upload {
+  max-width: 170px;
+  max-height: 170px;
+  margin-top: 2%;
+  margin-bottom: 3%;
+}
+
+.header-canvas {
+  cursor: initial;
+  position: absolute;
+  opacity: 0;
+}
+
+.avatar-canvas {
+  cursor: initial;
+  position: absolute;
+  opacity: 0;
+}
+
+.file-added {
+  color: $secondary;
+  fill: $secondary;
+  font-size: 1.2rem;
+  opacity: 0.6;
+}
+
+.try-again {
+  color: $primary;
+  fill: $primary;
+  font-size: 1.2rem;
+  opacity: 0.6;
+}
+
+.failed {
+  color: $danger;
+  fill: $danger;
+  font-size: 1.2rem;
+  opacity: 0.8;
+}
+
+@media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
+  .header-upload {
+    max-width: 250px;
+  }
+  .avatar-upload {
+    width: 90px;
+    height: 90px;
+  }
+  label.add-file {
+    padding: 0.5rem 0.5rem !important;
+  }
+}
+
+@media only screen and (max-width: 760px),
+  (min-device-width: 768px) and (max-device-width: 1024px) {
+  .header-upload {
+    max-width: 320px !important;
+  }
+  .avatar-upload {
+    width: 110px;
+    height: 110px;
+  }
+}
+
+/* iPads (portrait and landscape) ----------- */
+@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
+  .header-upload {
+    max-width: 465px !important;
+  }
+  .avatar-upload {
+    width: 128px;
+    height: 128px;
+  }
+}

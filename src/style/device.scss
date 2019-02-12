@@ -1,0 +1,9 @@
+@import "global";
+
+.device-view {
+  width: 100vw;
+  height: 100vh;
+}
+.device-view > .container-fluid {
+  padding: 0;
+}

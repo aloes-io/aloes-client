@@ -1,0 +1,28 @@
+@import "global";
+
+div.card.device-card {
+	margin-top: 2%;
+	border-radius: $card-border-radius;
+	border: 1px solid transparent;
+	box-shadow: $mini-card-shadow;
+	-webkit-transition: box-shadow 150ms ease;
+	transition: box-shadow 150ms ease;
+
+	.card-header {
+		padding: 10px 10px;
+		height: 50px;
+	}
+
+	img.device-icon {
+		max-height: 80px;
+	}
+	.device-status {
+		img {
+			max-height: $icon-height-small;
+		}
+	}
+}
+
+div.card.device-card:hover {
+	box-shadow: $mini-card-shadow-selected;
+}

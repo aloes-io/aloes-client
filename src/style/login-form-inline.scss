@@ -1,0 +1,158 @@
+@import "global";
+
+.login-form-inline {
+  margin-top: 1%;
+
+  label#login-email {
+    color: $primary;
+  }
+
+  input#login-email-inline.form-control {
+    margin-left: 1%;
+    width: 33%;
+    padding: $input-padding;
+    height: $input-height-small;
+    background-color: white;
+    border-radius: $input-border-radius;
+    border: 1px solid transparent;
+    box-shadow: $input-shadow;
+    -webkit-transition: box-shadow 150ms ease;
+    transition: box-shadow 150ms ease;
+  }
+
+  input#login-email-inline.form-control:hover {
+    box-shadow: $input-shadow-selected;
+  }
+
+  input#login-email-inline.form-control:valid {
+    border-color: $lightsuccess;
+  }
+
+  label#login-password-inline {
+    color: $primary;
+  }
+
+  input#login-password-inline.form-control {
+    margin-left: 1%;
+    width: 33%;
+    height: $input-height-small;
+    padding: $input-padding;
+    background-color: white;
+    border-radius: $input-border-radius;
+    border: 1px solid transparent;
+    box-shadow: $input-shadow;
+    -webkit-transition: box-shadow 150ms ease;
+    transition: box-shadow 150ms ease;
+  }
+
+  input#login-password-inline.form-control:hover {
+    box-shadow: $input-shadow-selected;
+  }
+
+  input#login-password-inline.form-control:valid {
+    border-color: $lightsuccess;
+  }
+
+  /*  input#login-password-inline.form-control:invalid {
+    border-color: $grey;
+  }*/
+
+  button.btn.login-button {
+    margin-left: 1%;
+    width: 28%;
+    height: 30px;
+    padding: 0.2rem 0.5rem;
+    background-color: $primary;
+    font-weight: $btn-font-weight;
+    color: white;
+    border-radius: $btn-border-radius;
+    border: 1px solid transparent;
+    box-shadow: $btn-shadow;
+    -webkit-transition: box-shadow 150ms ease;
+    transition: box-shadow 150ms ease;
+  }
+
+  button.btn.login-button:hover {
+    background-color: white;
+    color: $primary;
+    border-color: $primary;
+  }
+}
+
+/* The container */
+.container {
+  text-align: left;
+  display: block;
+  position: relative;
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.label-title {
+  margin-left: 30px;
+}
+/* Hide the browser's default checkbox */
+.container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 20px;
+  width: 20px;
+  margin-left: 2px;
+  background-color: $grey;
+  border-radius: $input-border-radius;
+  border: 1px solid transparent;
+  box-shadow: $input-shadow;
+  -webkit-transition: box-shadow 150ms ease;
+  transition: box-shadow 150ms ease;
+}
+
+/* On mouse-over, add a grey background color */
+.container:hover input ~ .checkmark {
+  background-color: white;
+}
+
+/* When the checkbox is checked, add a blue background */
+.container input:checked ~ .checkmark {
+  background-color: $success;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the checkmark when checked */
+.container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the checkmark/indicator */
+.container .checkmark:after {
+  left: 3px;
+  top: 1px;
+  width: 10px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}

@@ -1,0 +1,26 @@
+@import "global";
+
+.search-map {
+  margin-top: 4%;
+  overflow: auto;
+  border-radius: $card-border-radius;
+  box-shadow: $card-shadow;
+}
+
+.thumb-icon {
+  max-height: 20px;
+}
+
+.map-icon {
+  background-color: aqua;
+  padding: 10px;
+  border: 1px solid #333;
+  border-radius: 0 20px 20px 20px;
+  box-shadow: 5px 3px 10px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  margin: 0 !important;
+}
+
+.leaflet-top {
+  z-index: 500;
+}

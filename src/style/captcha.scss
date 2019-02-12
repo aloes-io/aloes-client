@@ -1,0 +1,25 @@
+@import "global";
+
+#coinhive-captcha {
+	text-align: center;
+	opacity: 1;
+
+	iframe {
+		height: 76px !important;
+		border-radius: $input-border-radius !important;
+		border: 0px solid transparent !important;
+		box-shadow: $input-shadow !important;
+		-webkit-transition: box-shadow 150ms ease;
+		transition: box-shadow 150ms ease;
+		max-width: 100% !important;
+	}
+}
+
+/*@media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
+	.coinhive-captcha {
+		iframe {
+			max-width: 80% !important;
+		}
+	}
+}
+*/

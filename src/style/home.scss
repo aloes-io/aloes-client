@@ -1,0 +1,58 @@
+@import "global";
+
+.home-view {
+  .joli-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 3;
+      background-color: transparent;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    .bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 2;
+      min-width: 100vw;
+      min-height: 100vh;
+    }
+
+    img {
+      height: 100%;
+    }
+
+    video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 2;
+      min-width: 100vw;
+      min-height: 100vh;
+    }
+  }
+
+  .welcome {
+    min-height: 45vh;
+    margin-top: 3%;
+    .title {
+      font-size: 1.2em;
+      font-weight: $font-weight-bold;
+      text-align: left;
+    }
+    .subtitle {
+      font-size: 1.2em;
+      text-align: left;
+    }
+  }
+}

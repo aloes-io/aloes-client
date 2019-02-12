@@ -1,0 +1,139 @@
+// CAUTION: This file will be duplicated in every componentscss style scope
+//; HINT: Use this for global variables and mixins
+//
+//
+// Color system
+//;
+$primary: #528fa2;
+//$primary: #3c3c3c;
+$secondary: #ededed;
+$success: #2bb673;
+$lightsuccess: #d6e6dc;
+$info: #444b4e;
+$warning: #ffc85f;
+$lightwarning: #ffe7ba;
+$danger: #f94b39;
+$light: #e9edef;
+$grey: #ededed;
+$icon-grey: #ededed;
+$light-grey: #fbfbfb;
+$dark-grey: #2b2b2b;
+
+// Fonts
+$font-size-base: 1rem;
+$font-size-mobile: 0.9rem;
+$font-weight-bold: 700;
+// $font-family-sans-serif: "OpenSans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+// $font-family-monospace: "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+// Icons
+$icon-height: 25px;
+$icon-height-large: 35px;
+$icon-height-mid: 30px;
+$icon-height-small: 20px;
+
+// Links
+$link-color: $dark-grey;
+
+// Cards
+$card-border-radius: 5px;
+$card-padding: 2%;
+$card-shadow: 0 2px 3px 0px #6e6e6e;
+$card-shadow-selected: 0 1px 2px 0px #6e6e6e;
+$mini-card-shadow: 0 1px 2px 0px #6e6e6e;
+$mini-card-shadow-selected: 0 0px 1px 0px #6e6e6e;
+
+// Components
+$border-radius: 10px;
+// $border-radius-lg: 0px;
+// $border-radius-sm: 0px;
+
+// Buttons
+$btn-border-radius: 3px;
+$btn-round-border-radius: 50%;
+$btn-round-radius: 25px;
+$btn-round-radius-lg: 30px;
+// $btn-border-radius-lg: 1.250em;
+// $btn-border-radius-sm: 1.250em;
+$btn-font-weight: $font-weight-bold;
+$btn-height: 40px;
+$btn-padding: 0.4rem 0.8rem;
+$btn-height-small: 30px;
+$btn-padding-small: 0.2rem 0.5rem;
+$btn-shadow: 0 1px 1px 0px #6e6e6e;
+$btn-shadow-selected: 0 0px 1px 0px #6e6e6e;
+
+// Forms
+// $input-color: $secondary;
+// $input-border-color: $light;
+$input-border-radius: 4px;
+$input-height: 40px;
+$input-height-small: 30px;
+$input-padding: 5px 12px;
+$input-shadow: 0 1px 1px 0px #6e6e6e;
+$input-shadow-selected: 0 0px 1px 0px #6e6e6e;
+
+// Breadcrumbs
+// $breadcrumb-bg: transparent;
+// $breadcrumb-divider-color: $light2;
+// $breadcrumb-active-color: $light2;
+
+// Body
+// $body-color: $secondary;
+
+// Import Global Bootstrap Variables
+// (the previous variables will not be overitten)
+@import "~bootstrap/scss/_functions";
+@import "~bootstrap/scss/_variables";
+
+// Import custom fonts
+@font-face {
+	font-family: "LemonMilkbold";
+	font-weight: normal;
+	font-style: normal;
+	src: url("/fonts/LemonMilkbold/LemonMilkbold.eot");
+	src: url("/fonts/LemonMilkbold/LemonMilkbold.woff2") format("woff2"),
+		url("/fonts/LemonMilkbold/LemonMilkbold.woff") format("woff"),
+		url("/fonts/LemonMilkbold/LemonMilkbold.ttf") format("truetype"),
+		url("/fonts/LemonMilkbold/LemonMilkbold.eot?#iefix") format("embedded-opentype");
+}
+
+/*@font-face {
+	font-family: "Lemon/Milk";
+	src: url("/fonts/LemonMilk/LemonMilk.eot");
+	src: url("/fonts/LemonMilk/LemonMilk.woff2") format("woff2"), url("/fonts/LemonMilk/LemonMilk.woff") format("woff"),
+		url("/fonts/LemonMilk/LemonMilk.ttf") format("truetype"),
+		url("/fonts/LemonMilk/LemonMilk.eot?#iefix") format("embedded-opentype");
+}
+*/
+@font-face {
+	font-family: "/fonts/Recoleta/Recoleta-Regular";
+	src: url("/fonts/Recoleta/Recoleta-Regular.eot");
+	src: url("/fonts/Recoleta/Recoleta-Regular.woff2") format("woff2"), url("/fonts/Recoleta/Recoleta-Regular.woff") format("woff"),
+		url("/fonts/Recoleta/Recoleta-Regular.ttf") format("truetype"), url("/fonts/Recoleta/Recoleta-Regular.svg#/fonts/Recoleta/Recoleta-Regular") format("svg"),
+		url("/fonts/Recoleta/Recoleta-Regular.eot?#iefix") format("embedded-opentype");
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+  /* Aloes Regular - latin */
+  font-family: 'Aloes-Rg';
+  font-weight: normal;
+  font-style: normal;
+  src: url('/fonts/Aloes/Aloes-Rg.woff2') format('woff2'),
+    url('/fonts/Aloes/Aloes-Rg.woff') format('woff'),
+    url('/fonts/Aloes/Aloes-Rg.eot') format('embedded-opentype'),
+    url('/fonts/Aloes/Aloes-Rg.ttf') format('truetype');
+}
+
+@font-face {
+  /* Aloes Bold - latin */
+  font-family: 'Aloes-Bd';
+  font-weight: normal;
+  font-style: normal;
+  src: url('/fonts/Aloes/Aloes-Bd.woff2') format('woff2'),
+    url('/fonts/Aloes/Aloes-Bd.woff') format('woff'),
+    url('/fonts/Aloes/Aloes-Bd.eot') format('embedded-opentype'),
+    url('/fonts/Aloes/Aloes-Bd.ttf') format('truetype');
+}

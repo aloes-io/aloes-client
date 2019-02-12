@@ -1,0 +1,107 @@
+@import 'global';
+
+.profile-img {
+  margin-bottom: 5%;
+}
+
+div.card.header-card {
+  border-radius: $card-border-radius;
+  border: 1px solid transparent;
+
+  button.header-button {
+    float: right;
+    right: 18px;
+    top: 18px;
+    position: absolute;
+    i {
+      font-size: 180%;
+    }
+  }
+
+  img.card-img {
+    min-height: 135px;
+    overflow: hidden;
+    border-radius: 2px;
+  }
+
+  button.avatar-button {
+    position: absolute;
+    bottom: 18px;
+    display: block;
+  }
+
+  button.btn {
+    padding: 1px 5px;
+    background-color: rgba(255, 255, 255, 0.3);
+    font-weight: $btn-font-weight;
+    color: $primary;
+    border: 0;
+    i {
+      padding-top: 0.1em;
+      font-size: 200%;
+    }
+  }
+
+  img.avatar-image {
+    border-radius: $input-border-radius;
+    height: 170px;
+    width: 170px;
+    position: absolute;
+    bottom: -45px;
+    display: block;
+    border: 1px solid $primary;
+  }
+}
+
+@media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
+  div.card.header-card {
+    img.avatar-image {
+      height: 90px;
+      width: 90px;
+      margin-left: -2%;
+      bottom: -15px;
+    }
+
+    img.card-img {
+      min-height: 120px;
+    }
+
+    button.avatar-button {
+      bottom: 15px;
+      margin-left: -2%;
+    }
+  }
+}
+
+@media only screen and (max-width: 760px),
+  (min-device-width: 768px) and (max-device-width: 1024px) {
+  div.card.header-card {
+    img.avatar-image {
+      height: 100px;
+      width: 100px;
+      margin-left: -2%;
+      bottom: -15px;
+    }
+
+    button.avatar-button {
+      bottom: 15px;
+      margin-left: -2%;
+    }
+  }
+}
+
+@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
+  div.card.header-card {
+    img.avatar-image {
+      height: 110px;
+      width: 110px;
+      margin-left: -1%;
+      bottom: -30px;
+    }
+
+    button.avatar-button {
+      bottom: 15px;
+      margin-left: -1%;
+    }
+  }
+}

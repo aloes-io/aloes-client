@@ -1,0 +1,110 @@
+@import "global";
+
+.home-container {
+  z-index: 4;
+  position: relative;
+  min-height: 80vh;
+  width: 80%;
+
+  svg.info-layer {
+    font-family: "LemonMilkbold";
+    --primary-color: #29abe2;
+    --secondary-color: #ededed;
+    --border-radius: 5px;
+    --border: 1px solid transparent;
+    --shadow: drop-shadow(-5px -5px 5px #000);
+    --shadow-selected: drop-shadow(0px 0px 2px #000);
+
+    circle.device-circle {
+      fill: var(--primary-color);
+      filter: url(#circle-shadow);
+    }
+
+    circle.device-circle:hover {
+      fill: var(--primary-color);
+      filter: url(#circle-shadow-selected);
+    }
+
+    circle.device-circle.twin {
+      opacity: 0.8;
+    }
+
+    circle.sensor-circle {
+      fill: #7ebcaf;
+      filter: url(#circle-shadow);
+    }
+
+    circle.sensor-circle:hover {
+      fill: #7ebcaf;
+      filter: url(#circle-shadow-selected);
+    }
+
+    circle.object-circle {
+      filter: url(#circle-shadow);
+    }
+
+    circle.object-circle:hover {
+      filter: url(#circle-shadow-selected);
+    }
+    image.sensor-icon {
+      cursor: pointer;
+    }
+  }
+
+  .fade-enter-active,
+  .fade-leave-active {
+    transition: opacity 0.5s;
+  }
+  .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+    opacity: 0;
+  }
+
+  .info-title {
+    text-align: center;
+    font-family: "LemonMilkbold";
+    font-size: 120%;
+    font-weight: 700;
+    fill: #333;
+  }
+
+  .info-subtitle {
+    font-family: "LemonMilkbold";
+    font-size: 100%;
+    font-weight: 400;
+    fill: #333;
+  }
+
+  .info-description {
+    font-size: 110%;
+    font-family: "Aloes-Rg";
+    line-height: 1.3;
+  }
+
+  .info-video {
+    video {
+      z-index: 2;
+      width: 100%;
+      min-height: 20vh;
+    }
+  }
+}
+
+/* Smartphones (portrait and landscape) ----------- */
+@media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
+  .home-container {
+    width: 100% !important;
+  }
+}
+
+@media only screen and (max-width: 760px), (min-device-width: 768px) and (max-device-width: 1024px) {
+  .home-container {
+    width: 100% !important;
+  }
+}
+
+/* iPads (portrait and landscape) ----------- */
+@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
+  .home-container {
+    width: 90% !important;
+  }
+}

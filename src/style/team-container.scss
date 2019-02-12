@@ -1,0 +1,52 @@
+@import 'global';
+
+.team-container-view {
+  min-height: 90vh;
+  width: 75%;
+}
+
+.card.team-card {
+  padding: 3%;
+  margin-top: 4%;
+  border-radius: $card-border-radius;
+  border: 1px solid transparent;
+  box-shadow: $card-shadow;
+  -webkit-transition: box-shadow 150ms ease;
+  transition: box-shadow 150ms ease;
+}
+
+.team-container-subtitle {
+  text-align: center;
+  font-weight: $font-weight-bold;
+  margin-bottom: 4%;
+}
+
+.card-title {
+  text-align: center;
+  font-weight: $font-weight-bold;
+}
+
+.team-container-view > .container-fluid {
+  padding: 0;
+}
+
+/* Smartphones (portrait and landscape) ----------- */
+@media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
+  .team-container-view {
+    width: 100% !important;
+  }
+}
+
+@media only screen and (max-width: 760px),
+  (min-device-width: 768px) and (max-device-width: 1024px) {
+  .team-container-view {
+    width: 95% !important;
+  }
+}
+
+/* iPads (portrait and landscape) ----------- */
+@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
+  .team-container-view {
+    width: 90% !important;
+  }
+}

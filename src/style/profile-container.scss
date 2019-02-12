@@ -1,0 +1,55 @@
+@import 'global';
+
+/*.profile-container-view {
+  font-size: 0.8em;
+}*/
+
+.container-fluid {
+  width: 75%;
+}
+
+button.btn.save-profile {
+  color: white;
+  background-color: $primary;
+  height: $btn-height;
+  padding: $btn-padding;
+  font-weight: $btn-font-weight;
+  border-radius: $btn-border-radius;
+  border: 0px solid transparent;
+  box-shadow: $btn-shadow;
+  -webkit-transition: box-shadow 150ms ease;
+  transition: box-shadow 150ms ease;
+}
+
+button.btn:hover {
+  background-color: white;
+  color: $primary;
+  border-color: $primary;
+}
+
+@media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
+  .container-fluid {
+    width: 95% !important;
+  }
+}
+
+@media only screen and (max-width: 760px),
+  (min-device-width: 768px) and (max-device-width: 1024px) {
+  .container-fluid {
+    width: 95% !important;
+  }
+}
+
+/* iPads (portrait and landscape) ----------- */
+@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
+  .container-fluid {
+    width: 95% !important;
+  }
+}
+
+/* iPads (portrait and landscape) ----------- */
+@media only screen and (min-device-width: 1024px) and (max-device-width: 1366px) {
+  .container-fluid {
+    width: 80% !important;
+  }
+}

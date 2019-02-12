@@ -1,0 +1,44 @@
+@import "global";
+
+.search-messages {
+  margin-top: 4%;
+  margin-bottom: 4%;
+  height: 50px;
+  background-color: $secondary;
+}
+
+.thumb-icon {
+  max-height: $icon-height-small;
+}
+
+/*.search-messages-columns {
+  padding-right: 10px;
+  padding-left: 10px;
+}*/
+
+input#search-message {
+  margin-top: 2%;
+  background-color: transparent;
+  border: 0px;
+  box-shadow: none;
+}
+
+button.btn.search-message-buttton {
+  margin-top: 4%;
+  font-weight: $btn-font-weight;
+  color: $primary;
+  background-color: transparent;
+  border: 1px solid transparent;
+  box-shadow: none;
+  img {
+    max-height: $icon-height-mid;
+  }
+}
+
+button.btn.search-message-buttton:hover {
+  border: 1px solid transparent;
+  box-shadow: $btn-shadow;
+  -webkit-transition: box-shadow 150ms ease;
+  transition: box-shadow 150ms ease;
+  background: transparent;
+}

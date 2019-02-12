@@ -1,0 +1,48 @@
+@import "global";
+
+.account-profile-view {
+  margin-top: 2%;
+}
+.card {
+  padding: $card-padding;
+  background-color: $white;
+  border-radius: $card-border-radius;
+  border: 1px solid transparent;
+  box-shadow: $card-shadow;
+  -webkit-transition: box-shadow 150ms ease;
+  transition: box-shadow 150ms ease;
+}
+
+.profile-title {
+  font-weight: $font-weight-bold;
+}
+
+.form-inline .form-control {
+  width: 100%;
+}
+
+textarea {
+  width: 100%;
+  background-color: white;
+  border-radius: $input-border-radius;
+  border: 1px solid transparent;
+  /*  box-shadow: $input-shadow;
+  -webkit-transition: box-shadow 150ms ease;
+  transition: box-shadow 150ms ease;*/
+}
+
+select {
+  width: 100%;
+  background-color: white;
+  height: $input-height;
+  padding: $input-padding;
+  border-radius: $input-border-radius;
+  border: 1px solid transparent;
+  box-shadow: $input-shadow;
+  -webkit-transition: box-shadow 150ms ease;
+  transition: box-shadow 150ms ease;
+}
+
+select:hover {
+  box-shadow: $input-shadow-selected;
+}

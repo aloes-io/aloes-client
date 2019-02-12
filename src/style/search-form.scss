@@ -1,0 +1,94 @@
+@import "global";
+
+.search-form {
+  margin-top: 2%;
+  margin-bottom: 0%;
+}
+
+.thumb-icon {
+  max-height: $icon-height-small;
+}
+
+input#search-name {
+  margin-bottom: 2%;
+  background-color: white;
+  height: $input-height-small;
+  padding: $input-padding;
+  border-radius: $input-border-radius;
+  border: 1px solid transparent;
+  box-shadow: $input-shadow;
+  -webkit-transition: box-shadow 150ms ease;
+  transition: box-shadow 150ms ease;
+}
+
+input#search-name:hover {
+  box-shadow: $input-shadow-selected;
+}
+
+input#search-place {
+  margin-bottom: 2%;
+  background-color: white;
+  height: $input-height-small;
+  padding: $input-padding;
+  border-radius: $input-border-radius;
+  border: 1px solid transparent;
+  box-shadow: $input-shadow;
+  -webkit-transition: box-shadow 150ms ease;
+  transition: box-shadow 150ms ease;
+}
+
+input#search-place:hover {
+  box-shadow: $input-shadow-selected;
+}
+
+button.btn#search-custom {
+  cursor: pointer;
+  height: $btn-round-radius-lg;
+  width: $btn-round-radius-lg;
+  padding: 0px;
+  margin-right: 4%;
+  margin-left: 4%;
+  font-weight: $btn-font-weight;
+  color: white;
+  background-color: $primary;
+  border-radius: $btn-round-border-radius;
+  border: 1px solid transparent;
+  box-shadow: $btn-shadow;
+  -webkit-transition: box-shadow 150ms ease;
+  transition: box-shadow 150ms ease;
+  i {
+    font-size: 100%;
+  }
+}
+
+button.btn#search-custom:hover {
+  color: $primary;
+  background-color: white;
+  border-color: $primary;
+}
+
+button.btn#search-geolocation {
+  cursor: pointer;
+  margin-bottom: 2%;
+  margin-left: 4%;
+  height: $btn-round-radius-lg;
+  width: $btn-round-radius-lg;
+  padding: 0px;
+  font-weight: $btn-font-weight;
+  color: white;
+  background-color: $primary;
+  border-radius: $btn-round-border-radius;
+  border: 1px solid transparent;
+  box-shadow: $btn-shadow;
+  -webkit-transition: box-shadow 150ms ease;
+  transition: box-shadow 150ms ease;
+  i {
+    font-size: 100%;
+  }
+}
+
+button.btn#search-geolocation:hover {
+  color: $primary;
+  background-color: white;
+  border-color: $primary;
+}

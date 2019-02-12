@@ -1,0 +1,36 @@
+.theme-primary .vdatetime-popup__header,
+.theme-primary .vdatetime-calendar__month__day--selected > span > span,
+.theme-primary .vdatetime-calendar__month__day--selected:hover > span > span {
+  background: #528fa2;
+}
+
+.theme-primary .vdatetime-year-picker__item--selected,
+.theme-primary .vdatetime-time-picker__item--selected,
+.theme-primary .vdatetime-popup__actions__button {
+  color: #528fa2;
+}
+
+div.date-time-pickers {
+/*  margin-top: 4%;
+*/
+  div.bootstrap-datetimepicker-widget.dropdown-menu {
+    padding: $card-padding;
+    border-radius: $card-border-radius;
+    border: 1px solid transparent;
+    box-shadow: $card-shadow;
+    -webkit-transition: box-shadow 150ms ease;
+    transition: box-shadow 150ms ease;
+  }
+}
+input.input-holder {
+  width: 100%;
+  margin-bottom: 4%;
+  background-color: white;
+
+  padding: $input-padding;
+  border-radius: $input-border-radius;
+  border: 1px solid transparent;
+  box-shadow: $input-shadow;
+  -webkit-transition: box-shadow 150ms ease;
+  transition: box-shadow 150ms ease;
+}

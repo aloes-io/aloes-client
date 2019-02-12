@@ -1,0 +1,139 @@
+@import "global";
+
+.profile-form-view {
+  padding-bottom: 2%;
+  padding-left: 2%;
+  padding-right: 2%;
+}
+
+form.profile-form {
+  margin-bottom: 1%;
+  margin-left: 0%;
+}
+
+.profile-header-name {
+  padding-top: 0.4rem;
+  padding-left: 0rem;
+}
+
+input#first-name {
+  background-color: white;
+  height: $input-height-small;
+  padding: $input-padding;
+  border-radius: $input-border-radius;
+  border: 1px solid transparent;
+  box-shadow: $input-shadow;
+  -webkit-transition: box-shadow 150ms ease;
+  transition: box-shadow 150ms ease;
+}
+input#first-name.form-control:valid {
+  border-color: transparent;
+}
+
+input#first-name.form-control:invalid {
+  border-color: $lightwarning;
+}
+
+input#first-name.form-control:hover {
+  box-shadow: $input-shadow-selected;
+}
+
+input#first-name:disabled {
+  border-color: transparent;
+  box-shadow: none !important;
+}
+
+input#last-name {
+  background-color: white;
+  height: $input-height-small;
+  padding: $input-padding;
+  border-radius: $input-border-radius;
+  border: 1px solid transparent;
+  box-shadow: $input-shadow;
+  -webkit-transition: box-shadow 150ms ease;
+  transition: box-shadow 150ms ease;
+}
+
+input#last-name.form-control:valid {
+  border-color: transparent;
+}
+
+input#last-name.form-control:invalid {
+  border-color: $grey;
+}
+
+input#last-name.form-control:hover {
+  box-shadow: $input-shadow-selected;
+}
+
+input#last-name:disabled {
+  border-color: transparent;
+  box-shadow: none !important;
+}
+
+button.btn#edit-mode {
+  background-color: $primary;
+  color: white;
+  height: $btn-height;
+  padding: $btn-padding;
+  border-radius: $btn-border-radius;
+  border: 1px solid transparent;
+  box-shadow: $btn-shadow;
+  -webkit-transition: box-shadow 150ms ease;
+  transition: box-shadow 150ms ease;
+}
+
+button.btn#edit-mode:hover {
+  background-color: white;
+  color: $primary;
+  border-color: $primary;
+}
+
+button.btn.profile-inline-button {
+  background-color: transparent;
+  border: 0px;
+  padding: 0.1rem 0.1rem;
+  margin-right: 1%;
+  box-shadow: none;
+  img {
+    max-height: $icon-height;
+  }
+}
+button.btn.profile-inline-button:hover {
+  box-shadow: $btn-shadow;
+}
+
+button.btn.profile-messenger {
+  background-color: transparent;
+  border: 0px;
+  padding: 0.1rem 0.1rem;
+  margin-left: 2%;
+  box-shadow: none;
+  img {
+    max-height: $icon-height;
+  }
+}
+
+button.btn.profile-messenger:hover {
+  box-shadow: $btn-shadow;
+}
+
+.profile-status {
+  margin-top: 0%;
+  img {
+    max-height: $icon-height;
+  }
+}
+.profile-status-on {
+  small {
+    font-weight: $font-weight-bold;
+    color: $success;
+  }
+}
+
+.profile-status-off {
+  small {
+    font-weight: $font-weight-bold;
+    color: $primary;
+  }
+}

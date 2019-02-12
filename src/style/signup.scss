@@ -1,0 +1,38 @@
+@import "global";
+
+.signup-view {
+}
+
+.signup-actions {
+  text-align: center;
+  margin-top: 2%;
+  margin-bottom: 4%;
+}
+
+.card {
+  margin: auto;
+  min-width: 320px;
+  border-radius: $card-border-radius;
+  border: 1px solid transparent;
+  box-shadow: $card-shadow;
+  -webkit-transition: box-shadow 150ms ease;
+  transition: box-shadow 150ms ease;
+}
+
+.card .card-title {
+  color: $primary;
+}
+
+.link {
+  cursor: pointer;
+}
+
+/*.signup-success {
+  z-index: 5;
+}*/
+
+@media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
+  .card {
+    min-width: 280px !important;
+  }
+}

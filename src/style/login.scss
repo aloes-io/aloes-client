@@ -1,0 +1,54 @@
+@import "global";
+
+.login.view {
+  background-color: darken($light, 5%);
+  min-height: 90vh;
+}
+
+.card {
+  width: 40%;
+  padding: $card-padding;
+  margin: auto;
+  margin-top: 2%;
+  border-radius: $card-border-radius;
+  border: 1px solid transparent;
+  box-shadow: $card-shadow;
+  -webkit-transition: box-shadow 150ms ease;
+  transition: box-shadow 150ms ease;
+}
+
+.card-img {
+  margin-top: 6%;
+  margin-bottom: 8%;
+  width: 40%;
+  margin-left: 30%;
+  border-radius: 0;
+}
+
+@media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
+  .card {
+    width: 80% !important;
+    margin: auto;
+  }
+}
+
+/*
+    Max width before this PARTICULAR table gets nasty
+    This query will take effect for any screen smaller than 760px
+    and also iPads specifically.
+    */
+@media only screen and (max-width: 760px),
+  (min-device-width: 768px) and (max-device-width: 1024px) {
+  .card {
+    width: 80% !important;
+    margin: auto;
+  }
+}
+
+/* iPads (portrait and landscape) ----------- */
+@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
+  .card {
+    width: 70% !important;
+    margin: auto;
+  }
+}

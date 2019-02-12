@@ -1,0 +1,27 @@
+@import 'global';
+
+.account-view {
+  width: 100vw;
+}
+
+.card {
+  border: none;
+  margin: auto;
+  background-color: $white;
+}
+.card .logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.card .logo img {
+  margin: 30px;
+  max-width: 150px;
+}
+.card .card-block {
+  background-color: var(--white);
+}
+
+.account-view > .container-fluid {
+  padding: 0;
+}

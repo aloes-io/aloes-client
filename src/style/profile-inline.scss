@@ -1,0 +1,133 @@
+@import "global";
+
+div.card.profile-inline-view {
+  margin-top: 2%;
+  padding: 2%;
+  border-radius: $card-border-radius;
+  background-color: white;
+  border: 1px solid transparent;
+  box-shadow: $mini-card-shadow;
+  -webkit-transition: box-shadow 150ms ease;
+  transition: box-shadow 150ms ease;
+  cursor: pointer;
+}
+
+div.card.profile-inline-view:hover {
+  box-shadow: $mini-card-shadow-selected;
+}
+
+div.card-body {
+  padding: 0%;
+}
+
+.profile-inline-row {
+  margin-top: 0%;
+  margin-bottom: 4%;
+}
+
+.profile-inline-name {
+  margin-top: 1%;
+  margin-bottom: 1%;
+}
+
+.profile-inline-address {
+  margin-top: 1%;
+  margin-bottom: 1%;
+}
+
+.profile-inline-description {
+  margin-top: 1%;
+  margin-bottom: 1%;
+  max-height: 40px;
+  overflow: hidden;
+}
+
+img.profile-inline-avatar {
+  height: 120px;
+}
+
+.profile-inline-status {
+  margin-top: 0%;
+  img {
+    max-height: $icon-height-small;
+  }
+}
+
+.profile-inline-team {
+  height: 30px;
+  cursor: pointer;
+  img {
+    max-height: $icon-height-small;
+  }
+}
+
+.profile-inline-express {
+  margin-top: 0%;
+  height: 30px;
+  img {
+    max-height: $icon-height-small;
+  }
+  a {
+    cursor: pointer;
+  }
+}
+
+.profile-inline-express-on {
+  small {
+    color: $success;
+  }
+}
+
+.profile-inline-express-off {
+  small {
+    color: $danger;
+  }
+}
+
+.profile-props {
+  font-size: 90%;
+}
+
+button.btn.profile-inline-button {
+  /*  height: $btn-height;
+  padding: $btn-padding;*/
+  margin-top: 2%;
+  height: $btn-height;
+  font-size: 90%;
+  font-weight: $btn-font-weight;
+  color: white;
+  background-color: $primary;
+  position: relative;
+  border-radius: $btn-border-radius;
+  border: 1px solid transparent;
+  box-shadow: $btn-shadow;
+  -webkit-transition: box-shadow 150ms ease;
+  transition: box-shadow 150ms ease;
+}
+
+div.profile-inline-team > button.btn {
+  color: white;
+  padding: 0;
+  background-color: transparent;
+  border: 1px solid transparent;
+}
+
+@media only screen and (max-width: 760px),
+  (min-device-width: 768px) and (max-device-width: 1024px) {
+  img.profile-inline-avatar {
+    height: 100px;
+  }
+}
+
+/* iPads (portrait and landscape) ----------- */
+@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
+  img.profile-inline-avatar {
+    height: 100px;
+  }
+}
+
+@media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
+  img.profile-inline-avatar {
+    height: 80px;
+  }
+}

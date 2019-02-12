@@ -1,0 +1,103 @@
+@import "global";
+
+.search-opt-form {
+  margin-top: 2%;
+  margin-bottom: 2%;
+}
+
+.thumb-icon {
+  max-height: 20px;
+}
+
+.search-columns {
+  padding-right: 10px;
+  padding-left: 10px;
+}
+
+.input-group {
+  margin-top: 5px;
+  max-width: 5%;
+  small {
+    font-size: 90%;
+  }
+}
+
+div.row.date-search {
+  margin-top: 1%;
+  margin-bottom: 1%;
+}
+
+input.input-holder.date-time-pickers {
+  width: 100%;
+  margin-top: 1%;
+  margin-bottom: 1%;
+  height: $input-height-small;
+  background-color: white;
+  font-size: 90%;
+  padding: $input-padding;
+  border-radius: $input-border-radius;
+  border: 1px solid transparent;
+  box-shadow: $input-shadow;
+  -webkit-transition: box-shadow 150ms ease;
+  transition: box-shadow 150ms ease;
+
+  div.bootstrap-datetimepicker-widget.dropdown-menu {
+    padding: $card-padding;
+    border-radius: $card-border-radius;
+    border: 1px solid transparent;
+    box-shadow: $mini-card-shadow;
+    -webkit-transition: box-shadow 150ms ease;
+    transition: box-shadow 150ms ease;
+  }
+}
+
+input.input-holder.date-time-pickers:hover {
+  box-shadow: $input-shadow-selected;
+}
+
+select#search-yoga-style {
+  margin-top: 2%;
+  margin-bottom: 2%;
+  height: $input-height-small;
+  background-color: white;
+  border-radius: $input-border-radius;
+  border: 1px solid transparent;
+  box-shadow: $input-shadow;
+  -webkit-transition: box-shadow 150ms ease;
+  transition: box-shadow 150ms ease;
+}
+
+select#search-yoga-style:hover {
+  box-shadow: $input-shadow-selected;
+}
+
+select#search-certified-ya {
+  margin-top: 2%;
+  margin-bottom: 2%;
+  height: $input-height-small;
+  background-color: white;
+  border-radius: $input-border-radius;
+  border: 1px solid transparent;
+  box-shadow: $input-shadow;
+  -webkit-transition: box-shadow 150ms ease;
+  transition: box-shadow 150ms ease;
+}
+
+select#search-certified-ya:hover {
+  box-shadow: $input-shadow-selected;
+}
+
+button.btn.filter-buttons {
+  margin-top: 2%;
+  margin-bottom: 2%;
+  background-color: white;
+  border-color: white;
+  padding: 2px 2px;
+  img {
+    max-height: $icon-height;
+  }
+}
+
+button.btn.filter-buttons:hover {
+  box-shadow: $btn-shadow-selected;
+}
