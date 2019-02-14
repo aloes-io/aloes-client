@@ -4,31 +4,30 @@ import PubSub from "./PubSub";
 
 const brokerUrl = process.env.VUE_APP_BROKER_URL;
 const baseOptions = {
-  keepalive: 60,
+  //  keepalive: 60,
   // reschedulePings: true,
-  // protocolId: "MQTT",
-  // protocolVersion: 4,
+  protocolId: "MQTT",
+  protocolVersion: 4,
   reconnectPeriod: 5000,
   connectTimeout: 30 * 1000,
-  // clean: true,
+  clean: true,
   clientId: null,
   username: null,
-  password: null
+  password: null,
 };
 
 const socket = {};
 
-socket.setToken = async token => {
+socket.setToken = async (token) => {
   logger.publish(3, "socket", "setToken", token);
   socket.token = token;
   const options = {
     ...baseOptions,
-    //  clientId: token.userId.toString(),
     clientId: `${token.userId.toString()}-${Math.random()
       .toString(16)
       .substr(2, 8)}`,
     username: token.userId.toString(),
-    password: token.id.toString()
+    password: token.id.toString(),
   };
   // if (socket.client && socket.client.connected) {
   //   await socket.client.end();
@@ -46,34 +45,24 @@ socket.removeToken = async () => {
   return null;
 };
 
-socket.initSocket = options => {
+socket.initSocket = (options) => {
   logger.publish(3, "socket", "initSocket", options);
   socket.client = mqtt.connect(brokerUrl, options);
 
-  socket.client.on("connect", async state => {
+  socket.client.on("connect", async (state) => {
     logger.publish(3, "socket", "onConnect", state);
     await PubSub.setListeners(socket.client, socket.token);
     //  socket.client.publish(`${token.userId.toString()}/Authentication/POST`, "yooo");
   });
 
-  socket.client.on("disconnect", state => {
+  socket.client.on("disconnect", (state) => {
     logger.publish(3, "socket", "onDisconnect", state);
     //  PubSub.close(socket.client);
   });
 
   socket.client.on("message", async (topic, message) => {
     logger.publish(3, "socket", "onMessage", topic);
-    const topicParts = topic.split("/");
-    if (
-      topicParts[0] === options.clientId &&
-      topicParts[1] === "Auth" &&
-      topicParts[2] === "POST"
-    ) {
-      logger.publish(3, "socket", "onAuthenticated", message.toString());
-      await PubSub.setListeners(socket.client, socket.token);
-    } else {
-      await PubSub.handler(topic, message);
-    }
+    await PubSub.handler(topic, message);
   });
 
   return socket;

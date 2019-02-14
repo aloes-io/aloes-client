@@ -252,7 +252,6 @@ export function updatePasswordFromToken(ctx, { accessToken, newPassword }) {
 }
 
 export async function signOut({ commit, state }) {
-  //  let response;
   await loopback.post(`/${state.resources}/logout`, {
     // eslint-disable-next-line dot-notation
     accessToken: state["access_token"]
