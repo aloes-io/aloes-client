@@ -1,4 +1,4 @@
-@import "global";
+@import 'global';
 
 .header-container {
   z-index: 5;
@@ -15,7 +15,7 @@ img.brand-logo {
 }
 
 p.brand-font {
-  font-family: "LemonMilkbold";
+  font-family: 'LemonMilkbold';
   color: $warning;
   max-height: $icon-height-small;
 }
@@ -38,6 +38,12 @@ p.brand-font {
   padding-right: 6%;
 }
 
+.navbar-nav {
+  flex-direction: row;
+  -ms-flex-direction: row;
+  -webkit-box-orient: horizontal;
+}
+
 .navbar.out {
   border-bottom: 2px solid $secondary;
 }
@@ -46,9 +52,7 @@ p.brand-font {
   border-bottom: 1px solid transparent;
 }
 
-.navbar-brand {
-  margin-right: 0;
-}
+
 
 .navbar-nav .nav-link {
   font-size: 1.1rem;
@@ -80,7 +84,8 @@ button.btn.login:hover {
   color: $primary;
 }
 
-@media only screen and (max-width: 760px), (min-device-width: 768px) and (max-device-width: 1024px) {
+@media only screen and (max-width: 760px),
+  (min-device-width: 768px) and (max-device-width: 1024px) {
   .logo img {
     margin-left: 3% !important;
     max-width: 300px;

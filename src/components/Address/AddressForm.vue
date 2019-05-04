@@ -1,10 +1,6 @@
 <template lang="html">
   <div class="address-form-view">
-    <b-row
-      v-if="!viewer || editorMode"
-      :class="complete"
-      class="address-editor"
-    >
+    <b-row v-if="!viewer || editorMode" :class="complete" class="address-editor">
       <b-col cols="12" sm="7" md="7" lg="7" xl="7">
         <b-form-group
           id="street-group"
@@ -76,11 +72,7 @@
           <small class="label-title">
             public ?
           </small>
-          <input
-            v-model="publicAddress"
-            :disabled="!editorMode"
-            type="checkbox"
-          />
+          <input v-model="publicAddress" :disabled="!editorMode" type="checkbox" />
           <span class="checkmark" />
         </label>
       </b-col>
@@ -96,7 +88,6 @@
         >
           <b-button
             id="verify-address"
-            :disabled="verifiedAddress"
             size="sm"
             class="verify-address"
             @click.prevent.stop="verifyAddress"
@@ -122,34 +113,34 @@
 </template>
 
 <script type="text/javascript">
-import bButton from "bootstrap-vue/es/components/button/button";
-import bFormGroup from "bootstrap-vue/es/components/form-group/form-group";
-import bFormInput from "bootstrap-vue/es/components/form-input/form-input";
-import bModal from "bootstrap-vue/es/components/modal/modal";
+import bButton from 'bootstrap-vue/es/components/button/button';
+import bFormGroup from 'bootstrap-vue/es/components/form-group/form-group';
+import bFormInput from 'bootstrap-vue/es/components/form-input/form-input';
+import bModal from 'bootstrap-vue/es/components/modal/modal';
 
 export default {
-  name: "AddressForm",
+  name: 'AddressForm',
 
   components: {
-    "b-button": bButton,
-    "b-form-group": bFormGroup,
-    "b-form-input": bFormInput,
-    "b-modal": bModal
+    'b-button': bButton,
+    'b-form-group': bFormGroup,
+    'b-form-input': bFormInput,
+    'b-modal': bModal,
   },
 
   props: {
-    "is-viewer": {
+    'is-viewer': {
       type: Boolean,
-      required: true
+      required: true,
     },
-    "edit-mode": {
+    'edit-mode': {
       type: Boolean,
-      default: false
+      default: false,
     },
-    "owner-id": {
+    'owner-id': {
       type: [Object, Number, String],
-      required: true
-    }
+      required: true,
+    },
   },
 
   data() {
@@ -158,114 +149,107 @@ export default {
       editorMode: false,
       verify: null,
       complete: false,
-      validate: { message: "vérifier" }
+      validate: { message: 'vérifier' },
     };
   },
 
   computed: {
-    street: {
+    address: {
       get() {
-        if (this.$route.name === "device") {
-          return this.$store.state.address.deviceAddress.street;
-        } else if (this.$route.name === "account") {
+        if (this.$route.name === 'device') {
+          return this.$store.state.address.deviceAddress;
+          //  return JSON.parse(this.$store.state.address.deviceAddress);
+        } else if (this.$route.name === 'account') {
           return this.$store.state.address.profileAddress.street;
-        } else if (this.$route.name === "profile") {
+        } else if (this.$route.name === 'profile') {
           return this.$store.state.address.viewedProfileAddress.street;
         }
         return null;
       },
+    },
+    street: {
+      get() {
+        if (this.address && this.address !== null && this.address.street) {
+          return this.address.street;
+        }
+        return null;
+      },
       set(value) {
-        this.$store.commit("address/setModelKV", {
+        this.$store.commit('address/setModelKV', {
           route: this.$route.name,
-          key: "street",
-          value
+          key: 'street',
+          value,
         });
-      }
+      },
     },
     postalCode: {
       get() {
-        if (this.$route.name === "device") {
-          return this.$store.state.address.deviceAddress.postalCode;
-        } else if (this.$route.name === "account") {
-          return this.$store.state.address.profileAddress.postalCode;
-        } else if (this.$route.name === "profile") {
-          return this.$store.state.address.viewedProfileAddress.postalCode;
+        if (this.address && this.address !== null && this.address.postalCode) {
+          return this.address.postalCode;
         }
         return null;
       },
       set(value) {
-        this.$store.commit("address/setModelKV", {
+        this.$store.commit('address/setModelKV', {
           route: this.$route.name,
-          key: "postalCode",
-          value
+          key: 'postalCode',
+          value,
         });
-      }
+      },
     },
     city: {
       get() {
-        if (this.$route.name === "device") {
-          return this.$store.state.address.deviceAddress.city;
-        } else if (this.$route.name === "account") {
-          return this.$store.state.address.profileAddress.city;
-        } else if (this.$route.name === "profile") {
-          return this.$store.state.address.viewedProfileAddress.city;
+        if (this.address && this.address !== null && this.address.city) {
+          return this.address.city;
         }
         return null;
       },
       set(value) {
-        this.$store.commit("address/setModelKV", {
+        this.$store.commit('address/setModelKV', {
           route: this.$route.name,
-          key: "city",
-          value
+          key: 'city',
+          value,
         });
-      }
+      },
     },
     publicAddress: {
       get() {
-        if (this.$route.name === "device") {
-          return this.$store.state.address.deviceAddress.publicAddress;
-        } else if (this.$route.name === "account") {
-          return this.$store.state.address.profileAddress.publicAddress;
-        } else if (this.$route.name === "profile") {
-          return this.$store.state.address.viewedProfileAddress.publicAddress;
+        if (this.address && this.address !== null) {
+          return this.address.public;
         }
         return null;
       },
       set(value) {
-        this.$store.commit("address/setModelKV", {
+        this.$store.commit('address/setModelKV', {
           route: this.$route.name,
-          key: "publicAddress",
-          value
+          key: 'public',
+          value,
         });
-      }
+      },
     },
     verifiedAddress: {
       get() {
-        if (this.$route.name === "device") {
-          return this.$store.state.address.deviceAddress.verified;
-        } else if (this.$route.name === "account") {
-          return this.$store.state.address.profileAddress.verified;
-        } else if (this.$route.name === "profile") {
-          return this.$store.state.address.viewedProfileAddress.verified;
+        if (this.address && this.address !== null) {
+          return this.address.verified;
         }
         return null;
       },
       set(value) {
-        this.$store.commit("address/setModelKV", {
+        this.$store.commit('address/setModelKV', {
           route: this.$route.name,
-          key: "verified",
-          value
+          key: 'verified',
+          value,
         });
-      }
+      },
     },
     className: {
       get() {
         if (!this.editorMode) {
-          return "viewer";
+          return 'viewer';
         }
-        return "editor";
-      }
-    }
+        return 'editor';
+      },
+    },
   },
 
   watch: {
@@ -273,19 +257,19 @@ export default {
       handler(state) {
         this.viewer = state;
       },
-      immediate: true
+      immediate: true,
     },
     editMode: {
       handler(mode) {
         this.editorMode = mode;
       },
-      immediate: true
+      immediate: true,
     },
     ownerId: {
       handler() {
         this.getCollectionAddress();
       },
-      immediate: true
+      immediate: true,
     },
     street() {
       this.updateAddressForm();
@@ -295,12 +279,12 @@ export default {
     },
     city() {
       this.updateAddressForm();
-    }
+    },
   },
 
   mounted() {
     this.verifiedAddress = false;
-    this.getCollectionAddress();
+    //  this.getCollectionAddress();
   },
 
   methods: {
@@ -318,8 +302,7 @@ export default {
     },
 
     updateAddressForm() {
-      this.complete =
-        this.validStreet && this.validPostalCode && this.validCity;
+      this.complete = this.validStreet && this.validPostalCode && this.validCity;
       this.fullAddress = `${this.street} ${this.postalCode} ${this.city}`;
       // if (this.street) {
       //   if (!this.postalCode) {
@@ -344,10 +327,10 @@ export default {
 
     async getCollectionAddress() {
       return this.$store
-        .dispatch("address/findAddress", {
+        .dispatch('address/findAddress', {
           route: this.$route.name,
           ownerId: this.$props.ownerId,
-          viewer: this.viewer
+          viewer: this.viewer,
         })
         .then(res => res)
         .catch(err => err);
@@ -355,9 +338,9 @@ export default {
 
     async saveCollectionAddress() {
       return this.$store
-        .dispatch("address/updateAddress", {
+        .dispatch('address/updateAddress', {
           route: this.$route.name,
-          ownerId: this.$props.ownerId
+          ownerId: this.$props.ownerId,
         })
         .then(res => res)
         .catch(err => err);
@@ -367,7 +350,7 @@ export default {
       // if (evt) evt.preventDefault();
       // if (evt) evt.stopPropagation();
       await this.$store
-        .dispatch("address/verifyAddress", this.$route.name)
+        .dispatch('address/verifyAddress', this.$route.name)
         .then(res => {
           if (res.message) {
             this.verifiedAddress = false;
@@ -376,13 +359,13 @@ export default {
             return this.verify;
           } else if (!res.message && res.street && res.city) {
             this.verifiedAddress = true;
-            this.verify = { message: "Adresse vérifiée, merci" };
+            this.verify = { message: 'Adress checked, thx' };
             this.$refs.addressModal.show();
             return this.saveCollectionAddress();
           }
           this.$refs.addressModal.show();
           this.verify = {
-            message: "Oups! L'adresse semble incorrecte, veuillez réessayer"
+            message: 'Sorry the address seems incorrect',
           };
           return false;
         })
@@ -393,11 +376,11 @@ export default {
           return err;
         });
       return null;
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style lang="scss" scoped>
-@import "../../style/address-form.scss";
+@import '../../style/address-form.scss';
 </style>

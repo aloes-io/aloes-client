@@ -3,9 +3,9 @@ r<template lang="html">
     <h5 class="title">CONTACT</h5>
     <br />
     <p>
-      Suspendisse viverra venenatis odio. Donec libero massa, iaculis vel velit
-      a, maximus interdum urna. Fusce pharetra eu metus a vestibulum. Fusce
-      pellentesque lorem vel risus lobortis facilisis et non tortor.
+      Suspendisse viverra venenatis odio. Donec libero massa, iaculis vel velit a, maximus interdum
+      urna. Fusce pharetra eu metus a vestibulum. Fusce pellentesque lorem vel risus lobortis
+      facilisis et non tortor.
     </p>
     <br />
     <b-row align-h="center">
@@ -109,29 +109,29 @@ r<template lang="html">
 </template>
 
 <script type="text/javascript">
-import bAlert from "bootstrap-vue/es/components/alert/alert";
-import bButton from "bootstrap-vue/es/components/button/button";
-import bForm from "bootstrap-vue/es/components/form/form";
-import bFormInput from "bootstrap-vue/es/components/form-input/form-input";
-import bFormGroup from "bootstrap-vue/es/components/form-group/form-group";
-import bFormTextarea from "bootstrap-vue/es/components/form-textarea/form-textarea";
+import bAlert from 'bootstrap-vue/es/components/alert/alert';
+import bButton from 'bootstrap-vue/es/components/button/button';
+import bForm from 'bootstrap-vue/es/components/form/form';
+import bFormInput from 'bootstrap-vue/es/components/form-input/form-input';
+import bFormGroup from 'bootstrap-vue/es/components/form-group/form-group';
+import bFormTextarea from 'bootstrap-vue/es/components/form-textarea/form-textarea';
 
 export default {
-  name: "ContactForm",
+  name: 'ContactForm',
 
   components: {
-    "b-alert": bAlert,
-    "b-button": bButton,
-    "b-form": bForm,
-    "b-form-input": bFormInput,
-    "b-form-group": bFormGroup,
-    "b-form-textarea": bFormTextarea
+    'b-alert': bAlert,
+    'b-button': bButton,
+    'b-form': bForm,
+    'b-form-input': bFormInput,
+    'b-form-group': bFormGroup,
+    'b-form-textarea': bFormTextarea,
   },
 
   data() {
     return {
       success: null,
-      error: null
+      error: null,
     };
   },
 
@@ -141,8 +141,8 @@ export default {
         return this.$store.state.auth.accountType;
       },
       set(type) {
-        this.$store.commit("auth/setAccountType", type);
-      }
+        this.$store.commit('auth/setAccountType', type);
+      },
     },
 
     firstName: {
@@ -150,56 +150,56 @@ export default {
         return this.$store.state.contactForm.firstName;
       },
       set(value) {
-        this.$store.commit("setContactFormKV", {
-          key: "firstName",
-          value
+        this.$store.commit('setContactFormKV', {
+          key: 'firstName',
+          value,
         });
-      }
+      },
     },
     lastName: {
       get() {
         return this.$store.state.contactForm.lastName;
       },
       set(value) {
-        this.$store.commit("setContactFormKV", {
-          key: "lastName",
-          value
+        this.$store.commit('setContactFormKV', {
+          key: 'lastName',
+          value,
         });
-      }
+      },
     },
     email: {
       get() {
         return this.$store.state.contactForm.email;
       },
       set(value) {
-        this.$store.commit("setContactFormKV", {
-          key: "email",
-          value
+        this.$store.commit('setContactFormKV', {
+          key: 'email',
+          value,
         });
-      }
+      },
     },
     subject: {
       get() {
         return this.$store.state.contactForm.subject;
       },
       set(value) {
-        this.$store.commit("setContactFormKV", {
-          key: "subject",
-          value
+        this.$store.commit('setContactFormKV', {
+          key: 'subject',
+          value,
         });
-      }
+      },
     },
     content: {
       get() {
         return this.$store.state.contactForm.content;
       },
       set(value) {
-        this.$store.commit("setContactFormKV", {
-          key: "content",
-          value
+        this.$store.commit('setContactFormKV', {
+          key: 'content',
+          value,
         });
-      }
-    }
+      },
+    },
   },
 
   mounted() {
@@ -217,9 +217,9 @@ export default {
       this.success = null;
       this.error = null;
       try {
-        const result = await this.$store.dispatch("sendContactForm");
+        const result = await this.$store.dispatch('sendContactForm');
         if (result) {
-          this.success = { message: "Message envoyé, merci." };
+          this.success = { message: 'Message envoyé, merci.' };
           return this.success;
         }
         this.error = { message: "Désolé votre message n'a pu être envoyé." };
@@ -231,14 +231,14 @@ export default {
     },
 
     onReset() {
-      this.$store.commit("cleanContactForm");
+      this.$store.commit('cleanContactForm');
       this.success = null;
       this.error = null;
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style lang="scss" scoped>
-@import "../../style/contact-form.scss";
+@import '../../style/contact-form.scss';
 </style>

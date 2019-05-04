@@ -1,5 +1,5 @@
 <template lang="html">
-  <div v-if="searchSuccess" class="search-map">
+  <div v-if="searchSuccess || devices" class="search-map">
     <l-map
       ref="map"
       :zoom="currentZoom"
@@ -10,34 +10,12 @@
       @update:zoom="zoomUpdate"
     >
       <l-tile-layer :url="url" :attribution="attribution" />
-      <l-marker
-        v-if="searchLocation"
-        :lat-lng="[searchLocation.lat, searchLocation.lng]"
-      >
-        <l-icon
-          :icon-size="dynamicSize"
-          :icon-anchor="dynamicAnchor"
-          :icon-url="$store.state.style.pictures.mapMarkerWhite"
-        />
-        <l-popup>
-          <img :src="profile.avatarImgUrl" class="thumb-icon" />
-          <div>
-            {{ profile.firstName }} {{ profile.lastName }}
-            <p v-show="showParagraph">
-              {{ profile.description }}
-            </p>
-          </div>
-        </l-popup>
-      </l-marker>
-      <div v-for="profile in searchResults" :key="profile.id">
+      <div v-for="device in devices" :key="device.id">
         <l-marker
-          v-if="profile.profileAddress && profile.profileAddress.coordinates"
-          :lat-lng="[
-            profile.profileAddress.coordinates.lat,
-            profile.profileAddress.coordinates.lng
-          ]"
-          @mouseover="highlightProfile(profile)"
-          @mouseleave="highlightProfile(null)"
+          v-if="device.deviceAddress && device.deviceAddress.coordinates"
+          :lat-lng="[device.deviceAddress.coordinates.lat, device.deviceAddress.coordinates.lng]"
+          @mouseover="highlightDevice(device)"
+          @mouseleave="highlightDevice(null)"
         >
           <l-icon
             ref="mapIcon"
@@ -46,11 +24,11 @@
             :icon-url="$store.state.style.pictures.mapMarker"
           />
           <l-popup>
-            <img :src="profile.avatarImgUrl" class="thumb-icon" />
-            <div @click="goToProfile(profile)">
-              {{ profile.firstName }} {{ profile.lastName }}
+            <img :src="device.icons[0]" class="thumb-icon" />
+            <div @click="goToDevice(device)">
+              {{ device.name }}
               <p v-show="showParagraph">
-                {{ profile.description }}
+                {{ device.description }}
               </p>
             </div>
           </l-popup>
@@ -58,53 +36,56 @@
       </div>
     </l-map>
     <!-- <b-button @click="showLongText">
-      Afficher les descriptions
+      Show descriptions
     </b-button> -->
   </div>
 </template>
 
 <script type="text/javascript">
-import "leaflet/dist/leaflet.css";
+import 'leaflet/dist/leaflet.css';
 //  import bButton from "bootstrap-vue/es/components/button/button";
-import { L, LMap, LTileLayer, LIcon, LMarker, LPopup } from "vue2-leaflet";
-import { EventBus } from "@/services/PubSub";
-import logger from "@/services/logger";
+import { L, LMap, LTileLayer, LIcon, LMarker, LPopup } from 'vue2-leaflet';
+import { EventBus } from '@/services/PubSub';
+import logger from '@/services/logger';
 
 export default {
-  name: "SearchMap",
+  name: 'SearchMap',
 
   components: {
     //  "b-button": bButton,
-    "l-map": LMap,
-    "l-icon": LIcon,
-    "l-tile-layer": LTileLayer,
-    "l-marker": LMarker,
-    "l-popup": LPopup
+    'l-map': LMap,
+    'l-icon': LIcon,
+    'l-tile-layer': LTileLayer,
+    'l-marker': LMarker,
+    'l-popup': LPopup,
   },
 
   props: {
     token: {
       type: String,
-      default: ""
+      default: '',
     },
-    "user-id": {
+    'user-id': {
       type: [String, Number],
-      default: null
-    }
+      default: null,
+    },
+    devices: {
+      type: Array,
+      default: null,
+    },
   },
 
   data() {
     return {
-      url: "https://{s}.tile.osm.org/{z}/{x}/{y}.png",
-      attribution:
-        '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors',
+      url: 'https://{s}.tile.osm.org/{z}/{x}/{y}.png',
+      attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors',
       currentZoom: 8,
       currentCenter: [48.86392, 2.323738],
       showParagraph: false,
       iconSize: 20,
       mapOptions: {
-        zoomSnap: 1
-      }
+        zoomSnap: 1,
+      },
     };
   },
 
@@ -112,47 +93,29 @@ export default {
     accountType: {
       get() {
         return this.$store.state.auth.account.type;
-      }
-    },
-    profile: {
-      get() {
-        return this.$store.state[`${this.accountType.toLowerCase()}`].model;
-      }
-    },
-    searchProfileType: {
-      get() {
-        return this.$store.state.search.model.profileType;
-      }
-    },
-    profileType: {
-      get() {
-        if (this.searchProfileType) {
-          return this.searchProfileType;
-        }
-        return "Teacher";
-      }
+      },
     },
     searchResults: {
       get() {
         return this.$store.state.search.model.results;
-      }
+      },
     },
     searchSuccess: {
       get() {
         return this.$store.state.search.model.success;
-      }
+      },
     },
     searchLocation: {
       get() {
         return this.$store.state.search.model.location;
-      }
+      },
     },
     dynamicSize() {
       return [this.iconSize, this.iconSize * 1.5];
     },
     dynamicAnchor() {
       return [this.iconSize / 2, this.iconSize * 1.15];
-    }
+    },
   },
 
   created() {},
@@ -162,10 +125,7 @@ export default {
       if (this.searchResults && this.searchSuccess) {
         this.map = this.$refs.map.mapObject;
         if (this.searchLocation !== null) {
-          this.currentCenter = [
-            this.searchLocation.lat,
-            this.searchLocation.lng
-          ];
+          this.currentCenter = [this.searchLocation.lat, this.searchLocation.lng];
         }
       }
       //  this.map._onResize();
@@ -173,34 +133,26 @@ export default {
   },
 
   beforeDestroy() {
-    EventBus.$off("highlightProfile");
+    EventBus.$off('deviceSelected');
   },
 
   methods: {
     setListeners() {
-      if (!EventBus._events) return null;
-      if (
-        !EventBus._events.highlightProfile ||
-        EventBus._events.highlightProfile.length === 0
-      ) {
-        EventBus.$on("highlightProfile", profile => {
-          if (profile && profile !== null) {
-            const hasAddress = Object.getOwnPropertyNames(profile).find(
-              key => key === "profileAddress"
-            );
-            if (hasAddress && profile.profileAddress.coordinates) {
-              this.currentCenter = [
-                profile.profileAddress.coordinates.lat,
-                profile.profileAddress.coordinates.lng
-              ];
-              return this.currentCenter;
-            }
+      EventBus.$on('deviceSelected', device => {
+        if (device && device !== null) {
+          const hasAddress = Object.getOwnPropertyNames(device).find(
+            key => key === 'deviceAddress',
+          );
+          if (hasAddress && device.deviceAddress.coordinates) {
+            this.currentCenter = [
+              device.deviceAddress.coordinates.lat,
+              device.deviceAddress.coordinates.lng,
+            ];
+            return this.currentCenter;
           }
-          return null;
-        });
-      } else if (EventBus._events.highlightProfile.length > 2) {
-        EventBus._events.highlightProfile.splice(1);
-      }
+        }
+        return null;
+      });
     },
 
     zoomUpdate(zoom) {
@@ -219,41 +171,37 @@ export default {
       //  this.$refs.map.mapObject.invalidateSize();
     },
 
-    highlightProfile(profile) {
-      if (profile !== null) {
+    highlightDevice(device) {
+      if (device !== null) {
         this.currentCenter = L.latLng(
-          profile.profileAddress.coordinates.lat,
-          profile.profileAddress.coordinates.lng
+          device.deviceAddress.coordinates.lat,
+          device.deviceAddress.coordinates.lng,
         );
-        EventBus.$emit("profileSelected", profile);
+        EventBus.$emit('deviceSelected', device);
       } else {
-        EventBus.$emit("profileSelected", profile);
+        EventBus.$emit('deviceSelected', device);
       }
     },
 
-    async goToProfile(profile) {
-      if (!this.$store.state.auth.account.subscribed.startsWith("paid")) {
+    async goToDevice(device) {
+      if (!this.$store.state.auth.account.subscribed.startsWith('paid')) {
         return null;
       }
       this.error = null;
       this.success = null;
-      logger.publish(4, "search", "goToProfile:req", profile.id);
-      await this.$store.commit(`${this.profileType.toLowerCase()}/setModel`, {
-        viewer: true,
-        profile
-      });
-      return this.$router.push({
-        name: "profile",
-        query: {
-          profileId: profile.id,
-          profileType: this.profileType
-        }
-      });
-    }
-  }
+      logger.publish(4, 'search', 'goToDevice:req', device.id);
+      return this.$store.commit('device/setModel', device);
+      // return this.$router.push({
+      //   name: "device",
+      //   query: {
+      //     deviceId: device.id,
+      //   },
+      // });
+    },
+  },
 };
 </script>
 
 <style lang="scss">
-@import "../../style/search-map.scss";
+@import '../../style/search-map.scss';
 </style>

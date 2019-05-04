@@ -92,25 +92,9 @@
     <address-form
       :is-viewer="viewer"
       :edit-mode="editorMode"
-      :owner-id="profileId"
+      :owner-id="updatedAccount.id"
       class="address-form"
     />
-    <b-row>
-      <b-col cols="5" sm="4" md="3" lg="2" xl="2" class="profile-status">
-        <div v-if="!updatedStatus" class="profile-status-off">
-          <b-img :src="$store.state.style.pictures.statusOff" />
-          <small>
-            A l'écoute
-          </small>
-        </div>
-        <div v-else-if="updatedStatus" class="profile-status-on">
-          <b-img :src="$store.state.style.pictures.statusOn" />
-          <small>
-            Disponible
-          </small>
-        </div>
-      </b-col>
-    </b-row>
     <team-popup
       v-if="viewer && account.subscribed.startsWith('paid')"
       ref="teamPopup"
@@ -120,43 +104,41 @@
 </template>
 
 <script type="text/javascript">
-import bButton from "bootstrap-vue/es/components/button/button";
-import bForm from "bootstrap-vue/es/components/form/form";
-import bFormInput from "bootstrap-vue/es/components/form-input/form-input";
-import bImg from "bootstrap-vue/es/components/image/img";
-import AddressForm from "@/components/Address/AddressForm.vue";
-import { EventBus } from "@/services/PubSub";
-import logger from "@/services/logger";
+import bButton from 'bootstrap-vue/es/components/button/button';
+import bForm from 'bootstrap-vue/es/components/form/form';
+import bFormInput from 'bootstrap-vue/es/components/form-input/form-input';
+import AddressForm from '@/components/Address/AddressForm.vue';
+import { EventBus } from '@/services/PubSub';
+import logger from '@/services/logger';
 
 export default {
-  name: "ProfileForm",
+  name: 'ProfileForm',
 
   components: {
-    "b-button": bButton,
-    "b-form": bForm,
-    "b-form-input": bFormInput,
-    "b-img": bImg,
-    "address-form": AddressForm,
-    "team-popup": () => import("@/views/containers/TeamPopup.vue")
+    'b-button': bButton,
+    'b-form': bForm,
+    'b-form-input': bFormInput,
+    'address-form': AddressForm,
+    'team-popup': () => import('@/views/containers/TeamPopup.vue'),
   },
 
   props: {
     account: {
       type: Object,
-      default: null
+      default: null,
     },
-    "profile-id": {
+    'profile-id': {
       type: [Number, String],
-      default: null
+      default: null,
     },
-    "is-viewer": {
+    'is-viewer': {
       type: Boolean,
-      default: true
+      default: true,
     },
-    "edit-mode": {
+    'edit-mode': {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
 
   data() {
@@ -166,7 +148,7 @@ export default {
       updatedStatus: null,
       updatedAccount: null,
       isMember: null,
-      memberId: null
+      memberId: null,
     };
   },
 
@@ -179,8 +161,8 @@ export default {
         return this.$store.state.auth.editorMode;
       },
       set(value) {
-        this.$store.commit("auth/setEditorMode", value);
-      }
+        this.$store.commit('auth/setEditorMode', value);
+      },
     },
     description: {
       get() {
@@ -190,11 +172,11 @@ export default {
         return this.$store.state.auth.account.description;
       },
       set(value) {
-        this.$store.commit("auth/setModelKV", {
-          key: "description",
-          value
+        this.$store.commit('auth/setModelKV', {
+          key: 'description',
+          value,
         });
-      }
+      },
     },
     firstName: {
       get() {
@@ -204,25 +186,25 @@ export default {
         return this.$store.state.auth.account.firstName;
       },
       set(value) {
-        this.$store.commit("auth/setModelKV", {
-          key: "firstName",
-          value
+        this.$store.commit('auth/setModelKV', {
+          key: 'firstName',
+          value,
         });
-      }
+      },
     },
     firstNameState() {
       return this.firstName.length >= 4;
     },
     invalidFirstName() {
       if (this.firstName.length > 4) {
-        return "";
+        return '';
       } else if (this.firstName.length > 0) {
-        return "Enter at least 4 characters";
+        return 'Enter at least 4 characters';
       }
-      return "Please enter something";
+      return 'Please enter something';
     },
     validFirstName() {
-      return this.firstNameState === true ? "Thank you" : "";
+      return this.firstNameState === true ? 'Thank you' : '';
     },
 
     lastName: {
@@ -233,25 +215,25 @@ export default {
         return this.$store.state.auth.account.lastName;
       },
       set(value) {
-        this.$store.commit("auth/setModelKV", {
-          key: "lastName",
-          value
+        this.$store.commit('auth/setModelKV', {
+          key: 'lastName',
+          value,
         });
-      }
+      },
     },
     lastNameState() {
       return this.lastName.length >= 4;
     },
     invalidLastName() {
       if (this.lastName.length > 4) {
-        return "";
+        return '';
       } else if (this.lastName.length > 0) {
-        return "Enter at least 4 characters";
+        return 'Enter at least 4 characters';
       }
-      return "Please enter something";
+      return 'Please enter something';
     },
     validLastName() {
-      return this.lastNameState === true ? "Thank you" : "";
+      return this.lastNameState === true ? 'Thank you' : '';
     },
     status: {
       get() {
@@ -259,23 +241,23 @@ export default {
           return this.$store.state.auth.viewed.status;
         }
         return this.$store.state.auth.account.status;
-      }
+      },
     },
     teams: {
       get() {
         return this.$store.state.teams.collection;
-      }
+      },
     },
     sender: {
       get() {
         return this.$store.state.auth.account;
-      }
+      },
     },
     receiver: {
       get() {
         return this.$store.state.auth.viewed;
-      }
-    }
+      },
+    },
   },
 
   watch: {
@@ -283,7 +265,7 @@ export default {
       handler(state) {
         this.viewer = state;
       },
-      immediate: true
+      immediate: true,
     },
     // editMode: {
     //   handler(mode) {
@@ -295,14 +277,14 @@ export default {
       handler(status) {
         this.updatedStatus = status;
       },
-      immediate: true
+      immediate: true,
     },
     account: {
       handler(account) {
         this.updatedAccount = account;
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
 
   created() {
@@ -321,7 +303,7 @@ export default {
 
   methods: {
     setListeners() {
-      EventBus.$on("onTeamDeleted", async team => {
+      EventBus.$on('onTeamDeleted', async team => {
         if (team && this.loaderCounter < 1) {
           this.loaderCounter += 1;
           return setTimeout(async () => {
@@ -331,7 +313,7 @@ export default {
         }
       });
 
-      EventBus.$on("onTeamCreated", team => {
+      EventBus.$on('onTeamCreated', team => {
         if (team && this.loaderCounter < 1) {
           this.loaderCounter += 1;
           return setTimeout(async () => {
@@ -343,15 +325,15 @@ export default {
     },
 
     removeListeners() {
-      EventBus.$off("onTeamCreated");
-      EventBus.$off("onTeamDeleted");
+      EventBus.$off('onTeamCreated');
+      EventBus.$off('onTeamDeleted');
     },
 
     async loadTeams() {
       this.error = null;
       this.success = null;
       return this.$store
-        .dispatch("team/loadTeams", this.sender.id)
+        .dispatch('team/loadTeams', this.sender.id)
         .then(res => {
           this.loaderCounter = 0;
           return res;
@@ -366,17 +348,15 @@ export default {
 
     isTeamMember(teams) {
       if (this.viewer && teams) {
-        const foundFavorite = this.teams.find(
-          team => team.memberId === this.profile.id
-        );
+        const foundFavorite = this.teams.find(team => team.memberId === this.profile.id);
         if (foundFavorite) {
-          logger.publish(4, "profile", "isTeamMember:res", true);
+          logger.publish(4, 'profile', 'isTeamMember:res', true);
           this.memberId = foundFavorite.id;
           this.isMember = true;
           return;
         }
       }
-      logger.publish(4, "profile", "isTeamMember:res", false);
+      logger.publish(4, 'profile', 'isTeamMember:res', false);
       this.isMember = false;
     },
 
@@ -391,28 +371,18 @@ export default {
       } else if (this.editorMode) {
         this.editorMode = false;
       }
-      logger.publish(
-        4,
-        this.updatedProfileType,
-        "toggleEditMode:res",
-        this.editorMode
-      );
+      logger.publish(4, 'profile', 'toggleEditMode:res', this.editorMode);
     },
 
     sendMessage(evt) {
       if (evt) evt.preventDefault();
       if (evt) evt.stopPropagation();
-      this.$refs.messagePopup.showModal(
-        this.receiver,
-        this.sender,
-        "",
-        "greet"
-      );
-    }
-  }
+      this.$refs.messagePopup.showModal(this.receiver, this.sender, '', 'greet');
+    },
+  },
 };
 </script>
 
 <style lang="scss" scoped>
-@import "../../style/profile-form.scss";
+@import '../../style/profile-form.scss';
 </style>

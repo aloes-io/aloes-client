@@ -15,33 +15,29 @@
     <b-button v-if="isMember" class="team-popup-button" @click="delTeamMember">
       Delete
     </b-button>
-    <b-button
-      v-else-if="!isMember"
-      class="team-popup-button"
-      @click="addTeamMember"
-    >
+    <b-button v-else-if="!isMember" class="team-popup-button" @click="addTeamMember">
       Add
     </b-button>
   </b-modal>
 </template>
 
 <script type="text/javascript">
-import bButton from "bootstrap-vue/es/components/button/button";
-import bModal from "bootstrap-vue/es/components/modal/modal";
+import bButton from 'bootstrap-vue/es/components/button/button';
+import bModal from 'bootstrap-vue/es/components/modal/modal';
 
 export default {
-  name: "TeamPopup",
+  name: 'TeamPopup',
 
   components: {
-    "b-button": bButton,
-    "b-modal": bModal
+    'b-button': bButton,
+    'b-modal': bModal,
   },
 
   props: {
-    "account-type": {
+    'account-type': {
       type: String,
-      default: null
-    }
+      default: null,
+    },
   },
 
   data() {
@@ -51,7 +47,7 @@ export default {
       profile: null,
       loading: false,
       isMember: false,
-      memberId: null
+      memberId: null,
     };
   },
 
@@ -59,11 +55,11 @@ export default {
     teamPopupTitle: {
       get() {
         if (!this.isMember) {
-          return "Add to the team ?";
+          return 'Add to the team ?';
         }
-        return "Remove from the team ?";
-      }
-    }
+        return 'Remove from the team ?';
+      },
+    },
   },
 
   methods: {
@@ -89,9 +85,9 @@ export default {
       if (evt) evt.preventDefault();
       if (evt) evt.stopPropagation();
       await this.$store
-        .dispatch("team/addTeamMember", {
+        .dispatch('team/addTeamMember', {
           ownerId: this.$store.state.auth.account.id,
-          memberId: this.profile.id
+          memberId: this.profile.id,
         })
         .then(res => res)
         .catch(err => err);
@@ -102,18 +98,18 @@ export default {
       if (evt) evt.preventDefault();
       if (evt) evt.stopPropagation();
       await this.$store
-        .dispatch("team/delTeamMember", {
+        .dispatch('team/delTeamMember', {
           ownerId: this.$store.state.auth.account.id,
-          memberId: this.memberId
+          memberId: this.memberId,
         })
         .then(res => res)
         .catch(err => err);
       return this.hideModal();
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style lang="scss">
-@import "../../style/team-popup.scss";
+@import '../../style/team-popup.scss';
 </style>

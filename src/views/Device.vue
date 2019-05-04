@@ -5,62 +5,57 @@
       :account="$store.state.auth.account"
     />
     <device-container
-      :token="token"
+      :token="accessToken"
       :user-id="userId"
+      :device-id="deviceId"
       :is-viewer="false"
       :edit-mode="true"
     />
     <footer-container />
-    <login-popup ref="loginPopup" />
   </div>
 </template>
 
 <script type="text/javascript">
-import HeaderContainer from "@/views/containers/HeaderContainer.vue";
-import FooterContainer from "@/views/containers/FooterContainer.vue";
-import DeviceContainer from "@/views/containers/DeviceContainer.vue";
-//  import LoginPopup from "@/views/containers/LoginPopup.vue";
+import HeaderContainer from '@/views/containers/HeaderContainer.vue';
+import FooterContainer from '@/views/containers/FooterContainer.vue';
+import DeviceContainer from '@/views/containers/DeviceContainer.vue';
 
 export default {
-  name: "Device",
+  name: 'Device',
 
   components: {
-    "header-container": HeaderContainer,
-    "footer-container": FooterContainer,
-    "device-container": DeviceContainer,
-    "login-popup": () => import("@/views/containers/LoginPopup.vue")
-    //  "login-popup": LoginPopup
+    'header-container': HeaderContainer,
+    'footer-container': FooterContainer,
+    'device-container': DeviceContainer,
   },
 
   props: {
-    token: {
+    'access-token': {
       type: String,
-      default: ""
+      default: '',
     },
-    "user-id": {
+    'user-id': {
       type: [String, Number],
-      required: true
-    }
+      required: true,
+    },
+    'device-id': {
+      type: [String, Number],
+      required: false,
+    },
   },
 
   data() {
     return {};
   },
 
-  mounted() {
-    if (!this.$store.state.auth.account) {
-      return this.$refs.loginPopup.showModal();
-    }
-  },
+  mounted() {},
 
-  beforeDestroy() {
-    return this.$refs.loginPopup.hideModal();
-  },
+  beforeDestroy() {},
 
-  methods: {}
+  methods: {},
 };
 </script>
 
 <style lang="scss" scoped>
-@import "../style/device.scss";
+@import '../style/device.scss';
 </style>

@@ -1,9 +1,6 @@
 <template lang="html">
   <div class="profile-view">
-    <header-container
-      :access_token="$store.state.auth.access_token"
-      :account="account"
-    />
+    <header-container :access_token="$store.state.auth.access_token" :account="account" />
     <profile-container
       :account="account"
       :token="$store.state.auth.access_token.id"
@@ -17,33 +14,33 @@
 </template>
 
 <script type="text/javascript">
-import HeaderContainer from "@/views/containers/HeaderContainer.vue";
-import FooterContainer from "@/views/containers/FooterContainer.vue";
+import HeaderContainer from '@/views/containers/HeaderContainer.vue';
+import FooterContainer from '@/views/containers/FooterContainer.vue';
 //  import LoginPopup from "@/views/containers/LoginPopup.vue";
-import ProfileContainer from "@/views/containers/ProfileContainer.vue";
+import ProfileContainer from '@/views/containers/ProfileContainer.vue';
 
 export default {
-  name: "Profile",
+  name: 'Profile',
 
   components: {
-    "footer-container": FooterContainer,
-    "header-container": HeaderContainer,
+    'footer-container': FooterContainer,
+    'header-container': HeaderContainer,
     //  "login-popup": LoginPopup,
-    "login-popup": () => import("@/views/containers/LoginPopup.vue"),
-    "profile-container": ProfileContainer
+    'login-popup': () => import('@/views/containers/LoginPopup.vue'),
+    'profile-container': ProfileContainer,
   },
 
   props: {
-    "profile-id": {
+    'profile-id': {
       type: [String, Number],
       required: true,
-      default: null
+      default: null,
     },
-    "profile-type": {
+    'profile-type': {
       type: String,
       required: true,
-      default: null
-    }
+      default: null,
+    },
   },
 
   data() {
@@ -54,13 +51,13 @@ export default {
     account: {
       get() {
         return this.$store.state.auth.account;
-      }
+      },
     },
     subscribeType: {
       get() {
         return this.$store.state.auth.account.subscribed;
-      }
-    }
+      },
+    },
   },
 
   mounted() {
@@ -69,10 +66,10 @@ export default {
     }
   },
 
-  methods: {}
+  methods: {},
 };
 </script>
 
 <style lang="scss" scoped>
-@import "../style/account.scss";
+@import '../style/account.scss';
 </style>

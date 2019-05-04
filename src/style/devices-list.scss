@@ -1,5 +1,11 @@
 @import "global";
 
+.devices-list-view {
+	margin-top: 4%;
+	max-height: 100vh;
+	overflow-y: scroll;
+}
+
 button.btn {
 	margin-top: 2%;
 	background-color: $primary;

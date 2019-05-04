@@ -1,4 +1,4 @@
-import logger from "@/services/logger";
+import logger from '@/services/logger';
 
 export function setModelKV(state, { key, value }) {
   state.instance[key] = value;
@@ -12,12 +12,7 @@ export function setModelKV(state, { key, value }) {
 
 export function setModel(state, device) {
   state.instance = device;
-  logger.publish(
-    4,
-    state.collectionName,
-    "commit:setModel:res",
-    state.instance
-  );
+  logger.publish(4, state.collectionName, 'commit:setModel:res', state.instance);
 }
 
 export function setCollection(state, devices) {
@@ -32,17 +27,12 @@ export function setCollection(state, devices) {
 
 export function setStateKV(state, { key, value }) {
   state[key] = value;
-  logger.publish(4, state.collectionName, "commit:setStateKV:res", state[key]);
+  logger.publish(4, state.collectionName, 'commit:setStateKV:res', state[key]);
 }
 
 export function setEditorMode(state, value) {
   state.editorMode = value;
-  logger.publish(
-    4,
-    state.collectionName,
-    "commit:setEditorMode:res",
-    state.editorMode
-  );
+  logger.publish(4, state.collectionName, 'commit:setEditorMode:res', state.editorMode);
 }
 
 //  export function setModelList(state, {command, list, value}) {
@@ -58,26 +48,30 @@ export function setEditorMode(state, value) {
 
 export function cleanModel(state) {
   state.instance = {
-    accountId: null,
-    devEui: null,
-    appKey: null,
+    ownerId: null,
     name: null,
     type: null,
     accessPointUrl: null,
     protocolName: null,
     protocolVersion: null,
+    transportProtocol: null,
+    messageProtocol: null,
     status: false,
-    description: "",
-    qrCode: "",
+    description: '',
+    qrCode: '',
     icons: [],
-    frameCounter: 0
+    frameCounter: 0,
+    appEui: null,
+    devEui: null,
+    devAddr: null,
+    apiKey: null,
+    appKey: null,
+    appSKey: null,
+    nwkSKey: null,
+    authMode: null,
   };
-  logger.publish(
-    4,
-    state.collectionName,
-    "commit:cleanModel:res",
-    state.instance
-  );
+  state.sensors = [];
+  logger.publish(4, state.collectionName, 'commit:cleanModel:res', state.instance);
 }
 
 // export function setExperienceKV(state, {position, key, value}) {

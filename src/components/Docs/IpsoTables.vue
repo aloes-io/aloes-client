@@ -4,10 +4,12 @@
       <b-row>
         <b-col id="description" cols="12">
           <p>
-            <a href="https://github.com/IPSO-Alliance/pub" target="_blank">
-              IPSO
+            <a
+              href="http://www.openmobilealliance.org/wp/OMNA/LwM2M/LwM2MRegistry.html"
+              target="_blank"
+            >
+              OMA object & resource registry
             </a>
-            object model description
           </p>
         </b-col>
         <b-col cols="6">
@@ -18,6 +20,10 @@
             <b-dropdown-divider />
             <b-dropdown-item-button @click="dataPath('omaResources')">
               Ressources Type
+            </b-dropdown-item-button>
+            <b-dropdown-divider />
+            <b-dropdown-item-button @click="dataPath('omaViews')">
+              Ressources Views
             </b-dropdown-item-button>
           </b-dropdown>
         </b-col>
@@ -37,56 +43,52 @@
 </template>
 
 <script>
-import { omaObjects, omaResources } from "aloes-handlers";
-import { keys } from "d3-collection";
-import { hierarchy } from "d3-hierarchy";
-import { select } from "d3-selection";
-import bDropdown from "bootstrap-vue/es/components/dropdown/dropdown";
-import bDropdownDivider from "bootstrap-vue/es/components/dropdown/dropdown-divider";
-import bDropdownItemButton from "bootstrap-vue/es/components/dropdown/dropdown-item-button";
+import { omaObjects, omaResources, omaViews } from 'oma-json';
+import { keys } from 'd3-collection';
+import { hierarchy } from 'd3-hierarchy';
+import { select } from 'd3-selection';
+import bDropdown from 'bootstrap-vue/es/components/dropdown/dropdown';
+import bDropdownDivider from 'bootstrap-vue/es/components/dropdown/dropdown-divider';
+import bDropdownItemButton from 'bootstrap-vue/es/components/dropdown/dropdown-item-button';
 
 export default {
-  name: "IpsoTables",
+  name: 'IpsoTables',
 
   components: {
-    "b-dropdown": bDropdown,
-    "b-dropdown-divider": bDropdownDivider,
-    "b-dropdown-item-button": bDropdownItemButton
+    'b-dropdown': bDropdown,
+    'b-dropdown-divider': bDropdownDivider,
+    'b-dropdown-item-button': bDropdownItemButton,
   },
 
   data() {
     return {
-      pageTopic: "getlarge" + this.$route.path,
-      width: Math.max(
-        document.documentElement.clientWidth,
-        window.innerWidth || 0
-      ),
-      height: Math.max(
-        document.documentElement.clientHeight,
-        window.innerHeight || 0
-      ),
+      pageTopic: 'getlarge' + this.$route.path,
+      width: Math.max(document.documentElement.clientWidth, window.innerWidth || 0),
+      height: Math.max(document.documentElement.clientHeight, window.innerHeight || 0),
       nodes: null,
       titles: null,
       sortAscending: false,
       rows: {},
       headers: {},
       selectedColumns: [],
-      clientUrl: this.$store.state.clientUrl
+      clientUrl: this.$store.state.clientUrl,
     };
   },
 
   mounted() {
     //  this.tableLoader(`${this.$store.state.clientUrl}${path}`, this.selectedColumns);
     this.tableLoader(omaObjects, this.selectedColumns);
-    this.$on("update:table", source => {
+    this.$on('update:table', source => {
       let graph;
-      if (source === "omaObjects") {
+      if (source === 'omaObjects') {
         graph = omaObjects;
-      } else if (source === "omaResources") {
+      } else if (source === 'omaResources') {
         graph = omaResources;
+      } else if (source === 'omaViews') {
+        graph = omaViews;
       }
       if (!graph) return null;
-      select("#ipso-table").remove();
+      select('#ipso-table').remove();
       this.tableLoader(graph, this.selectedColumns);
     });
   },
@@ -97,7 +99,7 @@ export default {
     },
 
     dataPath(path) {
-      this.$emit("update:table", path);
+      this.$emit('update:table', path);
     },
 
     tableLoader(source) {
@@ -112,18 +114,18 @@ export default {
     searchFor() {
       // Declare variables
       let td, i;
-      const input = document.getElementById("search-box");
+      const input = document.getElementById('search-box');
       const filter = input.value.toUpperCase();
-      const table = document.getElementById("aloes-table");
-      const tr = table.getElementsByTagName("tr");
+      const table = document.getElementById('aloes-table');
+      const tr = table.getElementsByTagName('tr');
       // Loop through all table rows, and hide those who don't match the search query
       for (i = 0; i < tr.length; i++) {
-        td = tr[i].getElementsByTagName("td")[1];
+        td = tr[i].getElementsByTagName('td')[1];
         if (td) {
           if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
-            tr[i].style.display = "";
+            tr[i].style.display = '';
           } else {
-            tr[i].style.display = "none";
+            tr[i].style.display = 'none';
           }
         }
       }
@@ -140,7 +142,7 @@ export default {
         // var aKeys = Object.keys(test[0]).sort();
         //console.log(JSON.stringify(aKeys));
         // todo : create dynamic type detection
-        if (d === "name" || d === "description" || d === "resource") {
+        if (d === 'name' || d === 'description' || d === 'resource') {
           this.rows.sort((a, b) => {
             const x = a[d].toLowerCase();
             const y = b[d].toLowerCase();
@@ -148,13 +150,13 @@ export default {
             if (x > y) return 1;
             return 0;
           });
-        } else if (d === "value") {
+        } else if (d === 'value') {
           this.rows.sort((a, b) => a[d] - b[d]);
         }
         this.sortAscending = false;
-        this.className = "aes";
+        this.className = 'aes';
       } else {
-        if (d === "name" || d === "description" || d === "resource") {
+        if (d === 'name' || d === 'description' || d === 'resource') {
           this.rows.sort((a, b) => {
             const x = a[d].toLowerCase();
             const y = b[d].toLowerCase();
@@ -162,74 +164,75 @@ export default {
             if (x < y) return 1;
             return 0;
           });
-        } else if (d === "value") {
+        } else if (d === 'value') {
           this.rows.sort((a, b) => b[d] - a[d]);
         }
         this.sortAscending = true;
-        this.className = "des";
+        this.className = 'des';
       }
     },
 
     tabulate(obj, titles) {
       this.sortAscending = true;
-      const table = select("#aloes-table")
-        .append("table")
-        .attr("id", "ipso-table");
+      const table = select('#aloes-table')
+        .append('table')
+        .attr('id', 'ipso-table');
       this.headers = table
-        .append("thead")
-        .append("tr")
-        .selectAll("th")
+        .append('thead')
+        .append('tr')
+        .selectAll('th')
         //.data(columns).enter()
         .data(titles)
         .enter()
-        .append("th")
+        .append('th')
         .text(d => d)
-        .attr("class", "header")
-        .on("click", this.sortTables);
+        .attr('class', 'header')
+        .on('click', this.sortTables);
       this.rows = table
-        .append("tbody")
-        .selectAll("tr")
+        .append('tbody')
+        .selectAll('tr')
         .data(obj)
         .enter()
-        .append("tr");
+        .append('tr');
       this.rows
-        .selectAll("td")
+        .selectAll('td')
         .data(row => {
           return titles.map(column => {
             //  return {column, value: row[column]};
-            if (column === "icons") {
+            if (column === 'icons') {
               return { column, icons: row[column] };
-            } else if (column === "colors") {
+            } else if (column === 'colors') {
               return { column, colors: row[column] };
-            } else if (column === "resources") {
-              return { column, resources: row[column] };
+            } else if (column === 'resources') {
+              return {
+                column,
+                resources: JSON.stringify(row[column], null, ' '),
+              };
             }
             return { column, value: row[column] };
           });
         })
         .enter()
-        .append("td")
-        .attr("data-th", d => d.column)
+        .append('td')
+        .attr('data-th', d => d.column)
         .text(d => (d.resources ? d.resources.toString() : d.value))
-        .append("div")
-        .attr("class", "cells")
-        .style("background", d =>
-          d.colors
-            ? `linear-gradient(to right,${d.colors[0]},${d.colors[1]})`
-            : "transparent"
+        .append('div')
+        .attr('class', 'cells')
+        .style('background', d =>
+          d.colors ? `linear-gradient(to right,${d.colors[0]},${d.colors[1]})` : 'transparent',
         )
-        .style("opacity", d => (d.colors ? "0.7" : "1"))
-        .append("img")
-        .attr("class", "icons")
-        .attr("src", d => (d.icons ? d.icons[0] : null));
+        .style('opacity', d => (d.colors ? '0.7' : '1'))
+        .append('img')
+        .attr('class', 'icons')
+        .attr('src', d => (d.icons ? d.icons[0] : null));
       //  .attr("src", (d) => d.icons.split(",") ? d.icons.split(",")[0] : "");
 
       return table;
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style lang="scss">
-@import "../../style/ipso-tables.scss";
+@import '../../style/ipso-tables.scss';
 </style>

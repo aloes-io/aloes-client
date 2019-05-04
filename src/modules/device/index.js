@@ -1,35 +1,45 @@
-import * as actions from "./actions";
-import * as mutations from "./mutations";
+import * as actions from './actions';
+import * as mutations from './mutations';
 
 export default {
   namespaced: true,
   state: {
-    collectionName: "Device",
-    resources: "Devices",
+    collectionName: 'Device',
+    resources: 'Devices',
     editorMode: false,
     success: null,
     error: null,
     dismissSecs: 5,
     dismissCountDown: 0,
     loading: null,
+    outputTopic: 'IoTAgent',
     collection: [],
+    network: {},
     instance: {
-      accountId: null,
-      devEui: null,
-      appKey: null,
+      ownerId: null,
       name: null,
       type: null,
       accessPointUrl: null,
       protocolName: null,
       protocolVersion: null,
+      transportProtocol: null,
+      messageProtocol: null,
       status: false,
-      description: "",
-      qrCode: "",
+      description: '',
+      qrCode: '',
       icons: [],
-      frameCounter: 0
+      frameCounter: 0,
+      appEui: null,
+      devEui: null,
+      devAddr: null,
+      apiKey: null,
+      appKey: null,
+      appSKey: null,
+      nwkSKey: null,
+      authMode: null,
     },
-    sensors: []
+    sensors: [],
   },
   mutations,
-  actions
+  actions,
 };

@@ -2,96 +2,78 @@
   <div class="search-result-view">
     <div v-if="searchSuccess">
       <b-alert :show="searchSuccess" variant="success">
-        Votre recherche a donné {{ searchSuccess }} résultat(s)
+        Your search has {{ searchSuccess }} results
       </b-alert>
-      <profile-inline
-        v-for="profile in searchResults"
-        :key="profile.id"
+      <device-inline
+        v-for="device in searchResults"
+        :key="device.id"
         :account="$store.state.auth.account"
         :token="token"
-        :profile="profile"
-        :profile-type="profileType"
+        :device="device"
       />
     </div>
-    <b-alert
-      v-else-if="searchError"
-      :show="searchError !== null"
-      variant="danger"
-    >
+    <b-alert v-else-if="searchError" :show="searchError !== null" variant="danger">
       {{ searchError.message }}
     </b-alert>
   </div>
 </template>
 
 <script type="text/javascript">
-import bAlert from "bootstrap-vue/es/components/alert/alert";
-import ProfileInline from "@/components/Profile/ProfileInline.vue";
+import bAlert from 'bootstrap-vue/es/components/alert/alert';
+import DeviceInline from '@/components/Device/DeviceInline.vue';
 
 export default {
-  name: "SearchResult",
+  name: 'SearchResult',
 
   components: {
-    "b-alert": bAlert,
-    "profile-inline": ProfileInline
+    'b-alert': bAlert,
+    'device-inline': DeviceInline,
   },
 
   props: {
     token: {
       type: String,
       required: true,
-      default: ""
+      default: '',
     },
-    "user-id": {
+    'user-id': {
       type: [String, Number],
       required: true,
-      default: null
-    }
+      default: null,
+    },
   },
 
   data() {
     return {
-      updatedSearchResults: null
+      updatedSearchResults: null,
     };
   },
 
   computed: {
-    searchProfileType: {
-      get() {
-        return this.$store.state.search.model.profileType;
-      }
-    },
-    profileType: {
-      get() {
-        if (this.searchProfileType) {
-          return this.searchProfileType;
-        }
-        return "Teacher";
-      }
-    },
     searchResults: {
       get() {
         return this.$store.state.search.model.results;
       },
       set(value) {
-        this.$store.commit("search/setModelKV", { key: "results", value });
-      }
+        this.$store.commit('search/setModelKV', { key: 'results', value });
+      },
     },
     searchError: {
       get() {
         return this.$store.state.search.model.error;
       },
       set(value) {
-        this.$store.commit("search/setModelKV", { key: "error", value });
-      }
+        this.$store.commit('search/setModelKV', { key: 'error', value });
+      },
     },
     searchSuccess: {
       get() {
         return this.$store.state.search.model.success;
       },
       set(value) {
-        this.$store.commit("search/setModelKV", { key: "success", value });
-      }
-    }
+        this.$store.commit('search/setModelKV', { key: 'success', value });
+      },
+    },
   },
 
   created() {},
@@ -101,10 +83,10 @@ export default {
     // console.log('mounted', this.searchProfileType);
   },
 
-  methods: {}
+  methods: {},
 };
 </script>
 
 <style lang="scss" scoped>
-@import "../../style/search-result.scss";
+@import '../../style/search-result.scss';
 </style>

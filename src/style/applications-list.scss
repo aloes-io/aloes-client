@@ -1,0 +1,21 @@
+@import "global";
+
+button.btn {
+	margin-top: 2%;
+	background-color: $primary;
+	font-weight: $btn-font-weight;
+	color: white;
+	height: $btn-height;
+	padding: $btn-padding;
+	border-radius: $btn-border-radius;
+	border: 1px solid transparent;
+	box-shadow: $btn-shadow;
+	-webkit-transition: box-shadow 150ms ease;
+	transition: box-shadow 150ms ease;
+}
+
+button.btn:hover {
+	background-color: white;
+	border-color: white;
+	color: $primary;
+}

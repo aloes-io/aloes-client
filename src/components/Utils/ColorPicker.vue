@@ -15,35 +15,35 @@
 
 <script type="text/javascript">
 export default {
-  name: "ColorPicker",
+  name: 'ColorPicker',
 
   props: {
     color: {
       type: String,
       require: true,
-      default: ""
-    }
+      default: '',
+    },
   },
 
   data() {
     return {
       colors: [
-        { text: "primary", value: "#528fa2" },
-        { text: "secondary", value: "#7ebcaf" },
-        { text: "success", value: "#8ac8a3" },
-        { text: "warning", value: "#ffc85f" }
-      ]
+        { text: 'primary', value: '#528fa2' },
+        { text: 'secondary', value: '#7ebcaf' },
+        { text: 'success', value: '#8ac8a3' },
+        { text: 'warning', value: '#ffc85f' },
+      ],
     };
   },
 
   methods: {
     selectColor(color) {
-      this.$emit("colorPicked", color);
-    }
-  }
+      this.$emit('colorPicked', color);
+    },
+  },
 };
 </script>
 
 <style lang="scss" scoped>
-@import "../../style/color-picker.scss";
+@import '../../style/color-picker.scss';
 </style>

@@ -27,35 +27,35 @@
 </template>
 
 <script type="text/javascript">
-import bAlert from "bootstrap-vue/es/components/alert/alert";
-import bButton from "bootstrap-vue/es/components/button/button";
-import bForm from "bootstrap-vue/es/components/form/form";
-import bFormGroup from "bootstrap-vue/es/components/form-group/form-group";
-import bFormInput from "bootstrap-vue/es/components/form-input/form-input";
+import bAlert from 'bootstrap-vue/es/components/alert/alert';
+import bButton from 'bootstrap-vue/es/components/button/button';
+import bForm from 'bootstrap-vue/es/components/form/form';
+import bFormGroup from 'bootstrap-vue/es/components/form-group/form-group';
+import bFormInput from 'bootstrap-vue/es/components/form-input/form-input';
 
 export default {
-  name: "ChangeEmail",
+  name: 'ChangeEmail',
 
   components: {
-    "b-alert": bAlert,
-    "b-button": bButton,
-    "b-form": bForm,
-    "b-form-group": bFormGroup,
-    "b-form-input": bFormInput
+    'b-alert': bAlert,
+    'b-button': bButton,
+    'b-form': bForm,
+    'b-form-group': bFormGroup,
+    'b-form-input': bFormInput,
   },
 
   props: {
     // eslint-disable-next-line camelcase
     access_token: {
       type: String,
-      default: null
-    }
+      default: null,
+    },
   },
 
   data() {
     return {
       error: null,
-      loading: false
+      loading: false,
     };
   },
 
@@ -65,9 +65,9 @@ export default {
         return this.$store.state.auth.account.email;
       },
       set(value) {
-        this.$store.commit("auth/setEmail", value);
-      }
-    }
+        this.$store.commit('auth/setEmail', value);
+      },
+    },
   },
 
   methods: {
@@ -77,24 +77,24 @@ export default {
       this.error = null;
 
       this.$store
-        .dispatch("auth/changeEmail", {
+        .dispatch('auth/changeEmail', {
           email: this.email,
           // eslint-disable-next-line camelcase
-          access_token: this.access_token
+          access_token: this.access_token,
         })
         .then(() => {
           this.loading = false;
-          this.success = { message: "Addresse email mise à jour" };
+          this.success = { message: 'Addresse email mise à jour' };
         })
         .catch(err => {
           this.error = err;
           this.loading = false;
         });
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style lang="scss" scoped>
-@import "../../style/change-password.scss";
+@import '../../style/change-password.scss';
 </style>

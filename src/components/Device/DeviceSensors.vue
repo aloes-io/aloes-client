@@ -2,20 +2,13 @@
   <b-card class="device-sensors-view">
     <transition name="fade">
       <b-row v-if="webComponentsLoaded && sensors">
-        <b-col
-          v-for="sensor in sensors"
-          :key="sensor.id"
-          cols="6"
-          sm="6"
-          md="4"
-          lg="4"
-          xl="4"
-        >
+        <b-col v-for="sensor in sensors" :key="sensor.id" cols="6" sm="6" md="4" lg="4" xl="4">
           <sensor-snap
             :ref="`sensorSnap${sensor.id}`"
             :id="sensor.id.toString()"
             :device-id="sensor.deviceId.toString()"
             :dev-eui="sensor.devEui"
+            :dev-addr="sensor.devAddr"
             :name="sensor.name"
             :type="sensor.type"
             :value="JSON.stringify(sensor.value)"
@@ -23,9 +16,11 @@
             :resources="JSON.stringify(sensor.resources)"
             :resource="sensor.resource"
             :icons="sensor.icons.toString()"
-            :colors="sensor.colors.toString()"
-            :protocol-name="sensor.protocolName"
-            :protocol-version="sensor.protocolVersion"
+            :colors="JSON.stringify(sensor.colors)"
+            :transport-protocol="sensor.transportProtocol"
+            :transport-protocol-version="sensor.transportProtocolVersion"
+            :message-protocol="sensor.messageProtocol"
+            :message-protocol-version="sensor.messageProtocolVersion"
             :input-path="sensor.inputPath || null"
             :output-path="sensor.outputPath || null"
             :in-prefix="sensor.inPrefix"
@@ -38,6 +33,7 @@
             :height="160"
             class="sensor-snap"
             @update-sensor="onUpdateSensor"
+            @update-setting="onUpdateSetting"
             @delete-sensor="onDeleteSensor"
           />
         </b-col>
@@ -50,32 +46,31 @@
 </template>
 
 <script>
-import { updateAloesSensors } from "aloes-handlers";
-import { SensorSnap } from "sensor-snap";
-import bCard from "bootstrap-vue/es/components/card/card";
-import bModal from "bootstrap-vue/es/components/modal/modal";
-import { EventBus } from "@/services/PubSub";
-import logger from "@/services/logger";
+import { updateAloesSensors } from 'aloes-handlers';
+import bCard from 'bootstrap-vue/es/components/card/card';
+import bModal from 'bootstrap-vue/es/components/modal/modal';
+import { EventBus } from '@/services/PubSub';
+import logger from '@/services/logger';
 
 export default {
-  name: "DeviceSensors",
+  name: 'DeviceSensors',
 
   components: {
-    "b-card": bCard,
-    "b-modal": bModal,
-    "sensor-snap": SensorSnap
+    'b-card': bCard,
+    'b-modal': bModal,
+    'sensor-snap': () => import('sensor-snap'),
   },
 
   props: {
-    "user-id": {
+    'user-id': {
       type: [String, Number],
-      required: true
+      required: true,
     },
-    "device-id": {
+    'device-id': {
       type: String,
       required: false,
-      default: null
-    }
+      default: null,
+    },
   },
 
   data() {
@@ -85,8 +80,8 @@ export default {
       CustomElement: null,
       updatedDeviceId: null,
       confirm: {
-        message: `Are you sure you want to delete this sensor ?`
-      }
+        message: `Are you sure you want to delete this sensor ?`,
+      },
     };
   },
 
@@ -96,18 +91,15 @@ export default {
         return this.$store.state.device.sensors;
       },
       set(value) {
-        this.$store.commit("device/setStateKV", {
-          key: "sensors",
-          value
+        this.$store.commit('device/setStateKV', {
+          key: 'sensors',
+          value,
         });
-      }
+      },
     },
     sensorsCacheExists() {
-      return this.$store.cache.has(
-        "device/findSensorsByDevice",
-        this.updatedDeviceId
-      );
-    }
+      return this.$store.cache.has('device/findSensorsByDevice', this.updatedDeviceId);
+    },
   },
 
   watch: {
@@ -115,7 +107,7 @@ export default {
       handler(name) {
         this.updatedClassName = name;
       },
-      immediate: true
+      immediate: true,
     },
     deviceId: {
       handler(id) {
@@ -124,16 +116,16 @@ export default {
           this.loadSensors(id);
         }
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
 
   created() {},
 
   async mounted() {
-    if (!this.sensors || this.sensors === null) {
-      await this.loadSensors(this.$props.deviceId);
-    }
+    //  if (!this.sensors || this.sensors === null) {
+    await this.loadSensors(this.$props.deviceId);
+    //  }
     await this.setListeners();
     this.webComponentsLoaded = true;
   },
@@ -148,15 +140,9 @@ export default {
         this.error = null;
         this.success = null;
         this.dismissCountDown = this.dismissSecs;
-        logger.publish(4, "device", "loadSensors:req", this.sensorsCacheExists);
-        const sensors = await this.$store.cache.dispatch(
-          "device/findSensorsByDevice",
-          deviceId,
-          {
-            timeout: 200
-          }
-        );
-        logger.publish(4, "device", "loadSensors:res", this.sensorsCacheExists);
+        //  logger.publish(4, 'device', 'loadSensors:req', this.sensorsCacheExists);
+        const sensors = await this.$store.dispatch('device/findSensorsByDevice', deviceId);
+        logger.publish(4, 'device', 'loadSensors:res', sensors);
         if (!sensors || sensors === null) {
           this.loading = false;
           return null;
@@ -170,35 +156,30 @@ export default {
     },
 
     setListeners() {
-      EventBus.$on("onSensorDeleted", sensor => {
+      EventBus.$on('onSensorDeleted', sensor => {
         if (sensor && !this.loading) {
           this.loadSensors(sensor.deviceId);
         }
       });
 
-      EventBus.$on("onSensorCreated", async sensor => {
+      EventBus.$on('onSensorCreated', async sensor => {
         if (sensor && !this.loading) {
-          await this.$store.cache.delete(
-            "device/findSensorsByDevice",
-            sensor.deviceId
-          );
-          await this.loadSensors(sensor.deviceId);
+          await this.$store.cache.delete('device/findSensorsByDevice', sensor.deviceId);
         }
       });
 
-      EventBus.$on("onSensorUpdated", async sensor => {
+      EventBus.$on('onSensorUpdated', async sensor => {
         if (sensor && !this.loading) {
           const cacheExists = await this.$store.cache.has(
-            "device/findSensorsByDevice",
-            sensor.deviceId
+            'device/findSensorsByDevice',
+            sensor.deviceId,
           );
           if (cacheExists) {
-            await this.$store.cache.delete(
-              "device/findSensorsByDevice",
-              sensor.deviceId
-            );
+            await this.$store.cache.delete('device/findSensorsByDevice', sensor.deviceId);
           }
-          await this.loadSensors(sensor.deviceId);
+          if (this.$props.deviceId === sensor.deviceId.toString()) {
+            await this.loadSensors(sensor.deviceId);
+          }
         }
       });
 
@@ -208,28 +189,37 @@ export default {
     },
 
     removeListeners() {
-      EventBus.$off("onSensorCreated");
-      EventBus.$off("onSensorDeleted");
-      EventBus.$off("onSensorUpdated");
+      EventBus.$off('onSensorCreated');
+      EventBus.$off('onSensorDeleted');
+      EventBus.$off('onSensorUpdated');
       // if (this.sensors) {
       //   this.$store.dispatch("device/unsubscribeFromSensorsUpdate", {userId: this.$props.userId});
       // }
     },
 
     async onUpdateSensor(...args) {
-      logger.publish(4, "device", "onUpdateSensor:req", args);
+      logger.publish(4, 'device', 'onUpdateSensor:req', args);
       if (!args || !args[0].id) return null;
       let sensor = args[0];
       sensor = await updateAloesSensors(sensor, args[1], args[2]);
-      await this.$store.dispatch("device/publishToSensor", {
+      await this.$store.dispatch('device/publishToSensor', {
         sensor,
-        userId: this.$props.userId
+        userId: this.$props.userId,
       });
       return sensor;
     },
 
+    async onUpdateSetting(...args) {
+      logger.publish(4, 'device', 'onUpdateSetting:req', args);
+      if (!args || !args[0].id) return null;
+      let sensor = args[0];
+      sensor = await updateAloesSensors(sensor, args[1], args[2]);
+      sensor = await this.$store.dispatch('device/updateSensor', { sensor });
+      return sensor;
+    },
+
     onDeleteSensor(sensor) {
-      logger.publish(4, "device", "onDeleteSensor:req", sensor);
+      logger.publish(4, 'device', 'onDeleteSensor:req', sensor);
       if (sensor && sensor.id) {
         this.sensor = sensor;
         this.$refs.confirmPopup.show();
@@ -237,31 +227,20 @@ export default {
     },
 
     async onYes() {
-      await this.$store.dispatch("device/delSensor", {
+      await this.$store.dispatch('device/delSensor', {
         deviceId: this.sensor.deviceId,
-        sensor: this.sensor
+        sensor: this.sensor,
       });
       return this.$refs.confirmPopup.hide();
     },
 
     onNo() {
       this.$refs.confirmPopup.hide();
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style lang="scss">
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 1s;
-}
-.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
-  opacity: 0;
-}
-
-aloes-sensor-snap > .loading {
-  display: block;
-  min-height: 50px;
-}
+@import '../../style/device-sensors.scss';
 </style>

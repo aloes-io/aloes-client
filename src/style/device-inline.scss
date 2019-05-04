@@ -10,6 +10,8 @@ div.card.device-inline-view {
   -webkit-transition: box-shadow 150ms ease;
   transition: box-shadow 150ms ease;
   cursor: pointer;
+  margin-left: 2%;
+  max-width: 96%;
   max-height: 100px;
 }
 

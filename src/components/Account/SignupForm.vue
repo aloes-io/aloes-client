@@ -51,21 +51,19 @@
 </template>
 
 <script type="text/javascript">
-import bFormInput from "bootstrap-vue/es/components/form-input/form-input";
+import bFormInput from 'bootstrap-vue/es/components/form-input/form-input';
 
 export default {
-  name: "SignupForm",
+  name: 'SignupForm',
 
   components: {
-    "b-form-input": bFormInput
+    'b-form-input': bFormInput,
   },
 
   data() {
     return {
-      displayTeacher: false,
-      displayStudio: false,
       displaySignupForm: false,
-      checked: []
+      checked: [],
     };
   },
 
@@ -75,13 +73,13 @@ export default {
         return this.$store.state.auth.accountType;
       },
       set(type) {
-        this.$store.commit("auth/setAccountType", type);
-      }
+        this.$store.commit('auth/setAccountType', type);
+      },
     },
     accountTypes: {
       get() {
         return this.$store.state.auth.accountTypes;
-      }
+      },
     },
 
     firstName: {
@@ -89,11 +87,11 @@ export default {
         return this.$store.state.auth.signup.firstName;
       },
       set(value) {
-        this.$store.commit("auth/setCredentialsKV", {
-          key: "lastName",
-          value
+        this.$store.commit('auth/setCredentialsKV', {
+          key: 'lastName',
+          value,
         });
-      }
+      },
     },
 
     lastName: {
@@ -101,11 +99,11 @@ export default {
         return this.$store.state.auth.signup.lastName;
       },
       set(value) {
-        this.$store.commit("auth/setCredentialsKV", {
-          key: "lastName",
-          value
+        this.$store.commit('auth/setCredentialsKV', {
+          key: 'lastName',
+          value,
         });
-      }
+      },
     },
 
     email: {
@@ -113,11 +111,11 @@ export default {
         return this.$store.state.auth.signup.email;
       },
       set(value) {
-        this.$store.commit("auth/setCredentialsKV", {
-          key: "email",
-          value
+        this.$store.commit('auth/setCredentialsKV', {
+          key: 'email',
+          value,
         });
-      }
+      },
     },
 
     password: {
@@ -125,41 +123,35 @@ export default {
         return this.$store.state.auth.signup.password;
       },
       set(value) {
-        this.$store.commit("auth/setCredentialsKV", {
-          key: "password",
-          value
+        this.$store.commit('auth/setCredentialsKV', {
+          key: 'password',
+          value,
         });
-      }
+      },
     },
     confirmPassword: {
       get() {
         return this.$store.state.auth.signup.confirmPassword;
       },
       set(value) {
-        this.$store.commit("auth/setCredentialsKV", {
-          key: "confirmPassword",
-          value
+        this.$store.commit('auth/setCredentialsKV', {
+          key: 'confirmPassword',
+          value,
         });
-      }
+      },
     },
     confirmPasswordState() {
-      return (
-        this.confirmPassword.length > 5 &&
-        this.confirmPassword === this.password
-      );
+      return this.confirmPassword.length > 5 && this.confirmPassword === this.password;
     },
     invalidConfirmPassword() {
-      if (
-        this.confirmPassword !== this.password &&
-        this.confirmPassword.length < 5
-      ) {
-        return "";
+      if (this.confirmPassword !== this.password && this.confirmPassword.length < 5) {
+        return '';
       }
-      return "confirmation invalide";
+      return 'confirmation invalide';
     },
     validConfirmPassword() {
-      return this.confirmPasswordState === true ? "Thank you" : "";
-    }
+      return this.confirmPasswordState === true ? 'Thank you' : '';
+    },
   },
 
   mounted() {
@@ -171,23 +163,8 @@ export default {
   },
 
   methods: {
-    displayType(evt) {
-      //  console.log('hover', evt.target);
-      if (evt.target.id === "teacherButton") {
-        this.displayTypes = true;
-        this.displaySignupForm = false;
-      } else if (evt.target.id === "studioButton") {
-        this.displayTypes = true;
-        this.displaySignupForm = false;
-      } else {
-        this.displayTypes = false;
-        this.displaySignupForm = false;
-      }
-    },
-
     onReset() {
-      this.$store.commit("auth/cleanSignup");
-      this.displayTypes = false;
+      this.$store.commit('auth/cleanSignup');
       this.displaySignupForm = false;
 
       /* Trick to reset/clear native browser form validation state */
@@ -195,11 +172,11 @@ export default {
       // this.$nextTick(() => {
       //   this.show = true;
       // });
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style lang="scss" scoped>
-@import "../../style/signup-form.scss";
+@import '../../style/signup-form.scss';
 </style>

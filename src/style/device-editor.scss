@@ -1,98 +1,98 @@
-@import "global";
+@import 'global';
 
 div.card.device-editor {
-	margin-top: 3%;
-	border-radius: $card-border-radius;
-	border: 1px solid transparent;
-	box-shadow: $mini-card-shadow;
-	-webkit-transition: box-shadow 150ms ease;
-	transition: box-shadow 150ms ease;
+  margin-top: 3%;
+  border-radius: $card-border-radius;
+  border: 1px solid transparent;
+  box-shadow: $mini-card-shadow;
+  -webkit-transition: box-shadow 150ms ease;
+  transition: box-shadow 150ms ease;
 
-	label {
-		color: $primary;
-	}
+  label {
+    color: $primary;
+  }
 
-	input.form-control {
-		margin-bottom: 4%;
-		width: 100%;
-		background-color: white;
-		padding: $input-padding;
-		border-radius: $input-border-radius;
-		border: 1px solid transparent;
-		box-shadow: $input-shadow;
-		-webkit-transition: box-shadow 150ms ease;
-		transition: box-shadow 150ms ease;
-	}
+  input.form-control {
+    margin-bottom: 4%;
+    width: 100%;
+    background-color: white;
+    padding: $input-padding;
+    border-radius: $input-border-radius;
+    border: 1px solid transparent;
+    box-shadow: $input-shadow;
+    -webkit-transition: box-shadow 150ms ease;
+    transition: box-shadow 150ms ease;
+  }
 
-	input.form-control:valid {
-		border-color: $lightsuccess;
-	}
+  input.form-control:valid {
+    border-color: $lightsuccess;
+  }
 
-	input.form-control:invalid {
-		border-color: $grey;
-	}
+  input.form-control:invalid {
+    border-color: $grey;
+  }
 
-	input.form-control:hover {
-		box-shadow: $input-shadow-selected;
-	}
+  input.form-control:hover {
+    box-shadow: $input-shadow-selected;
+  }
 
-	input.form-control:disabled {
-		border-color: transparent;
-		box-shadow: none !important;
-	}
+  input.form-control:disabled {
+    border-color: transparent;
+    box-shadow: none !important;
+  }
 
-	select.form-control {
-		margin-bottom: 4%;
-		background-color: white;
-		padding: $input-padding;
-		border-radius: $input-border-radius;
-		border: 1px solid transparent;
-		box-shadow: $input-shadow;
-		-webkit-transition: box-shadow 150ms ease;
-		transition: box-shadow 150ms ease;
-	}
+  select.form-control {
+    margin-bottom: 4%;
+    background-color: white;
+    padding: $input-padding;
+    border-radius: $input-border-radius;
+    border: 1px solid transparent;
+    box-shadow: $input-shadow;
+    -webkit-transition: box-shadow 150ms ease;
+    transition: box-shadow 150ms ease;
+  }
 
-	select.form-control:valid {
-		border-color: $lightsuccess;
-	}
+  select.form-control:valid {
+    border-color: $lightsuccess;
+  }
 
-	select.form-control:invalid {
-		border-color: $grey;
-	}
+  select.form-control:invalid {
+    border-color: $grey;
+  }
 
-	select.form-control:hover {
-		box-shadow: $input-shadow-selected;
-	}
+  select.form-control:hover {
+    box-shadow: $input-shadow-selected;
+  }
 
-	select.form-control:disabled {
-		border-color: transparent;
-		box-shadow: none !important;
-	}
-	.card-footer {
-		padding: 10px 10px;
-		height: 60px;
-	}
+  select.form-control:disabled {
+    border-color: transparent;
+    box-shadow: none !important;
+  }
+  .card-footer {
+    padding: 10px 10px;
+    height: 60px;
+  }
 
-	button.btn {
-		width: 46%;
-		margin-left: 2%;
-		margin-right: 2%;
-		margin-bottom: 4%;
-		background-color: $primary;
-		font-weight: $btn-font-weight;
-		color: white;
-		height: $btn-height;
-		padding: $btn-padding;
-		border-radius: $btn-border-radius;
-		border: 1px solid transparent;
-		box-shadow: $btn-shadow;
-		-webkit-transition: box-shadow 150ms ease;
-		transition: box-shadow 150ms ease;
-	}
+  button.btn {
+    width: 46%;
+    margin-left: 2%;
+    margin-right: 2%;
+    margin-bottom: 4%;
+    background-color: $primary;
+    font-weight: $btn-font-weight;
+    color: white;
+    height: $btn-height;
+    padding: $btn-padding;
+    border-radius: $btn-border-radius;
+    border: 1px solid transparent;
+    box-shadow: $btn-shadow;
+    -webkit-transition: box-shadow 150ms ease;
+    transition: box-shadow 150ms ease;
+  }
 
-	button.btn:hover {
-		background-color: white;
-		border-color: white;
-		color: $primary;
-	}
+  button.btn:hover {
+    background-color: white;
+    border-color: white;
+    color: $primary;
+  }
 }

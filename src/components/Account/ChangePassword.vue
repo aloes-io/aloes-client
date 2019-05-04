@@ -54,29 +54,29 @@
 </template>
 
 <script type="text/javascript">
-import bAlert from "bootstrap-vue/es/components/alert/alert";
-import bButton from "bootstrap-vue/es/components/button/button";
-import bForm from "bootstrap-vue/es/components/form/form";
-import bFormGroup from "bootstrap-vue/es/components/form-group/form-group";
-import bFormInput from "bootstrap-vue/es/components/form-input/form-input";
+import bAlert from 'bootstrap-vue/es/components/alert/alert';
+import bButton from 'bootstrap-vue/es/components/button/button';
+import bForm from 'bootstrap-vue/es/components/form/form';
+import bFormGroup from 'bootstrap-vue/es/components/form-group/form-group';
+import bFormInput from 'bootstrap-vue/es/components/form-input/form-input';
 
 export default {
-  name: "ChangePassword",
+  name: 'ChangePassword',
 
   components: {
-    "b-alert": bAlert,
-    "b-button": bButton,
-    "b-form": bForm,
-    "b-form-group": bFormGroup,
-    "b-form-input": bFormInput
+    'b-alert': bAlert,
+    'b-button': bButton,
+    'b-form': bForm,
+    'b-form-group': bFormGroup,
+    'b-form-input': bFormInput,
   },
 
   props: {
     // eslint-disable-next-line camelcase
     access_token: {
       type: String,
-      default: null
-    }
+      default: null,
+    },
   },
 
   data() {
@@ -85,7 +85,7 @@ export default {
       newPassword: null,
       confirmPassword: null,
       error: null,
-      loading: false
+      loading: false,
     };
   },
 
@@ -97,30 +97,30 @@ export default {
 
       if (this.newPassword !== this.confirmPassword) {
         this.loading = false;
-        this.error = new Error("The password does not match, please try again");
+        this.error = new Error('The password does not match, please try again');
         return;
       }
 
       this.$store
-        .dispatch("auth/changePassword", {
+        .dispatch('auth/changePassword', {
           oldPassword: this.password,
           newPassword: this.newPassword,
           // eslint-disable-next-line camelcase
-          access_token: this.access_token
+          access_token: this.access_token,
         })
         .then(() => {
           this.loading = false;
-          this.success = { message: "Mot de passe mis à jour" };
+          this.success = { message: 'Mot de passe mis à jour' };
         })
         .catch(err => {
           this.error = err;
           this.loading = false;
         });
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style lang="scss" scoped>
-@import "../../style/change-password.scss";
+@import '../../style/change-password.scss';
 </style>
