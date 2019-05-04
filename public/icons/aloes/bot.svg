@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   data-name="Layer 1"
+   viewBox="0 0 100 100"
+   x="0px"
+   y="0px"
+   version="1.1"
+   id="svg22"
+   sodipodi:docname="bot.svg"
+   width="100"
+   height="100"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)">
+  <metadata
+     id="metadata26">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>bots-04-5-18</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1025"
+     id="namedview24"
+     showgrid="false"
+     inkscape:zoom="1.888"
+     inkscape:cx="50"
+     inkscape:cy="62.5"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg22" />
+  <defs
+     id="defs4">
+    <style
+       id="style2">.cls-1{fill:none;stroke:#000;stroke-miterlimit:10;stroke-width:5px;}</style>
+  </defs>
+  <title
+     id="title6">bots-04-5-18</title>
+  <rect
+     class="cls-1"
+     x="25.52"
+     y="17.410004"
+     width="49.27"
+     height="32.25"
+     rx="6.5599999"
+     ry="6.5599999"
+     id="rect8"
+     style="fill:none;stroke:#000000;stroke-width:5px;stroke-miterlimit:10" />
+  <rect
+     x="47.470001"
+     y="5.7699966"
+     width="4.9299998"
+     height="11.65"
+     rx="2.3699999"
+     ry="2.3699999"
+     id="rect10" />
+  <circle
+     cx="38.509998"
+     cy="32.190002"
+     r="3.1400001"
+     id="circle12" />
+  <circle
+     cx="61.349998"
+     cy="32.639999"
+     r="3.1400001"
+     id="circle14" />
+  <path
+     class="cls-1"
+     d="m 49.71,89.07 c -34,0 -34,-18.31 -34,-18.31 a 5.87,5.87 0 0 1 5.87,-5.87 h 56.29 a 5.87,5.87 0 0 1 5.87,5.87 c 0,0 0.01,18.31 -34.03,18.31 z"
+     id="path16"
+     inkscape:connector-curvature="0"
+     style="fill:none;stroke:#000000;stroke-width:5px;stroke-miterlimit:10" />
+</svg>

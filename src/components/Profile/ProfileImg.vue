@@ -14,17 +14,13 @@
         fluid
         class="avatar-image"
         @click.native.prevent.stop="
-          displayAvatarButton
-            ? (displayAvatarButton = false)
-            : (displayAvatarButton = true)
+          displayAvatarButton ? (displayAvatarButton = false) : (displayAvatarButton = true)
         "
         @mouseover="displayAvatarButton = true"
         @mouseleave="displayAvatarButton = false"
       />
       <b-button
-        v-if="
-          !viewer && editorMode && displayHeaderButton && !displayAvatarButton
-        "
+        v-if="!viewer && editorMode && displayHeaderButton && !displayAvatarButton"
         class="header-button"
         @click.prevent.stop="
           $refs.headerImport.showModal();
@@ -63,35 +59,35 @@
 </template>
 
 <script type="text/javascript">
-import bButton from "bootstrap-vue/es/components/button/button";
-import bCard from "bootstrap-vue/es/components/card/card";
-import bImg from "bootstrap-vue/es/components/image/img";
-import FileImportContainer from "@/views/containers/FileImportContainer.vue";
+import bButton from 'bootstrap-vue/es/components/button/button';
+import bCard from 'bootstrap-vue/es/components/card/card';
+import bImg from 'bootstrap-vue/es/components/image/img';
+import FileImportContainer from '@/views/containers/FileImportContainer.vue';
 
 export default {
-  name: "ProfileImg",
+  name: 'ProfileImg',
 
   components: {
-    "b-button": bButton,
-    "b-card": bCard,
-    "b-img": bImg,
-    "file-import-container": FileImportContainer
+    'b-button': bButton,
+    'b-card': bCard,
+    'b-img': bImg,
+    'file-import-container': FileImportContainer,
   },
 
   props: {
-    "profile-type": {
+    'profile-type': {
       type: String,
       require: true,
-      default: null
+      default: null,
     },
-    "is-viewer": {
+    'is-viewer': {
       type: Boolean,
-      default: true
+      default: true,
     },
-    "edit-mode": {
+    'edit-mode': {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
 
   data() {
@@ -101,7 +97,7 @@ export default {
       displayHeaderButton: false,
       displayAvatarButton: false,
       viewer: true,
-      editorMode: false
+      editorMode: false,
     };
   },
 
@@ -114,11 +110,11 @@ export default {
         return this.$store.state.auth.account.headerImgUrl;
       },
       set(value) {
-        this.$store.commit("auth/setModelKV", {
-          key: "headerImgUrl",
-          value
+        this.$store.commit('auth/setModelKV', {
+          key: 'headerImgUrl',
+          value,
         });
-      }
+      },
     },
     avatarImgUrl: {
       get() {
@@ -128,12 +124,12 @@ export default {
         return this.$store.state.auth.account.avatarImgUrl;
       },
       set(value) {
-        this.$store.commit("auth/setModelKV", {
-          key: "avatarImgUrl",
-          value
+        this.$store.commit('auth/setModelKV', {
+          key: 'avatarImgUrl',
+          value,
         });
-      }
-    }
+      },
+    },
   },
 
   watch: {
@@ -141,22 +137,22 @@ export default {
       handler(state) {
         this.viewer = state;
       },
-      immediate: true
+      immediate: true,
     },
     editMode: {
       handler(mode) {
         this.editorMode = mode;
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
 
   mounted() {},
 
-  methods: {}
+  methods: {},
 };
 </script>
 
 <style lang="scss" scoped>
-@import "../../style/profile-img.scss";
+@import '../../style/profile-img.scss';
 </style>

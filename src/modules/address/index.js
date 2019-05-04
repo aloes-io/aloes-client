@@ -1,46 +1,46 @@
-import * as actions from "./actions";
-import * as mutations from "./mutations";
+import * as actions from './actions';
+import * as mutations from './mutations';
 
 export default {
   namespaced: true,
   state: {
-    collectionName: "Address",
-    resources: "Addresses",
+    collectionName: 'Address',
+    resources: 'Addresses',
     editorMode: false,
     profileAddress: {
-      street: "",
+      street: '',
       streetNumber: null,
-      streetName: "",
-      postalCode: "",
-      city: "",
-      countryCode: "",
+      streetName: '',
+      postalCode: '',
+      city: '',
+      countryCode: '',
       coordinates: { lat: null, lng: null },
       verified: false,
-      public: false
+      public: false,
     },
     viewedProfileAddress: {
-      street: "",
+      street: '',
       streetNumber: null,
-      streetName: "",
-      postalCode: "",
-      city: "",
-      countryCode: "",
+      streetName: '',
+      postalCode: '',
+      city: '',
+      countryCode: '',
       coordinates: { lat: null, lng: null },
       verified: false,
-      public: false
+      public: false,
     },
     deviceAddress: {
       street: null,
       streetNumber: null,
-      streetName: "",
+      streetName: '',
       postalCode: null,
       city: null,
-      countryCode: "",
+      countryCode: '',
       coordinates: { lat: null, lng: null },
       verified: false,
-      public: true
-    }
+      public: true,
+    },
   },
   mutations,
-  actions
+  actions,
 };

@@ -1,10 +1,6 @@
 <template lang="html">
   <b-card no-body class="profile-header">
-    <profile-img
-      :is-viewer="viewer"
-      :edit-mode="editorMode"
-      :profile-type="profileType"
-    />
+    <profile-img :is-viewer="viewer" :edit-mode="editorMode" :profile-type="profileType" />
     <br />
     <profile-form
       :is-viewer="viewer"
@@ -17,42 +13,42 @@
 </template>
 
 <script type="text/javascript">
-import bCard from "bootstrap-vue/es/components/card/card";
-import ProfileForm from "@/components/Profile/ProfileForm.vue";
-import ProfileImg from "@/components/Profile/ProfileImg.vue";
+import bCard from 'bootstrap-vue/es/components/card/card';
+import ProfileForm from '@/components/Profile/ProfileForm.vue';
+import ProfileImg from '@/components/Profile/ProfileImg.vue';
 
 export default {
-  name: "ProfileHeader",
+  name: 'ProfileHeader',
 
   components: {
-    "b-card": bCard,
-    "profile-form": ProfileForm,
-    "profile-img": ProfileImg
+    'b-card': bCard,
+    'profile-form': ProfileForm,
+    'profile-img': ProfileImg,
   },
 
   props: {
     account: {
       type: Object,
-      default: null
+      default: null,
     },
     profile: {
       type: Object,
-      default: null
+      default: null,
     },
-    "profile-id": {
+    'profile-id': {
       type: [Number, String],
       require: true,
-      default: null
+      default: null,
     },
-    "profile-type": {
+    'profile-type': {
       type: String,
       require: true,
-      default: null
+      default: null,
     },
-    "is-viewer": {
+    'is-viewer': {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
 
   data() {
@@ -61,7 +57,7 @@ export default {
       loading: false,
       viewer: true,
       isFavorite: null,
-      favoriteId: null
+      favoriteId: null,
     };
   },
 
@@ -74,24 +70,24 @@ export default {
         return this.$store.state.auth.editorMode;
       },
       set(value) {
-        this.$store.commit("auth/setEditorMode", value);
-      }
+        this.$store.commit('auth/setEditorMode', value);
+      },
     },
     favorites: {
       get() {
         return this.$store.state.favorites.model;
-      }
+      },
     },
     sender: {
       get() {
         return this.$store.state.auth.account;
-      }
+      },
     },
     receiver: {
       get() {
         return this.$store.state.auth.viewed;
-      }
-    }
+      },
+    },
   },
 
   watch: {
@@ -99,26 +95,26 @@ export default {
       handler(account) {
         this.updatedAccount = account;
       },
-      immediate: true
+      immediate: true,
     },
     profile: {
       handler(profile) {
         this.updatedProfile = profile;
       },
-      immediate: true
+      immediate: true,
     },
     profileType: {
       handler(type) {
         this.updatedProfileType = type;
       },
-      immediate: true
+      immediate: true,
     },
     isViewer: {
       handler(state) {
         this.viewer = state;
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
 
   mounted() {
@@ -129,10 +125,10 @@ export default {
     this.editorMode = false;
   },
 
-  methods: {}
+  methods: {},
 };
 </script>
 
 <style lang="scss" scoped>
-@import "../../style/profile-header.scss";
+@import '../../style/profile-header.scss';
 </style>

@@ -26,10 +26,7 @@
           novalidate
           class="file-uploader"
         >
-          <label
-            :for="`${resourceType.toLowerCase()}${imgType}-uploader`"
-            class="add-file"
-          >
+          <label :for="`${resourceType.toLowerCase()}${imgType}-uploader`" class="add-file">
             {{ importBtnTitle }}
           </label>
           <input
@@ -39,11 +36,7 @@
             type="file"
             class="input-file"
             @change="
-              onFilesChange(
-                resourceType,
-                $event.target.name,
-                $event.target.files
-              );
+              onFilesChange(resourceType, $event.target.name, $event.target.files);
               fileCount = $event.target.files.length;
             "
           />
@@ -86,43 +79,38 @@
 </template>
 
 <script type="text/javascript">
-import bAlert from "bootstrap-vue/es/components/alert/alert";
-import bButton from "bootstrap-vue/es/components/button/button";
-import bForm from "bootstrap-vue/es/components/form/form";
-import notification from "@/views/mixins/notification";
-import logger from "@/services/logger";
+import bAlert from 'bootstrap-vue/es/components/alert/alert';
+import bButton from 'bootstrap-vue/es/components/button/button';
+import bForm from 'bootstrap-vue/es/components/form/form';
+import notification from '@/views/mixins/notification';
+import logger from '@/services/logger';
 
 export default {
-  name: "FileImport",
+  name: 'FileImport',
 
   components: {
-    "b-alert": bAlert,
-    "b-button": bButton,
-    "b-form": bForm
+    'b-alert': bAlert,
+    'b-button': bButton,
+    'b-form': bForm,
   },
 
   mixins: [notification],
 
   props: {
-    "access-token": {
+    'access-token': {
       type: Object,
-      default: null
+      default: null,
     },
-    "profile-type": {
-      type: String,
-      required: true,
-      default: null
-    },
-    "resource-type": {
+    'resource-type': {
       type: String,
       required: false,
-      default: "Images"
+      default: 'Images',
     },
-    "image-type": {
+    'image-type': {
       type: String,
       required: true,
-      default: "Avatar"
-    }
+      default: 'Avatar',
+    },
   },
 
   data() {
@@ -132,13 +120,13 @@ export default {
       imgType: null,
       mimetype: `${this.$props.resourceType
         .toLowerCase()
-        .slice(0, this.$props.resourceType.lastIndexOf("s"))}/*`,
+        .slice(0, this.$props.resourceType.lastIndexOf('s'))}/*`,
       filetype: `${this.$props.resourceType
         .toLowerCase()
-        .slice(0, this.$props.resourceType.lastIndexOf("s"))}`,
+        .slice(0, this.$props.resourceType.lastIndexOf('s'))}`,
       maxSize: 10000000,
       fileCount: null,
-      fileName: "",
+      fileName: '',
       imageUrl: null,
       uploadedFile: null,
       STATUS_INITIAL: this.$store.state.files.STATUS_INITIAL,
@@ -148,83 +136,87 @@ export default {
       HEADER_MAX_WIDTH: 820,
       HEADER_MAX_HEIGHT: 312,
       AVATAR_MAX_WIDTH: 170,
-      AVATAR_MAX_HEIGHT: 170
+      AVATAR_MAX_HEIGHT: 170,
     };
   },
 
   computed: {
     importBtnTitle: {
       get() {
-        if (this.isFailed) return "Try again";
-        return "Import a picture";
-      }
+        if (this.isFailed) return 'Try again';
+        return 'Import a picture';
+      },
     },
     isInitial: {
       get() {
         return (
-          this.$store.state.files[this.$props.resourceType][
-            this.$props.imageType
-          ].status === this.STATUS_INITIAL
+          this.$store.state.files[this.$props.resourceType][this.$props.imageType].status ===
+          this.STATUS_INITIAL
         );
-      }
+      },
     },
     isSaving: {
       get() {
         return (
-          this.$store.state.files[this.$props.resourceType][
-            this.$props.imageType
-          ].status === this.STATUS_SAVING
+          this.$store.state.files[this.$props.resourceType][this.$props.imageType].status ===
+          this.STATUS_SAVING
         );
-      }
+      },
     },
     isSuccess: {
       get() {
         return (
-          this.$store.state.files[this.$props.resourceType][
-            this.$props.imageType
-          ].status === this.STATUS_SUCCESS
+          this.$store.state.files[this.$props.resourceType][this.$props.imageType].status ===
+          this.STATUS_SUCCESS
         );
-      }
+      },
     },
     isFailed: {
       get() {
         return (
-          this.$store.state.files[this.$props.resourceType][
-            this.$props.imageType
-          ].status === this.STATUS_FAILED
+          this.$store.state.files[this.$props.resourceType][this.$props.imageType].status ===
+          this.STATUS_FAILED
         );
-      }
+      },
     },
     status: {
       get() {
-        return this.$store.state.files[this.$props.resourceType][
-          this.$props.imageType
-        ].status;
+        return this.$store.state.files[this.$props.resourceType][this.$props.imageType].status;
       },
       set(status) {
-        this.$store.commit("files/setUploadStatus", {
+        this.$store.commit('files/setUploadStatus', {
           resourceType: this.$props.resourceType,
           role: this.$props.imageType,
-          status
+          status,
         });
-      }
+      },
     },
     source: {
       get() {
-        return this.$store.state.auth.account[
-          `${this.$props.imageType.toLowerCase()}ImgUrl`
-        ];
+        if (this.$route.name === 'profile') {
+          return this.$store.state.auth.account[`${this.$props.imageType.toLowerCase()}ImgUrl`];
+        } else if (this.$route.name === 'application') {
+          return this.$store.state.application.instance.icon;
+        }
+        return null;
       },
       set(value) {
-        this.$store.commit("auth/setModelKV", {
-          key: `${this.$props.imageType.toLowerCase()}ImgUrl`,
-          value
-        });
-      }
+        if (this.$route.name === 'profile') {
+          this.$store.commit('auth/setModelKV', {
+            key: `${this.$props.imageType.toLowerCase()}ImgUrl`,
+            value,
+          });
+        } else if (this.$route.name === 'application') {
+          this.$store.commit('application/setModelKV', {
+            key: 'icon',
+            value,
+          });
+        }
+      },
     },
 
     ratio() {
-      if (this.imgType.toLowerCase() === "header") {
+      if (this.imgType.toLowerCase() === 'header') {
         if (window.innerWidth >= 320 && window.innerWidth <= 480) {
           return 3.2;
         } else if (window.innerWidth >= 480 && window.innerWidth <= 768) {
@@ -251,46 +243,46 @@ export default {
 
     maxBoundaryWidth: {
       get() {
-        if (this.imgType.toLowerCase() === "header") {
+        if (this.imgType.toLowerCase() === 'header') {
           return 820 / this.ratio;
         }
         return 170 / this.ratio;
-      }
+      },
     },
     maxBoundaryHeight: {
       get() {
-        if (this.imgType.toLowerCase() === "header") {
+        if (this.imgType.toLowerCase() === 'header') {
           return 312 / this.ratio;
         }
         return 170 / this.ratio;
-      }
+      },
     },
     maxViewportWidth: {
       get() {
-        if (this.imgType.toLowerCase() === "header") {
+        if (this.imgType.toLowerCase() === 'header') {
           return 820 / 1.2 / this.ratio;
         }
         return 170 / 1.2 / this.ratio;
-      }
+      },
     },
     maxViewportHeight: {
       get() {
-        if (this.imgType.toLowerCase() === "header") {
+        if (this.imgType.toLowerCase() === 'header') {
           return 312 / 1.2 / this.ratio;
         }
         return 170 / 1.2 / this.ratio;
-      }
+      },
     },
     windowWidth: {
       get() {
         return this.$store.state.windowWidth;
-      }
+      },
     },
     windowHeight: {
       get() {
         return this.$store.state.windowHeight;
-      }
-    }
+      },
+    },
   },
 
   watch: {
@@ -298,13 +290,13 @@ export default {
       handler(type) {
         this.imgType = type;
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
 
   mounted() {
     this.$refs[`${this.imgType.toLowerCase()}Croppie`].bind({
-      url: this.source
+      url: this.source,
     });
   },
 
@@ -318,7 +310,7 @@ export default {
     initCroppie() {
       this.$refs[`${this.imgType.toLowerCase()}Croppie`].refresh();
       this.$refs[`${this.imgType.toLowerCase()}Croppie`].bind({
-        url: this.source
+        url: this.source,
       });
     },
 
@@ -328,14 +320,14 @@ export default {
       this.imageUrl = null;
       this.uploadedFile = null;
       this.status = this.STATUS_INITIAL;
-      return this.$store.dispatch("files/onResetFileImport", {
+      return this.$store.dispatch('files/onResetFileImport', {
         resourceType: this.$props.resourceType,
-        role: this.$props.imageType
+        role: this.$props.imageType,
       });
     },
 
     async onFilesChange(resourceType, name, files) {
-      logger.publish(4, "files", "onFilesChange:req", name);
+      logger.publish(4, 'files', 'onFilesChange:req', name);
       this.error = null;
       this.success = null;
       this.fileName = name;
@@ -343,81 +335,76 @@ export default {
         const reader = await new FileReader();
         reader.onload = e => {
           this.$refs[`${this.imgType.toLowerCase()}Croppie`].bind({
-            url: e.target.result
+            url: e.target.result,
           });
         };
         return reader.readAsDataURL(files[0]);
       }
       this.error = {
-        message: "Désolé, ce navigateur ne supporte pas l'envoi d'image"
+        message: "Désolé, ce navigateur ne supporte pas l'envoi d'image",
       };
-      logger.publish(4, "files", "onFilesChange:err", this.error);
+      logger.publish(4, 'files', 'onFilesChange:err', this.error);
       return this.error;
     },
 
     onRotate(evt) {
       if (evt) evt.preventDefault();
       if (evt) evt.stopPropagation();
-      this.$refs[`${this.imgType.toLowerCase()}Croppie`].rotate(
-        parseInt(90, 10)
-      );
+      this.$refs[`${this.imgType.toLowerCase()}Croppie`].rotate(parseInt(90, 10));
     },
 
     crop() {
       const options = {
-        type: "canvas",
+        type: 'canvas',
         size: {
           width: this[`${this.imgType.toUpperCase()}_MAX_WIDTH`],
-          height: this[`${this.imgType.toUpperCase()}_MAX_HEIGHT`]
-        }
+          height: this[`${this.imgType.toUpperCase()}_MAX_HEIGHT`],
+        },
       };
-      this.$refs[`${this.imgType.toLowerCase()}Croppie`].result(
-        options,
-        output => {
-          //  this.imageUrl = output;
-          return this.result(output);
-        }
-      );
+      this.$refs[`${this.imgType.toLowerCase()}Croppie`].result(options, output => {
+        //  this.imageUrl = output;
+        return this.result(output);
+      });
       //  this.$refs[`${this.imgType.toLowerCase()}Croppie`].result(options);
     },
 
     async result(output) {
       //  this.imageUrl = output;
       const blob = await fetch(output).then(res => res.blob());
-      const fileType = blob.type.split("/");
+      const fileType = blob.type.split('/');
       const blobToFile = new File([blob], `${this.imgType}.${fileType[1]}`, {
-        type: blob.type
+        type: blob.type,
       });
       this.uploadedFile = await this.$store
-        .dispatch("files/onFileImport", {
+        .dispatch('files/onFileImport', {
           accessToken: this.$props.accessToken,
           resourceType: this.$props.resourceType,
           role: this.imgType,
-          files: blobToFile
+          files: blobToFile,
         })
         .catch(err => {
           this.error = err;
-          logger.publish(4, "files", "onFileSave:err", err);
+          logger.publish(4, 'files', 'onFileSave:err', err);
           return this.error;
         });
 
       if (this.isSuccess) {
-        logger.publish(4, "files", "onFileSave:res", this.uploadedFile);
+        logger.publish(4, 'files', 'onFileSave:res', this.uploadedFile);
         this.source = this.uploadedFile.url;
         this.$refs[`${this.imgType.toLowerCase()}Croppie`].bind({
-          url: this.uploadedFile.url
+          url: this.uploadedFile.url,
         });
-        this.success = { message: "Votre image est enregistré" };
+        this.success = { message: 'Votre image est enregistré' };
         this.$parent.hide();
         return this.success;
       } else if (this.isFailed) {
-        logger.publish(4, "files", "onFileSave:err", "uploadFailed");
+        logger.publish(4, 'files', 'onFileSave:err', 'uploadFailed');
         this.error = {
-          message: "L'envoi de l'image a échoué, veuillez réessayer"
+          message: "L'envoi de l'image a échoué, veuillez réessayer",
         };
         return this.error;
       }
-      logger.publish(4, "files", "onFileSave:err", "still loading ?");
+      logger.publish(4, 'files', 'onFileSave:err', 'still loading ?');
       return null;
     },
 
@@ -430,17 +417,15 @@ export default {
       //   "onFileSave:req",
       //   this.$refs[`${this.imgType.toLowerCase()}Croppie`].croppie.data.url,
       // );
-      if (
-        !this.$refs[`${this.imgType.toLowerCase()}Croppie`].croppie.data.url
-      ) {
+      if (!this.$refs[`${this.imgType.toLowerCase()}Croppie`].croppie.data.url) {
         return null;
       }
       return this.crop();
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style lang="scss" scoped>
-@import "../../style/file-import.scss";
+@import '../../style/file-import.scss';
 </style>

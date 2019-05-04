@@ -31,25 +31,20 @@
               v-if="
                 account.subscribed.startsWith('paid') &&
                   updatedProfile.fullAddress &&
-                  updatedProfile.profileAddress
+                  (updatedProfile.profileAddress || updatedProfile.address)
               "
               class="profile-inline-address"
             >
               {{ updatedProfile.fullAddress }}
             </p>
-            <p
-              v-if="account.subscribed.startsWith('paid')"
-              class="profile-inline-description"
-            >
+            <p v-if="account.subscribed.startsWith('paid')" class="profile-inline-description">
               {{ updatedProfile.description }}
             </p>
           </b-col>
           <b-col class="profile-inline-team" cols="1" sm="1">
             <b-button
               :disabled="!account.subscribed.startsWith('paid')"
-              @click="
-                $refs.teamPopup.showModal(updatedProfile, isMember, memberId)
-              "
+              @click="$refs.teamPopup.showModal(updatedProfile, isMember, memberId)"
             >
               <img
                 v-if="isMember && account.subscribed.startsWith('paid')"
@@ -68,16 +63,11 @@
         </b-row>
         <b-row>
           <b-col class="profile-inline-status" cols="10" sm="10">
-            <div
-              v-if="!account.subscribed.startsWith('paid')"
-              class="profile-inline-status-off"
-            >
+            <div v-if="!account.subscribed.startsWith('paid')" class="profile-inline-status-off">
               <img :src="$store.state.style.pictures.statusAlt" />
             </div>
             <div
-              v-else-if="
-                !updatedProfile.status && account.subscribed.startsWith('paid')
-              "
+              v-else-if="!updatedProfile.status && account.subscribed.startsWith('paid')"
               class="profile-inline-status-off"
             >
               <img :src="$store.state.style.pictures.statusOff" />
@@ -86,9 +76,7 @@
               </small>
             </div>
             <div
-              v-else-if="
-                updatedProfile.status && account.subscribed.startsWith('paid')
-              "
+              v-else-if="updatedProfile.status && account.subscribed.startsWith('paid')"
               class="profile-inline-status-on"
             >
               <img :src="$store.state.style.pictures.statusOn" />
@@ -105,37 +93,37 @@
 </template>
 
 <script type="text/javascript">
-import bButton from "bootstrap-vue/es/components/button/button";
-import bCard from "bootstrap-vue/es/components/card/card";
-import { EventBus } from "@/services/PubSub";
-import logger from "@/services/logger";
+import bButton from 'bootstrap-vue/es/components/button/button';
+import bCard from 'bootstrap-vue/es/components/card/card';
+import { EventBus } from '@/services/PubSub';
+import logger from '@/services/logger';
 
 export default {
-  name: "ProfileInline",
+  name: 'ProfileInline',
 
   components: {
-    "b-button": bButton,
-    "b-card": bCard,
-    "team-popup": () => import("@/views/containers/TeamPopup.vue")
+    'b-button': bButton,
+    'b-card': bCard,
+    'team-popup': () => import('@/views/containers/TeamPopup.vue'),
   },
 
   props: {
     account: {
       type: Object,
-      default: null
+      default: null,
     },
     token: {
       type: String,
-      default: ""
+      default: '',
     },
     profile: {
       type: Object,
-      required: true
+      required: true,
     },
-    "profile-type": {
+    'profile-type': {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
 
   data() {
@@ -150,7 +138,7 @@ export default {
       updatedAccount: null,
       updatedProfile: null,
       updatedProfileType: null,
-      updatedClassName: null
+      updatedClassName: null,
     };
   },
 
@@ -158,18 +146,18 @@ export default {
     status: {
       get() {
         return this.$store.state.auth.viewed.status;
-      }
+      },
     },
     profileAddress: {
       get() {
         return this.$store.state.address.viewer.profileAddress;
-      }
+      },
     },
     teams: {
       get() {
         return this.$store.state.teams.collection;
-      }
-    }
+      },
+    },
   },
 
   watch: {
@@ -177,26 +165,26 @@ export default {
       handler(account) {
         this.updatedAccount = account;
       },
-      immediate: true
+      immediate: true,
     },
     profile: {
       handler(profile) {
         this.updatedProfile = profile;
       },
-      immediate: true
+      immediate: true,
     },
     profileType: {
       handler(type) {
         this.updatedProfileType = type;
       },
-      immediate: true
+      immediate: true,
     },
     className: {
       handler(name) {
         this.updatedClassName = name;
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
 
   created() {
@@ -215,7 +203,7 @@ export default {
 
   methods: {
     setListeners() {
-      EventBus.$on("onTeamDeleted", async team => {
+      EventBus.$on('onTeamDeleted', async team => {
         if (team && this.loaderCounter < 1) {
           this.loaderCounter += 1;
           return setTimeout(async () => {
@@ -225,7 +213,7 @@ export default {
         }
       });
 
-      EventBus.$on("onTeamCreated", team => {
+      EventBus.$on('onTeamCreated', team => {
         if (team && this.loaderCounter < 1) {
           this.loaderCounter += 1;
           return setTimeout(async () => {
@@ -235,7 +223,7 @@ export default {
         }
       });
 
-      EventBus.$on("profileSelected", profile => {
+      EventBus.$on('profileSelected', profile => {
         if (
           profile &&
           profile !== null &&
@@ -243,23 +231,23 @@ export default {
         ) {
           this.$el.style.background = this.$store.state.style.color.secondary;
         } else {
-          this.$el.style.background = "white";
+          this.$el.style.background = 'white';
         }
         return null;
       });
     },
 
     removeListeners() {
-      EventBus.$off("onTeamDeleted");
-      EventBus.$off("onTeamCreated");
-      EventBus.$off("profileSelected");
+      EventBus.$off('onTeamDeleted');
+      EventBus.$off('onTeamCreated');
+      EventBus.$off('profileSelected');
     },
 
     async loadTeams() {
       this.error = null;
       this.success = null;
       return this.$store
-        .dispatch("team/loadTeams", this.$store.state.auth.account.id)
+        .dispatch('team/loadTeams', this.$store.state.auth.account.id)
         .then(res => {
           this.loaderCounter = 0;
           return res;
@@ -273,23 +261,21 @@ export default {
 
     isTeamMember(teams) {
       if (teams) {
-        const foundFavorite = this.teams.find(
-          team => team.memberId === this.profile.id
-        );
+        const foundFavorite = this.teams.find(team => team.memberId === this.profile.id);
         if (foundFavorite) {
-          logger.publish(4, "profile", "isTeamMember:res", true);
+          logger.publish(4, 'profile', 'isTeamMember:res', true);
           this.memberId = foundFavorite.id;
           this.isMember = true;
           return;
         }
       }
-      logger.publish(4, "profile", "isTeamMember:res", false);
+      logger.publish(4, 'profile', 'isTeamMember:res', false);
       this.isMember = false;
     },
 
     highlightProfile(profile) {
-      EventBus.$emit("profileSelected", profile);
-      EventBus.$emit("highlightProfile", profile);
+      EventBus.$emit('profileSelected', profile);
+      EventBus.$emit('highlightProfile', profile);
     },
 
     async goToProfile(evt) {
@@ -297,23 +283,23 @@ export default {
       if (evt) evt.stopPropagation();
       this.error = null;
       this.success = null;
-      logger.publish(4, "profile", "goToProfile:req", this.updatedProfile.id);
-      await this.$store.commit("auth/setAccount", {
+      logger.publish(4, 'profile', 'goToProfile:req', this.updatedProfile.id);
+      await this.$store.commit('auth/setAccount', {
         viewer: true,
-        profile: this.updatedProfile
+        account: this.updatedProfile,
       });
       return this.$router.push({
-        name: "profile",
+        name: 'profile',
         query: {
           profileId: this.updatedProfile.id,
-          profileType: this.updatedProfileType
-        }
+          profileType: this.updatedProfileType,
+        },
       });
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style lang="scss" scoped>
-@import "../../style/profile-inline.scss";
+@import '../../style/profile-inline.scss';
 </style>

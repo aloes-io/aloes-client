@@ -20,28 +20,26 @@
           <img v-if="device.icons" :src="device.icons[0]" class="device-icon" />
         </b-col>
         <b-col cols="6" sm="6" md="4" lg="3" xl="3">
+          <div v-if="device.id">
+            id :
+            <p>{{ device.id }}</p>
+          </div>
           <div>
             devEui :
             <p>{{ device.devEui }}</p>
-          </div>
-          <div>
-            last signal :
-            <p>{{ lastSignal }}</p>
           </div>
         </b-col>
         <b-col cols="6" sm="6" md="4" lg="3" xl="3">
           <div class="device-status">
             status :
-            <img
-              v-if="!device.status"
-              :src="$store.state.style.pictures.deviceOff"
-            />
-            <img
-              v-else-if="device.status"
-              :src="$store.state.style.pictures.deviceOn"
-            />
+            <img v-if="!device.status" :src="$store.state.style.pictures.deviceOff" />
+            <img v-else-if="device.status" :src="$store.state.style.pictures.deviceOn" />
           </div>
           <br />
+          <div>
+            last signal :
+            <p>{{ lastSignal }}</p>
+          </div>
           <div class="device-status">
             frame counter :
             <p>{{ device.frameCounter }}</p>
@@ -57,48 +55,50 @@
     </b-card-body>
     <b-card-footer @click="showToken = !showToken">
       API key :
-      <p v-show="showToken && device.appKey !== null">
-        {{ device.appKey }}
+      <p v-show="showToken && device.apiKey !== null">
+        {{ device.apiKey }}
       </p>
+
+      <!-- refreshtoken button -->
     </b-card-footer>
   </b-card>
 </template>
 
 <script type="text/javascript">
-import qrcode from "qrcode-generator";
-import bCard from "bootstrap-vue/es/components/card/card";
-import bCardBody from "bootstrap-vue/es/components/card/card-body";
-import bCardHeader from "bootstrap-vue/es/components/card/card-header";
-import bCardFooter from "bootstrap-vue/es/components/card/card-footer";
+import qrcode from 'qrcode-generator';
+import bCard from 'bootstrap-vue/es/components/card/card';
+import bCardBody from 'bootstrap-vue/es/components/card/card-body';
+import bCardHeader from 'bootstrap-vue/es/components/card/card-header';
+import bCardFooter from 'bootstrap-vue/es/components/card/card-footer';
 
 export default {
-  name: "DeviceCard",
+  name: 'DeviceCard',
 
   components: {
-    "b-card": bCard,
-    "b-card-body": bCardBody,
-    "b-card-footer": bCardFooter,
-    "b-card-header": bCardHeader
+    'b-card': bCard,
+    'b-card-body': bCardBody,
+    'b-card-footer': bCardFooter,
+    'b-card-header': bCardHeader,
   },
 
   props: {
     device: {
       type: Object,
       required: true,
-      default: null
+      default: null,
     },
-    "new-device": {
+    'new-device': {
       type: Boolean,
       required: false,
-      default: false
-    }
+      default: false,
+    },
   },
 
   data() {
     return {
       showToken: false,
       typeNumber: 0,
-      errorCorrectionLevel: "M"
+      errorCorrectionLevel: 'M',
     };
   },
 
@@ -109,10 +109,11 @@ export default {
       // } else if (this.device.accountId === this.$store.state.auth.account.id.toString() && this.$props.newDevice) {
       //   return "editor";
       // }
-      return "viewer";
+      return 'viewer';
     },
     lastSignal() {
-      return this.$moment(this.device.lastSignal).format("DD-MM-YY - HH:mm");
+      //  return this.$moment(this.device.lastSignal).format('DD-MM-YY - HH:mm');
+      return this.device.lastSignal;
     },
     showAppKey: {
       get() {
@@ -120,13 +121,13 @@ export default {
         //   return this.shownToken;
         // }
         return true;
-      }
+      },
       // set(value) {
       //   if (this.device.accountId === this.$store.state.auth.account.id.toString()) {
       //     this.shownToken = value;
       //   }
       // },
-    }
+    },
   },
 
   mounted() {
@@ -146,12 +147,21 @@ export default {
       this.qr = qrcode(this.typeNumber, this.errorCorrectionLevel);
       this.qr.addData(data);
       this.qr.make();
-      this.$el.querySelector("#qr-holder").innerHTML = this.qr.createImgTag();
-    }
-  }
+      this.$el.querySelector('#qr-holder').innerHTML = this.qr.createImgTag();
+    },
+
+    async refreshtoken(deviceId) {
+      // prompt for confirm
+      const device = await this.$store.dispatch('device/refreshtoken', deviceId);
+      if (device && device.apiKey) {
+        return true;
+      }
+      return false;
+    },
+  },
 };
 </script>
 
 <style lang="scss" scoped>
-@import "../../style/device-card.scss";
+@import '../../style/device-card.scss';
 </style>

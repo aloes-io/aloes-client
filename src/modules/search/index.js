@@ -1,38 +1,21 @@
-import * as actions from "./actions";
-import * as mutations from "./mutations";
+import * as actions from './actions';
+import * as mutations from './mutations';
 
 export default {
   namespaced: true,
   state: {
-    collectionName: "Search",
-    resources: "Searches",
+    collectionName: 'Search',
+    resources: 'Searches',
     filter: null,
     model: {
-      profileType: null,
       location: null,
-      yogaStyle: null,
-      certifiedYA: null,
       statusFilter: false,
-      expressFilter: false,
-      favoriteFilter: false,
-      profileSelected: null,
-      appointment: {
-        type: null,
-        yogaStyle: null,
-        start: "",
-        end: "",
-        allDay: false,
-        dow: [],
-        moy: [],
-        repeat: 0,
-        recurStart: "",
-        recurEnd: ""
-      },
+      deviceSelected: null,
       results: [],
       success: null,
-      error: null
-    }
+      error: null,
+    },
   },
   mutations,
-  actions
+  actions,
 };

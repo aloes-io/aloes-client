@@ -48,32 +48,32 @@
 </template>
 
 <script type="text/javascript">
-import bAlert from "bootstrap-vue/es/components/alert/alert";
-import bButton from "bootstrap-vue/es/components/button/button";
-import bCard from "bootstrap-vue/es/components/card/card";
-import bForm from "bootstrap-vue/es/components/form/form";
-import FooterContainer from "@/views/containers/FooterContainer.vue";
+import bAlert from 'bootstrap-vue/es/components/alert/alert';
+import bButton from 'bootstrap-vue/es/components/button/button';
+import bCard from 'bootstrap-vue/es/components/card/card';
+import bForm from 'bootstrap-vue/es/components/form/form';
+import FooterContainer from '@/views/containers/FooterContainer.vue';
 
 export default {
-  name: "ResetPassword",
+  name: 'ResetPassword',
 
   components: {
-    "b-alert": bAlert,
-    "b-button": bButton,
-    "b-card": bCard,
-    "b-form": bForm,
-    "footer-container": FooterContainer
+    'b-alert': bAlert,
+    'b-button': bButton,
+    'b-card': bCard,
+    'b-form': bForm,
+    'footer-container': FooterContainer,
   },
 
   props: {
-    userId: {
+    'user-id': {
       type: String,
-      default: null
+      default: null,
     },
-    token: {
+    'access-token': {
       type: String,
-      default: null
-    }
+      default: null,
+    },
   },
 
   data() {
@@ -83,7 +83,6 @@ export default {
       error: null,
       loading: false,
       success: null,
-      accessToken: null
     };
   },
 
@@ -98,18 +97,21 @@ export default {
 
       if (this.newPassword !== this.confirmPassword) {
         this.loading = false;
-        this.error = new Error("Les mots de passe ne correspondent pas");
+        this.error = new Error('Les mots de passe ne correspondent pas');
         return;
       }
-      this.accessToken = { id: this.$props.token, userId: this.$props.userId };
+      const accessToken = {
+        id: this.$props.accessToken,
+        userId: this.$props.userId,
+      };
       this.$store
-        .dispatch("auth/updatePasswordFromToken", {
-          accessToken: this.accessToken,
-          newPassword: this.newPassword
+        .dispatch('auth/updatePasswordFromToken', {
+          accessToken,
+          newPassword: this.newPassword,
         })
         .then(() => {
           this.loading = false;
-          this.success = { message: "Le mot de passe a été mis à jour" };
+          this.success = { message: 'Le mot de passe a été mis à jour' };
         })
         .catch(err => {
           this.error = err;
@@ -118,13 +120,13 @@ export default {
     },
 
     goHome() {
-      this.$router.push({ name: "login" });
+      this.$router.push({ name: 'login' });
       //  this.$router.go(-1);
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style lang="scss" scoped>
-@import "../style/reset-password.scss";
+@import '../style/reset-password.scss';
 </style>

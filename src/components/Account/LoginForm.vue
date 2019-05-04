@@ -6,7 +6,7 @@
       v-model="email"
       type="email"
       autocomplete="email"
-      placeholder="Votre adresse email"
+      placeholder="Email address"
       required
     />
     <b-form-input
@@ -15,14 +15,14 @@
       v-model="password"
       type="password"
       autocomplete="current-password"
-      placeholder="Votre mot de passe"
+      placeholder="Your password"
       required
       plain
       @keypress.native.enter="onLogin"
     />
     <label class="container">
       <small class="label-title">
-        Se souvenir de moi
+        Remember me
       </small>
       <input v-model="rememberMe" type="checkbox" checked="checked" />
       <span class="checkmark" />
@@ -31,15 +31,15 @@
 </template>
 
 <script type="text/javascript">
-import bForm from "bootstrap-vue/es/components/form/form";
-import bFormInput from "bootstrap-vue/es/components/form-input/form-input";
+import bForm from 'bootstrap-vue/es/components/form/form';
+import bFormInput from 'bootstrap-vue/es/components/form-input/form-input';
 
 export default {
-  name: "LoginForm",
+  name: 'LoginForm',
 
   components: {
-    "b-form": bForm,
-    "b-form-input": bFormInput
+    'b-form': bForm,
+    'b-form-input': bFormInput,
   },
 
   // props: {
@@ -53,7 +53,7 @@ export default {
     return {
       show: true,
       dismissSecs: 4,
-      dismissCountDown: 0
+      dismissCountDown: 0,
     };
   },
 
@@ -63,56 +63,56 @@ export default {
         return this.$store.state.auth.login.email;
       },
       set(value) {
-        this.$store.commit("auth/setLoginKV", {
-          key: "email",
-          value
+        this.$store.commit('auth/setLoginKV', {
+          key: 'email',
+          value,
         });
-      }
+      },
     },
     password: {
       get() {
         return this.$store.state.auth.login.password;
       },
       set(value) {
-        this.$store.commit("auth/setLoginKV", {
-          key: "password",
-          value
+        this.$store.commit('auth/setLoginKV', {
+          key: 'password',
+          value,
         });
-      }
+      },
     },
     loading: {
       get() {
         return this.$store.state.auth.login.loading;
       },
       set(value) {
-        this.$store.commit("auth/setLoginKV", {
-          key: "loading",
-          value
+        this.$store.commit('auth/setLoginKV', {
+          key: 'loading',
+          value,
         });
-      }
+      },
     },
     error: {
       get() {
         return this.$store.state.auth.login.error;
       },
       set(value) {
-        this.$store.commit("auth/setLoginKV", {
-          key: "error",
-          value
+        this.$store.commit('auth/setLoginKV', {
+          key: 'error',
+          value,
         });
-      }
+      },
     },
     rememberMe: {
       get() {
         return this.$store.state.auth.login.save;
       },
       set(value) {
-        this.$store.commit("auth/setLoginKV", {
-          key: "save",
-          value
+        this.$store.commit('auth/setLoginKV', {
+          key: 'save',
+          value,
         });
-      }
-    }
+      },
+    },
   },
 
   mounted() {
@@ -127,53 +127,53 @@ export default {
       if (evt) evt.stopPropagation();
 
       try {
-        const accessToken = await this.$store.dispatch("auth/signIn", {
+        const accessToken = await this.$store.dispatch('auth/signIn', {
           email: this.email,
           password: this.password,
-          save: this.save
+          save: this.save,
         });
         this.loading = false;
         if (accessToken && accessToken.id) {
           return this.$router.push({
-            name: "account",
+            name: 'account',
             query: {
-              token: accessToken.id,
-              userId: accessToken.userId
-            }
+              'access-token': accessToken.id,
+              'user-id': accessToken.userId,
+            },
           });
-        } else if (accessToken === "LOGIN_FAILED_EMAIL_NOT_VERIFIED") {
+        } else if (accessToken === 'LOGIN_FAILED_EMAIL_NOT_VERIFIED') {
           this.errorCounter += 1;
           this.error = {
-            code: "NOT_VERIFIED",
-            message: "Have you received confirmation link ?"
+            code: 'NOT_VERIFIED',
+            message: 'Have you received confirmation link ?',
           };
           return this.error;
         }
         this.errorCounter += 1;
         this.error = {
-          message: "Your password seems incorrect"
+          message: 'Your password seems incorrect',
         };
         return this.error;
       } catch (error) {
         this.loading = false;
         this.errorCounter += 1;
-        if (error.details && error.code === "LOGIN_FAILED_EMAIL_NOT_VERIFIED") {
+        if (error.details && error.code === 'LOGIN_FAILED_EMAIL_NOT_VERIFIED') {
           this.error = {
-            code: "NOT_VERIFIED",
-            message: "Have you received confirmation link ?"
+            code: 'NOT_VERIFIED',
+            message: 'Have you received confirmation link ?',
           };
         } else {
           this.error = {
-            message: "Your password seems incorrect"
+            message: 'Your password seems incorrect',
           };
         }
         return this.error;
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style lang="scss" scoped>
-@import "../../style/login-form.scss";
+@import '../../style/login-form.scss';
 </style>

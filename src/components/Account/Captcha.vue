@@ -20,22 +20,19 @@
 
 <script type="text/javascript">
 export default {
-  name: "Captcha",
+  name: 'Captcha',
 
   data() {
     return {
       coinHiveVerification: true,
-      recaptchaScript: null
+      recaptchaScript: null,
     };
   },
 
   created() {
-    this.recaptchaScript = document.createElement("script");
-    this.recaptchaScript.setAttribute(
-      "src",
-      "https://authedmine.com/lib/captcha.min.js"
-    );
-    this.recaptchaScript.setAttribute("async", true);
+    this.recaptchaScript = document.createElement('script');
+    this.recaptchaScript.setAttribute('src', 'https://authedmine.com/lib/captcha.min.js');
+    this.recaptchaScript.setAttribute('async', true);
     document.body.appendChild(this.recaptchaScript);
   },
 
@@ -60,14 +57,14 @@ export default {
       token = target[4].value;
       //  console.log("captcha token :", token);
       return this.$store
-        .dispatch("auth/verifyCaptcha", token)
+        .dispatch('auth/verifyCaptcha', token)
         .then(res => res)
         .catch(err => err);
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style lang="scss">
-@import "../../style/captcha.scss";
+@import '../../style/captcha.scss';
 </style>

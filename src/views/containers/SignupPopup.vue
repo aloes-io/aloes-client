@@ -11,37 +11,33 @@
     @shown="onModalShown"
     @hidden="onModalHidden"
   >
-    <img
-      :src="$store.state.style.pictures.logo"
-      alt="Aloes logo"
-      class="header-popup-image"
-    />
+    <img :src="$store.state.style.pictures.logo" alt="Aloes logo" class="header-popup-image" />
     <sign-up />
   </b-modal>
 </template>
 
 <script type="text/javascript">
-import bModal from "bootstrap-vue/es/components/modal/modal";
-import Signup from "@/components/Account/Signup.vue";
+import bModal from 'bootstrap-vue/es/components/modal/modal';
+import Signup from '@/components/Account/Signup.vue';
 
 export default {
-  name: "signupPopup",
+  name: 'signupPopup',
 
   components: {
-    "b-modal": bModal,
-    "sign-up": Signup
+    'b-modal': bModal,
+    'sign-up': Signup,
   },
 
   props: {
     sessionError: {
       type: Error,
-      default: null
-    }
+      default: null,
+    },
   },
 
   data() {
     return {
-      newTabIndex: 0
+      newTabIndex: 0,
     };
   },
 
@@ -50,8 +46,8 @@ export default {
       handler(err) {
         this.error = err;
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
 
   mounted() {
@@ -76,11 +72,11 @@ export default {
 
     showModal() {
       this.$refs.signupPopup.show();
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style lang="scss">
-@import "../../style/login-popup.scss";
+@import '../../style/login-popup.scss';
 </style>

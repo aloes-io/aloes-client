@@ -4,19 +4,10 @@
       <h6 class="profile-title">Favorite colors</h6>
       <b-row v-if="!viewer && editorMode">
         <b-col sm="5" md="4" lg="3" xl="2">
-          <b-form-select
-            v-model="favoriteColor"
-            :options="palette"
-            size="sm"
-            required
-          />
+          <b-form-select v-model="favoriteColor" :options="palette" size="sm" required />
         </b-col>
         <b-col sm="1">
-          <b-button
-            size="sm"
-            class="favorite-color-button"
-            @click="addFavoriteColor"
-          >
+          <b-button size="sm" class="favorite-color-button" @click="addFavoriteColor">
             <i class="fa fa-plus " />
           </b-button>
         </b-col>
@@ -54,35 +45,35 @@
 </template>
 
 <script type="text/javascript">
-import bButton from "bootstrap-vue/es/components/button/button";
-import bCard from "bootstrap-vue/es/components/card/card";
-import bFormSelect from "bootstrap-vue/es/components/form-select/form-select";
+import bButton from 'bootstrap-vue/es/components/button/button';
+import bCard from 'bootstrap-vue/es/components/card/card';
+import bFormSelect from 'bootstrap-vue/es/components/form-select/form-select';
 
 export default {
-  name: "ProfileDescription",
+  name: 'ProfileDescription',
 
   components: {
-    "b-button": bButton,
-    "b-card": bCard,
-    "b-form-select": bFormSelect
+    'b-button': bButton,
+    'b-card': bCard,
+    'b-form-select': bFormSelect,
   },
 
   props: {
-    "is-viewer": {
+    'is-viewer': {
       type: Boolean,
-      default: true
+      default: true,
     },
-    "edit-mode": {
+    'edit-mode': {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
 
   data() {
     return {
       viewer: true,
       editorMode: false,
-      favoriteColor: null
+      favoriteColor: null,
     };
   },
 
@@ -90,7 +81,7 @@ export default {
     palette: {
       get() {
         return this.$store.state.style.palette;
-      }
+      },
     },
     description: {
       get() {
@@ -100,11 +91,11 @@ export default {
         return this.$store.state.auth.account.description;
       },
       set(value) {
-        this.$store.commit("auth/setModelKV", {
-          key: "description",
-          value
+        this.$store.commit('auth/setModelKV', {
+          key: 'description',
+          value,
         });
-      }
+      },
     },
     favoriteColors: {
       get() {
@@ -114,13 +105,13 @@ export default {
         return this.$store.state.auth.account.favoriteColors;
       },
       set(value) {
-        this.$store.commit("auth/setAccountList", {
-          command: "add",
-          list: "favoriteColors",
-          value
+        this.$store.commit('auth/setAccountList', {
+          command: 'add',
+          list: 'favoriteColors',
+          value,
         });
-      }
-    }
+      },
+    },
   },
 
   watch: {
@@ -128,14 +119,14 @@ export default {
       handler(state) {
         this.viewer = state;
       },
-      immediate: true
+      immediate: true,
     },
     editMode: {
       handler(mode) {
         this.editorMode = mode;
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
 
   methods: {
@@ -143,9 +134,7 @@ export default {
       if (evt) evt.preventDefault();
       if (evt) evt.stopPropagation();
       if (this.favoriteColor) {
-        const found = this.favoriteColors.find(
-          practice => practice === this.favoriteColor
-        );
+        const found = this.favoriteColors.find(practice => practice === this.favoriteColor);
         if (!found) {
           this.favoriteColors = this.favoriteColor;
         }
@@ -153,16 +142,16 @@ export default {
     },
 
     delFavoriteColor(index) {
-      this.$store.commit("auth/setModelList", {
-        command: "del",
-        list: "favoriteColors",
-        value: index
+      this.$store.commit('auth/setModelList', {
+        command: 'del',
+        list: 'favoriteColors',
+        value: index,
       });
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style lang="scss" scoped>
-@import "../../style/profile-description.scss";
+@import '../../style/profile-description.scss';
 </style>

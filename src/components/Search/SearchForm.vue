@@ -1,17 +1,6 @@
 <template lang="html">
-  <b-form class="search-form" @submit="searchProfiles">
+  <b-form class="search-form" @submit="searchDevices">
     <b-row align-h="center">
-      <b-col cols="12" sm="5" md="5" lg="4" xl="4">
-        <b-form-input
-          id="search-name"
-          v-model="nameSearch"
-          :required="!placeSearch"
-          :placeholder="profileNameInput"
-          type="text"
-          size="sm"
-          autocomplete="search"
-        />
-      </b-col>
       <b-col cols="12" sm="5" md="5" lg="5" xl="5">
         <b-form-input
           id="search-place"
@@ -37,30 +26,29 @@
 </template>
 
 <script type="text/javascript">
-import moment from "moment";
-import bButton from "bootstrap-vue/es/components/button/button";
-import bForm from "bootstrap-vue/es/components/form/form";
-import bFormInput from "bootstrap-vue/es/components/form-input/form-input";
-import logger from "@/services/logger";
+import bButton from 'bootstrap-vue/es/components/button/button';
+import bForm from 'bootstrap-vue/es/components/form/form';
+import bFormInput from 'bootstrap-vue/es/components/form-input/form-input';
+import logger from '@/services/logger';
 
 export default {
-  name: "SearchForm",
+  name: 'SearchForm',
 
   components: {
-    "b-button": bButton,
-    "b-form": bForm,
-    "b-form-input": bFormInput
+    'b-button': bButton,
+    'b-form': bForm,
+    'b-form-input': bFormInput,
   },
 
   props: {
     token: {
       type: String,
-      default: ""
+      default: '',
     },
-    "user-id": {
+    'user-id': {
       type: [String, Number],
-      default: null
-    }
+      default: null,
+    },
   },
 
   data() {
@@ -68,7 +56,7 @@ export default {
       nameSearch: null,
       placeSearch: null,
       dateSearch: null,
-      searchFields: null
+      searchFields: null,
     };
   },
 
@@ -76,142 +64,82 @@ export default {
     accountType: {
       get() {
         return this.$store.state.auth.account.type;
-      }
-    },
-    profileNameInput: {
-      get() {
-        if (this.accountType === "Teacher") {
-          return "Nom du studio";
-        }
-        return "Nom du professeur";
-      }
+      },
     },
     profileType: {
       get() {
         return this.$store.state.search.model.profileType;
       },
       set(value) {
-        this.$store.commit("search/setModelKV", { key: "profileType", value });
-      }
-    },
-    yogaStyleFilter: {
-      get() {
-        return this.$store.state.search.model.yogaStyle;
-      }
-    },
-    certifiedYA: {
-      get() {
-        return this.$store.state.search.model.certifiedYA;
-      }
+        this.$store.commit('search/setModelKV', { key: 'profileType', value });
+      },
     },
     statusFilter: {
       get() {
         return this.$store.state.search.model.statusFilter;
-      }
-    },
-    expressFilter: {
-      get() {
-        return this.$store.state.search.model.expressFilter;
-      }
-    },
-    favoriteFilter: {
-      get() {
-        return this.$store.state.search.model.favoriteFilter;
-      }
-    },
-    appointmentFields: {
-      get() {
-        return this.$store.state.search.model.appointment;
-      }
+      },
     },
     searchLocation: {
       get() {
         return this.$store.state.search.model.location;
       },
       set(value) {
-        this.$store.commit("search/setModelKV", { key: "location", value });
-      }
+        this.$store.commit('search/setModelKV', { key: 'location', value });
+      },
     },
     searchResults: {
       get() {
         return this.$store.state.search.model.results;
       },
       set(value) {
-        this.$store.commit("search/setModelKV", { key: "results", value });
-      }
+        this.$store.commit('search/setModelKV', { key: 'results', value });
+      },
     },
     searchError: {
       get() {
         return this.$store.state.search.model.error;
       },
       set(value) {
-        this.$store.commit("search/setModelKV", { key: "error", value });
-      }
+        this.$store.commit('search/setModelKV', { key: 'error', value });
+      },
     },
     searchSuccess: {
       get() {
         return this.$store.state.search.model.success;
       },
       set(value) {
-        this.$store.commit("search/setModelKV", { key: "success", value });
-      }
-    }
+        this.$store.commit('search/setModelKV', { key: 'success', value });
+      },
+    },
   },
 
   mounted() {
-    this.$store.commit("search/cleanSearch");
+    this.$store.commit('search/cleanSearch');
   },
 
   beforeDestroy() {
-    this.$store.commit("search/cleanSearch");
+    this.$store.commit('search/cleanSearch');
   },
 
   methods: {
-    async searchProfiles(evt) {
+    async searchDevices(evt) {
       if (evt) evt.preventDefault();
       if (evt) evt.stopPropagation();
       this.searchError = null;
       this.searchSuccess = null;
       this.dateSearch = null;
-      let start, end;
-
-      if (!this.nameSearch && !this.placeSearch) {
-        this.searchError = new Error(
-          "Veuillez remplir au moins un champ de recherche"
-        );
+      if (!this.placeSearch) {
+        this.searchError = new Error('Please fill where field');
         return this.searchError;
-      }
-      if (this.appointmentFields.recurStart && this.appointmentFields.start) {
-        start = moment(
-          `${this.appointmentFields.recurStart} ${
-            this.appointmentFields.start
-          }:00`,
-          "YYYY-MM-DD hh:mm:ss"
-        ).toDate();
-        this.dateSearch = true;
-      }
-      if (this.appointmentFields.recurEnd && this.appointmentFields.end) {
-        end = moment(
-          `${this.appointmentFields.recurEnd} ${this.appointmentFields.end}:00`,
-          "YYYY-MM-DD hh:mm:ss"
-        ).toDate();
-        this.dateSearch = true;
       }
 
       const filter = {
-        name: this.nameSearch,
         place: this.placeSearch,
-        status: this.statusFilter,
-        expressYogi: this.expressFilter,
-        yogaStyle: this.yogaStyleFilter,
-        certifiedYA: this.certifiedYA,
-        favorites: this.favoriteFilter,
-        appointment: this.dateSearch ? { start, end } : null,
-        accountType: this.accountType
+        accountType: this.accountType,
       };
-      logger.publish(4, "search", "composeFilter:req", filter);
+      logger.publish(4, 'search', 'composeFilter:req', filter);
       const profiles = await this.$store
-        .dispatch(`search/searchProfiles`, filter)
+        .dispatch(`search/searchDevices`, filter)
         .then(res => res)
         .catch(err => err);
       //  this.$store.commit('search/cleanSearch');
@@ -219,21 +147,21 @@ export default {
       return profiles;
     },
 
-    async getProfilesByGeolocation(position) {
+    async getDevicesByGeolocation(position) {
       const location = {
         lat: position.coords.latitude,
-        lng: position.coords.longitude
+        lng: position.coords.longitude,
       };
       this.searchLocation = location;
       const filter = {
         accountType: this.accountType,
         location,
         maxDistance: 1000,
-        unit: "kilometers"
+        unit: 'kilometers',
       };
-      logger.publish(4, "search", "getProfilesByGeolocation:req", filter);
+      logger.publish(4, 'search', 'getDevicesByGeolocation:req', filter);
       return this.$store
-        .dispatch("search/getProfilesByGeolocation", filter)
+        .dispatch('search/getDevicesByGeolocation', filter)
         .then(res => res)
         .catch(err => err);
       //  return profiles;
@@ -244,56 +172,46 @@ export default {
         case error.PERMISSION_DENIED:
           logger.publish(
             4,
-            "search",
-            "showLocationError:err",
-            "User denied the request for Geolocation."
+            'search',
+            'showLocationError:err',
+            'User denied the request for Geolocation.',
           );
           this.searchError = {
-            message: "Vous avez refusé la géolocalisation"
+            message: 'User denied the request for Geolocation.',
           };
           break;
         case error.POSITION_UNAVAILABLE:
           logger.publish(
             4,
-            "search",
-            "showLocationError:err",
-            "Location information is unavailable."
+            'search',
+            'showLocationError:err',
+            'Location information is unavailable.',
           );
-          this.searchError = new Error(
-            "Information de géolocalisation indisponible"
-          );
+          this.searchError = {
+            message: `Location information is unavailable.`,
+          };
           break;
         case error.TIMEOUT:
           logger.publish(
             4,
-            "search",
-            "showLocationError:err",
-            "The request to get user location timed out."
+            'search',
+            'showLocationError:err',
+            'The request to get user location timed out.',
           );
           this.searchError = {
-            message: "Le durée limite de la requête a été dépassée"
+            message: 'The request to get user location timed out.',
           };
           break;
         case error.UNKNOWN_ERROR:
-          logger.publish(
-            4,
-            "search",
-            "showLocationError:err",
-            "An unknown error occurred."
-          );
+          logger.publish(4, 'search', 'showLocationError:err', 'An unknown error occurred.');
           this.searchError = {
-            message: `Une erreur inconnue s'est produite, veuillez réessayer`
+            message: `An unknown error occurred.`,
           };
           break;
         default:
-          logger.publish(
-            4,
-            "search",
-            "showLocationError:err",
-            "An unknown error occurred."
-          );
+          logger.publish(4, 'search', 'showLocationError:err', 'An unknown error occurred.');
           this.searchError = {
-            message: `Une erreur inconnue s'est produite, veuillez réessayer`
+            message: `An unknown error occurred.`,
           };
       }
     },
@@ -303,33 +221,31 @@ export default {
       if (evt) evt.stopPropagation();
       this.searchSuccess = false;
       this.searchError = null;
-      const userCoordinates = this.$store.state[
-        `${this.accountType.toLowerCase()}`
-      ].profileAddress.coordinates;
+      const userCoordinates = this.$store.state.address.profileAddress.coordinates;
       if (userCoordinates) {
         const position = {
           coords: {
             latitude: userCoordinates.lat,
-            longitude: userCoordinates.lng
-          }
+            longitude: userCoordinates.lng,
+          },
         };
-        logger.publish(4, "search", "getUserLocation:req", position);
-        this.getProfilesByGeolocation(position);
+        logger.publish(4, 'search', 'getUserLocation:req', position);
+        this.getDevicesByGeolocation(position);
       } else if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
-          this.getProfilesByGeolocation,
-          this.showLocationError
+          this.getDevicesByGeolocation,
+          this.showLocationError,
         );
       } else {
         this.searchError = new Error(
-          `La géolocalisation n'est pas supportée par votre navigateur, veuillez entrer une addresse dans votre profil pour l'utiliser comme référence.`
+          `Geolocation not supported by your browser, fill the address field in your settings.`,
         );
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style lang="scss" scoped>
-@import "../../style/search-form.scss";
+@import '../../style/search-form.scss';
 </style>

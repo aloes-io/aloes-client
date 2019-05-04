@@ -1,9 +1,5 @@
 <template lang="html">
-  <b-form
-    ref="form"
-    class="forgot-form-view"
-    @submit.prevent="sendRecoverEmail"
-  >
+  <b-form ref="form" class="forgot-form-view" @submit.prevent="sendRecoverEmail">
     <b-form-group
       id="reset-password-group"
       label="Entrez l'adresse email de votre compte"
@@ -26,17 +22,17 @@
 </template>
 
 <script type="text/javascript">
-import bForm from "bootstrap-vue/es/components/form/form";
-import bFormGroup from "bootstrap-vue/es/components/form-group/form-group";
-import bFormInput from "bootstrap-vue/es/components/form-input/form-input";
+import bForm from 'bootstrap-vue/es/components/form/form';
+import bFormGroup from 'bootstrap-vue/es/components/form-group/form-group';
+import bFormInput from 'bootstrap-vue/es/components/form-input/form-input';
 
 export default {
-  name: "ForgotPassword",
+  name: 'ForgotPassword',
 
   components: {
-    "b-form": bForm,
-    "b-form-group": bFormGroup,
-    "b-form-input": bFormInput
+    'b-form': bForm,
+    'b-form-group': bFormGroup,
+    'b-form-input': bFormInput,
   },
 
   data() {
@@ -49,45 +45,45 @@ export default {
         return this.$store.state.auth.forgotPassword.loading;
       },
       set(value) {
-        this.$store.commit("auth/setForgotPasswordKV", {
-          key: "loading",
-          value
+        this.$store.commit('auth/setForgotPasswordKV', {
+          key: 'loading',
+          value,
         });
-      }
+      },
     },
     error: {
       get() {
         return this.$store.state.auth.forgotPassword.error;
       },
       set(value) {
-        this.$store.commit("auth/setForgotPasswordKV", {
-          key: "error",
-          value
+        this.$store.commit('auth/setForgotPasswordKV', {
+          key: 'error',
+          value,
         });
-      }
+      },
     },
     success: {
       get() {
         return this.$store.state.auth.forgotPassword.success;
       },
       set(value) {
-        this.$store.commit("auth/setForgotPasswordKV", {
-          key: "success",
-          value
+        this.$store.commit('auth/setForgotPasswordKV', {
+          key: 'success',
+          value,
         });
-      }
+      },
     },
     email: {
       get() {
         return this.$store.state.auth.forgotPassword.email;
       },
       set(value) {
-        this.$store.commit("auth/setForgotPasswordKV", {
-          key: "email",
-          value
+        this.$store.commit('auth/setForgotPasswordKV', {
+          key: 'email',
+          value,
         });
-      }
-    }
+      },
+    },
   },
 
   mounted() {},
@@ -102,19 +98,19 @@ export default {
       if (evt) evt.preventDefault();
       if (evt) evt.stopPropagation();
       return this.$store
-        .dispatch("auth/rememberPassword", this.email)
+        .dispatch('auth/rememberPassword', this.email)
         .then(() => {
           this.loading = false;
           this.success = {
-            message: "Un mail pour créer un nouveau mot de passe a été envoyé"
+            message: 'Un mail pour créer un nouveau mot de passe a été envoyé',
           };
           return this.success;
         })
         .catch(err => {
-          if (err.details && err.code === "EMAIL_NOT_FOUND") {
+          if (err.details && err.code === 'EMAIL_NOT_FOUND') {
             this.error = {
               code: err.code,
-              message: "Addresse email introuvable"
+              message: 'Addresse email introuvable',
             };
           } else {
             this.error = err;
@@ -131,11 +127,11 @@ export default {
       //   return this.error;
       // }
       //  return null;
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style lang="scss" scoped>
-@import "../../style/forgot-password.scss";
+@import '../../style/forgot-password.scss';
 </style>

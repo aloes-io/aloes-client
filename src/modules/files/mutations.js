@@ -7,16 +7,16 @@ export function setUploadedFile(state, { resourceType, role, file }) {
 
 export function setUploadedFileUrl(state, { resourceType, role, url }) {
   switch (resourceType) {
-    case "Audios":
+    case 'Audios':
       state.Audios[role].url.pop();
       state.Audios[role].url.push(`${state.serverUrl}${url}`);
       //  console.log(`setUploadedFileUrl (Audios) : ${state[resourceType][role].url}`);
       break;
-    case "Images":
+    case 'Images':
       state[resourceType][role].url = `${state.serverUrl}${url}`;
       //  console.log(`setUploadedFileUrl (Images) : ${state[resourceType][role].url}`);
       break;
-    case "Document":
+    case 'Document':
       state[resourceType][role].url = `${state.serverUrl}${url}`;
       //  console.log(`setUploadedFileUrl (Images) : ${state[resourceType][role].url}`);
       break;

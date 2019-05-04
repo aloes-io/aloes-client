@@ -1,19 +1,10 @@
 <template lang="html">
-  <b-navbar
-    :class="className"
-    toggleable
-    toggle-breakpoint="sm"
-    class="header-container"
-  >
+  <b-navbar :class="className" toggleable toggle-breakpoint="sm" class="header-container">
     <b-navbar-toggle target="nav_collapse" />
-    <b-navbar-brand :to="{ name: 'home' }" class="logo w-45">
+    <b-navbar-brand :to="{ name: 'home' }" class="logo w-45 mr">
       <b-row>
         <b-col cols="5" sm="5">
-          <img
-            :src="$store.state.style.pictures.logo"
-            alt="aloes logo"
-            class="brand-logo"
-          />
+          <img :src="$store.state.style.pictures.logo" alt="aloes logo" class="brand-logo" />
         </b-col>
         <b-col cols="7" sm="7">
           <p class="brand-font">
@@ -23,8 +14,7 @@
       </b-row>
     </b-navbar-brand>
     <b-collapse id="nav_collapse" is-nav>
-      <b-navbar-nav v-if="!access_token || !account" class="w-55 ml-auto">
-        <!-- <login-form-inline/> -->
+      <b-navbar-nav v-if="!access_token || access_token === null" class="w-55">
         <b-nav-item @click.prevent.stop="$refs.loginPopup.showModal()">
           Signin
         </b-nav-item>
@@ -34,18 +24,26 @@
         <login-popup ref="loginPopup" />
         <signup-popup ref="signupPopup" />
       </b-navbar-nav>
-      <b-navbar-nav v-else-if="access_token && account" class="w-55 ml-auto ml">
+      <b-navbar-nav v-else-if="access_token && !account" class="w-55">
+        <b-nav-item @click.prevent.stop="onLogoutClick">
+          <b-img :src="$store.state.style.pictures.signOut" class="thumb-icon" />
+        </b-nav-item>
+      </b-navbar-nav>
+      <b-navbar-nav v-else-if="access_token && account" class="w-55">
         <b-nav-item
           :to="{
             name: 'search',
-            query: { token: access_token.id, userId: access_token.userId }
+            query: {
+              ['access-token']: access_token.id,
+              ['user-id']: access_token.userId,
+            },
           }"
         >
           <b-img :src="$store.state.style.pictures.search" class="thumb-icon" />
         </b-nav-item>
         <b-nav-item
           :to="{
-            name: 'team'
+            name: 'team',
           }"
         >
           <b-img :src="$store.state.style.pictures.team" class="thumb-icon" />
@@ -54,7 +52,27 @@
           :disabled="!account.subscribed.startsWith('paid')"
           :to="{
             name: 'device',
-            query: { token: access_token.id, userId: access_token.userId }
+            query: {
+              ['access-token']: access_token.id,
+              ['user-id']: access_token.userId,
+            },
+          }"
+        >
+          <b-img
+            v-if="account.subscribed.startsWith('paid')"
+            :src="$store.state.style.pictures.node"
+            class="thumb-icon"
+          />
+          <b-img v-else :src="$store.state.style.pictures.node" class="thumb-icon" />
+        </b-nav-item>
+        <b-nav-item
+          :disabled="!account.subscribed.startsWith('paid')"
+          :to="{
+            name: 'application',
+            query: {
+              ['access-token']: access_token.id,
+              ['user-id']: access_token.userId,
+            },
           }"
         >
           <b-img
@@ -62,18 +80,15 @@
             :src="$store.state.style.pictures.device"
             class="thumb-icon"
           />
-          <b-img
-            v-else
-            :src="$store.state.style.pictures.deviceAlt"
-            class="thumb-icon"
-          />
+          <b-img v-else :src="$store.state.style.pictures.deviceAlt" class="thumb-icon" />
         </b-nav-item>
-        <!--         <notifications-dropdown
-          :account-type="account.type"/> -->
         <b-nav-item
           :to="{
             name: 'account',
-            query: { token: access_token.id, userId: access_token.userId }
+            query: {
+              ['access-token']: access_token.id,
+              ['user-id']: access_token.userId,
+            },
           }"
         >
           <b-img
@@ -81,20 +96,13 @@
             :src="$store.state.auth.account.avatarImgUrl"
             class="thumb-icon"
           />
-          <b-img
-            v-else
-            :src="$store.state.style.pictures.user"
-            class="thumb-icon"
-          />
+          <b-img v-else :src="$store.state.style.pictures.user" class="thumb-icon" />
           <small v-show="screenIsLarge">
             {{ $store.state.auth.account.firstName }}
           </small>
         </b-nav-item>
         <b-nav-item @click.prevent.stop="onLogoutClick">
-          <b-img
-            :src="$store.state.style.pictures.signOut"
-            class="thumb-icon"
-          />
+          <b-img :src="$store.state.style.pictures.signOut" class="thumb-icon" />
         </b-nav-item>
       </b-navbar-nav>
     </b-collapse>
@@ -102,30 +110,28 @@
 </template>
 
 <script type="text/javascript">
-import bCollapse from "bootstrap-vue/es/components/collapse/collapse";
-import bImg from "bootstrap-vue/es/components/image/img";
-import bNavbar from "bootstrap-vue/es/components/navbar/navbar";
-import bNavbarNav from "bootstrap-vue/es/components/navbar/navbar-nav";
-import bNavbarBrand from "bootstrap-vue/es/components/navbar/navbar-brand";
-import bNavbarToggle from "bootstrap-vue/es/components/navbar/navbar-toggle";
-import bNavItem from "bootstrap-vue/es/components/nav/nav-item";
-//  import LoginFormInline from "@/components/Account/LoginFormInline.vue";
+import bCollapse from 'bootstrap-vue/es/components/collapse/collapse';
+import bImg from 'bootstrap-vue/es/components/image/img';
+import bNavbar from 'bootstrap-vue/es/components/navbar/navbar';
+import bNavbarNav from 'bootstrap-vue/es/components/navbar/navbar-nav';
+import bNavbarBrand from 'bootstrap-vue/es/components/navbar/navbar-brand';
+import bNavbarToggle from 'bootstrap-vue/es/components/navbar/navbar-toggle';
+import bNavItem from 'bootstrap-vue/es/components/nav/nav-item';
 //  import NotificationsDropdown from "@/views/containers/NotificationsDropdown.vue";
-import Notification from "@/views/mixins/notification";
+import Notification from '@/views/mixins/notification';
 
 export default {
   components: {
-    "b-collapse": bCollapse,
-    "b-img": bImg,
-    "b-navbar": bNavbar,
-    "b-navbar-nav": bNavbarNav,
-    "b-navbar-brand": bNavbarBrand,
-    "b-navbar-toggle": bNavbarToggle,
-    "b-nav-item": bNavItem,
-    //  "login-form-inline": LoginFormInline,
+    'b-collapse': bCollapse,
+    'b-img': bImg,
+    'b-navbar': bNavbar,
+    'b-navbar-nav': bNavbarNav,
+    'b-navbar-brand': bNavbarBrand,
+    'b-navbar-toggle': bNavbarToggle,
+    'b-nav-item': bNavItem,
     //  "notifications-dropdown": NotificationsDropdown,
-    "login-popup": () => import("@/views/containers/LoginPopup.vue"),
-    "signup-popup": () => import("@/views/containers/SignupPopup.vue")
+    'login-popup': () => import('@/views/containers/LoginPopup.vue'),
+    'signup-popup': () => import('@/views/containers/SignupPopup.vue'),
   },
 
   mixins: [Notification],
@@ -135,19 +141,19 @@ export default {
     access_token: {
       type: Object,
       default: null,
-      required: false
+      required: false,
     },
     account: {
       type: Object,
       default: null,
-      required: false
-    }
+      required: false,
+    },
   },
 
   data() {
     return {
       updatedAccountType: null,
-      showNotifications: false
+      showNotifications: false,
     };
   },
 
@@ -158,23 +164,23 @@ export default {
           return this.$props.account.type.toLowerCase();
         }
         return null;
-      }
+      },
     },
     windowWidth: {
       get() {
         return this.$store.state.windowWidth;
       },
       set(value) {
-        this.$store.commit("setModelKV", { key: "windowWidth", value });
-      }
+        this.$store.commit('setModelKV', { key: 'windowWidth', value });
+      },
     },
     windowHeight: {
       get() {
         return this.$store.state.windowHeight;
       },
       set(value) {
-        this.$store.commit("setModelKV", { key: "windowHeight", value });
-      }
+        this.$store.commit('setModelKV', { key: 'windowHeight', value });
+      },
     },
     screenIsLarge() {
       if (this.windowWidth > 480) {
@@ -183,11 +189,11 @@ export default {
       return false;
     },
     className() {
-      if (this.$route.name === "home") {
-        return "home";
+      if (this.$route.name === 'home') {
+        return 'home';
       }
-      return "out";
-    }
+      return 'out';
+    },
   },
 
   watch: {
@@ -195,22 +201,22 @@ export default {
       handler(state) {
         this.updatedAccountType = state;
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
 
   mounted() {
     this.$nextTick(() => {
-      window.addEventListener("resize", this.getWindowWidth);
-      window.addEventListener("resize", this.getWindowHeight);
+      window.addEventListener('resize', this.getWindowWidth);
+      window.addEventListener('resize', this.getWindowHeight);
       this.getWindowWidth();
       this.getWindowHeight();
     });
   },
 
   beforeDestroy() {
-    window.removeEventListener("resize", this.getWindowWidth);
-    window.removeEventListener("resize", this.getWindowHeight);
+    window.removeEventListener('resize', this.getWindowWidth);
+    window.removeEventListener('resize', this.getWindowHeight);
   },
 
   methods: {
@@ -224,19 +230,25 @@ export default {
 
     async onLogoutClick() {
       this.$router.push({
-        name: "home"
+        name: 'home',
       });
+      if (this.account && this.account !== null) {
+        return setTimeout(() => {
+          this.$store.commit('device/cleanModel');
+          this.$store.commit('team/setTeams', null);
+          //  this.$store.cache.clear()
+          this.$store.dispatch('auth/signOut').catch(this.notifyError);
+        }, 300);
+      }
       return setTimeout(() => {
-        this.$store.commit("device/cleanModel");
-        this.$store.commit("team/setTeams", null);
         //  this.$store.cache.clear()
-        this.$store.dispatch("auth/signOut").catch(this.notifyError);
+        this.$store.dispatch('auth/externalSignOut').catch(this.notifyError);
       }, 300);
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style lang="scss" scoped>
-@import "../../style/header-container.scss";
+@import '../../style/header-container.scss';
 </style>

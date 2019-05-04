@@ -16,7 +16,6 @@
     <file-import
       :ref="`${imgType}Import`"
       :access-token="accessToken"
-      :profile-type="profileType"
       :image-type="imgType"
       resource-type="Images"
     />
@@ -24,37 +23,33 @@
 </template>
 
 <script type="text/javascript">
-import bModal from "bootstrap-vue/es/components/modal/modal";
-import FileImport from "@/components/Files/FileImport.vue";
+import bModal from 'bootstrap-vue/es/components/modal/modal';
+import FileImport from '@/components/Files/FileImport.vue';
 
 export default {
-  name: "FileImport",
+  name: 'FileImport',
 
   components: {
-    "file-import": FileImport,
-    "b-modal": bModal
+    'file-import': FileImport,
+    'b-modal': bModal,
   },
 
   props: {
-    "access-token": {
+    'access-token': {
       type: Object,
-      default: null
+      default: null,
     },
-    "profile-type": {
-      type: String,
-      required: true,
-      default: null
-    },
-    "resource-type": {
+
+    'resource-type': {
       type: String,
       required: false,
-      default: "Images"
+      default: 'Images',
     },
-    "image-type": {
+    'image-type': {
       type: String,
       required: true,
-      default: "Avatar"
-    }
+      default: 'Avatar',
+    },
   },
 
   data() {
@@ -63,22 +58,20 @@ export default {
 
   computed: {
     modalSize() {
-      return this.imgType === "Avatar" ? "sm" : "lg";
+      return this.imgType === 'Avatar' ? 'sm' : 'lg';
     },
     status: {
       get() {
-        return this.$store.state.files[this.$props.resourceType][
-          this.$props.imageType
-        ].status;
+        return this.$store.state.files[this.$props.resourceType][this.$props.imageType].status;
       },
       set(status) {
-        this.$store.commit("files/setUploadStatus", {
+        this.$store.commit('files/setUploadStatus', {
           resourceType: this.$props.resourceType,
           role: this.$props.imageType,
-          status
+          status,
         });
-      }
-    }
+      },
+    },
   },
 
   watch: {
@@ -86,26 +79,22 @@ export default {
       handler(type) {
         this.imgType = type;
       },
-      immediate: true
+      immediate: true,
     },
     windowHeight(newHeight, oldHeight) {
       this.txt = `it changed to ${newHeight} from ${oldHeight}`;
-    }
+    },
   },
 
   updated() {},
 
   methods: {
     hideModal() {
-      this.$refs[
-        `${this.$props.resourceType.toLowerCase()}${this.imgType}Import`
-      ].hide();
+      this.$refs[`${this.$props.resourceType.toLowerCase()}${this.imgType}Import`].hide();
     },
 
     showModal() {
-      this.$refs[
-        `${this.$props.resourceType.toLowerCase()}${this.imgType}Import`
-      ].show();
+      this.$refs[`${this.$props.resourceType.toLowerCase()}${this.imgType}Import`].show();
     },
 
     onModalHidden() {
@@ -115,11 +104,11 @@ export default {
 
     onModalShown() {
       this.$refs[`${this.imgType}Import`].initCroppie();
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style lang="scss">
-@import "../../style/file-import-container.scss";
+@import '../../style/file-import-container.scss';
 </style>

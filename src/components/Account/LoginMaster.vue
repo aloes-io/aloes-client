@@ -7,8 +7,24 @@
       {{ loginSubtitle }}
     </p>
     <b-row align-h="center">
+      <b-col v-for="type in loginTypes" :key="type" sm="3" md="3" lg="2" xl="2">
+        <b-button
+          v-if="type !== 'local'"
+          :href="`${$store.state.serverUrl}${$store.state.restApiRoot}/auth/${type}`"
+          target="_blank"
+          @click.prevent.stop="loginType = type"
+        >
+          {{ type }}
+        </b-button>
+
+        <b-button v-else-if="type === 'local'" @click.prevent.stop="loginType = type">
+          {{ type }}</b-button
+        >
+      </b-col>
+    </b-row>
+    <b-row align-h="center">
       <b-col sm="12" md="10" lg="8" xl="8">
-        <login-form v-if="newTabIndex === 0" ref="login" />
+        <login-form v-if="newTabIndex === 0 && loginType === 'local'" ref="login" />
         <forgot-password v-else-if="newTabIndex === 1" ref="forgotPassword" />
       </b-col>
     </b-row>
@@ -17,10 +33,10 @@
       <b-col sm="12" md="10" lg="8" xl="8">
         <b-button class="return-button" @click="$router.push({ name: 'home' })">
           <i class="fa fa-angle-left" />
-          Retour
+          Back
         </b-button>
         <b-button type="submit" class="login" @click="sendReq">
-          S'identifier
+          Signin
         </b-button>
         <br />
       </b-col>
@@ -32,7 +48,7 @@
             loginError = null;
           "
         >
-          Mot de passe oublié ?
+          Forgot password ?
         </a>
       </b-col>
     </b-row>
@@ -45,10 +61,10 @@
             forgotPasswordError = null;
           "
         >
-          Annuler
+          Cancel
         </b-button>
         <b-button type="submit" class="send" @click="sendReq">
-          Valider
+          Confirm
         </b-button>
       </b-col>
     </b-row>
@@ -62,37 +78,39 @@
 </template>
 
 <script type="text/javascript">
-import bButton from "bootstrap-vue/es/components/button/button";
-import ForgotPassword from "@/components/Account/ForgotPassword.vue";
-import LoginAlert from "@/components/Account/LoginAlert.vue";
-import LoginForm from "@/components/Account/LoginForm.vue";
+import bButton from 'bootstrap-vue/es/components/button/button';
+import ForgotPassword from '@/components/Account/ForgotPassword.vue';
+import LoginAlert from '@/components/Account/LoginAlert.vue';
+import LoginForm from '@/components/Account/LoginForm.vue';
 
 export default {
-  name: "LoginMaster",
+  name: 'LoginMaster',
 
   components: {
-    "b-button": bButton,
-    "forgot-password": ForgotPassword,
-    "login-alert": LoginAlert,
-    "login-form": LoginForm
+    'b-button': bButton,
+    'forgot-password': ForgotPassword,
+    'login-alert': LoginAlert,
+    'login-form': LoginForm,
   },
 
   props: {
     sessionError: {
       type: Error,
-      default: null
+      default: null,
     },
     tabIndex: {
       type: Number,
-      default: 0
-    }
+      default: 0,
+    },
   },
 
   data() {
     return {
       newTabIndex: 0,
+      loginTypes: ['local', 'github'],
+      loginType: null,
       loading: false,
-      error: false
+      error: false,
     };
   },
 
@@ -100,56 +118,56 @@ export default {
     loginTitle: {
       get() {
         if (this.newTabIndex === 0) {
-          return "Bon retour parmi nous";
+          return 'Welcome back';
         } else if (this.newTabIndex === 1) {
-          return "Commençons par trouver votre compte";
+          return "Let's find your account";
         }
-        return "";
-      }
+        return '';
+      },
     },
     loginSubtitle: {
       get() {
         if (this.newTabIndex === 0) {
-          return " Ne manquez pas votre prochaine opportunité ! Identifiez vous pour rester au courant de ce qui se passe dans votre sphère professionnelle.";
+          return `Signin to ${this.$store.state.clientUrl}`;
         } else if (this.newTabIndex === 1) {
-          return "";
+          return '';
         }
-        return "";
-      }
+        return '';
+      },
     },
     loginError: {
       get() {
         return this.$store.state.auth.login.error;
       },
       set(value) {
-        this.$store.commit("auth/setLoginKV", {
-          key: "error",
-          value
+        this.$store.commit('auth/setLoginKV', {
+          key: 'error',
+          value,
         });
-      }
+      },
     },
     forgotPasswordError: {
       get() {
         return this.$store.state.auth.forgotPassword.error;
       },
       set(value) {
-        this.$store.commit("auth/setForgotPasswordKV", {
-          key: "error",
-          value
+        this.$store.commit('auth/setForgotPasswordKV', {
+          key: 'error',
+          value,
         });
-      }
+      },
     },
     forgotPasswordSuccess: {
       get() {
         return this.$store.state.auth.forgotPassword.success;
       },
       set(value) {
-        this.$store.commit("auth/setForgotPasswordKV", {
-          key: "success",
-          value
+        this.$store.commit('auth/setForgotPasswordKV', {
+          key: 'success',
+          value,
         });
-      }
-    }
+      },
+    },
   },
 
   watch: {
@@ -157,14 +175,14 @@ export default {
       handler(err) {
         this.error = err;
       },
-      immediate: true
+      immediate: true,
     },
     tabIndex: {
       handler(index) {
         this.newTabIndex = index;
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
 
   mounted() {
@@ -184,6 +202,12 @@ export default {
   },
 
   methods: {
+    // selectLoginType(type) {
+    //   this.loginType = type;
+    //   if (type !== 'local') {
+    //   }
+    // },
+
     async sendReq(evt) {
       if (evt) evt.preventDefault();
       if (evt) evt.stopPropagation();
@@ -212,31 +236,27 @@ export default {
 
     onVerify() {
       this.forgotPasswordSuccess = null;
-      this.$store.dispatch(
-        "auth/verifyEmail",
-        this.$store.state.auth.forgotPassword.email
-      );
+      this.$store.dispatch('auth/verifyEmail', this.$store.state.auth.forgotPassword.email);
       this.forgotPasswordError = {
-        message:
-          "Un nouveau mail de vérification a été envoyé, l'avez-vous reçu ?"
+        message: 'A new verification email has been sent, have you received it ?',
       };
     },
 
     onReset() {
       if (this.newTabIndex === 0) {
-        this.$store.commit("auth/cleanLogin");
+        this.$store.commit('auth/cleanLogin');
       } else if (this.newTabIndex === 1) {
-        this.$store.commit("auth/cleanForgotPassword");
+        this.$store.commit('auth/cleanForgotPassword');
       }
       this.forgotPasswordError = null;
       this.forgotPasswordSuccess = null;
       this.loginError = null;
       this.newTabIndex = 0;
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style lang="scss" scoped>
-@import "../../style/login-master.scss";
+@import '../../style/login-master.scss';
 </style>

@@ -26,19 +26,19 @@
 </template>
 
 <script>
-import HeaderContainer from "@/views/containers/HeaderContainer.vue";
-import FooterContainer from "@/views/containers/FooterContainer.vue";
-import HomeContainer from "@/views/containers/HomeContainer.vue";
-import SearchContainer from "@/views/containers/SearchContainer.vue";
+import HeaderContainer from '@/views/containers/HeaderContainer.vue';
+import FooterContainer from '@/views/containers/FooterContainer.vue';
+import HomeContainer from '@/views/containers/HomeContainer.vue';
+import SearchContainer from '@/views/containers/SearchContainer.vue';
 
 export default {
-  name: "Home",
+  name: 'Home',
 
   components: {
-    "header-container": HeaderContainer,
-    "footer-container": FooterContainer,
-    "home-container": HomeContainer,
-    "search-container": SearchContainer
+    'header-container': HeaderContainer,
+    'footer-container': FooterContainer,
+    'home-container': HomeContainer,
+    'search-container': SearchContainer,
   },
 
   data() {
@@ -47,10 +47,10 @@ export default {
 
   mounted() {},
 
-  methods: {}
+  methods: {},
 };
 </script>
 
 <style lang="scss">
-@import "../style/home.scss";
+@import '../style/home.scss';
 </style>

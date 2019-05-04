@@ -14,13 +14,7 @@
           class="info-layer"
         >
           <defs>
-            <filter
-              id="circle-shadow-selected"
-              y="-10"
-              x="-10"
-              height="40"
-              width="150"
-            >
+            <filter id="circle-shadow-selected" y="-10" x="-10" height="40" width="150">
               <feOffset in="SourceAlpha" dx="1" dy="1" result="offset1" />
               <feGaussianBlur in="offset2" stdDeviation="1" result="blur1" />
               <feMerge>
@@ -69,15 +63,11 @@
             </p>
             <p class="info-description">
               Powered by
-              <a
-                href="https://framagit.org/getlarge/aloes-handlers"
-                target="_blank"
+              <a href="https://framagit.org/getlarge/aloes-handlers" target="_blank"
                 >aloes-handlers</a
               >
               to encode/decode MQTT stream, and
-              <a
-                href="https://framagit.org/getlarge/device-manager"
-                target="_blank"
+              <a href="https://framagit.org/getlarge/device-manager" target="_blank"
                 >device-manager</a
               >
               to transport and persist data .
@@ -85,64 +75,39 @@
           </div>
           <div v-else-if="deviceTwinSelected" class="info-video" key="video">
             <video ref="videoPlayer" muted autoplay loop>
-              <source
-                :src="$store.state.style.videos.createDeviceWebm"
-                type="video/webm"
-              />
-              <source
-                :src="$store.state.style.videos.createDeviceMp4"
-                type="video/mp4"
-              />
-              <source
-                :src="$store.state.style.videos.createDeviceOgv"
-                type="video/ogg"
-              />
+              <source :src="$store.state.style.videos.createDeviceWebm" type="video/webm" />
+              <source :src="$store.state.style.videos.createDeviceMp4" type="video/mp4" />
+              <source :src="$store.state.style.videos.createDeviceOgv" type="video/ogg" />
             </video>
           </div>
         </transition>
       </b-col>
     </b-row>
     <b-row align-v="center" align-h="center">
-      <b-col
-        cols="12"
-        sm="6"
-        lg="5"
-        xl="5"
-        order-md="12"
-        order-lg="12"
-        order-xl="12"
-      >
+      <b-col cols="12" sm="6" lg="5" xl="5" order-md="12" order-lg="12" order-xl="12">
         <device-tree
           v-if="deviceTreeLoaded"
-          :source="`/data/device-tree.json`"
+          :source="`/data/device-tree2.json`"
           :client-url="$store.state.clientUrl"
+          :width="800"
+          :height="1000"
           @node-selected="onNodeSelected"
           @node-deselected="onNodeDeselected"
           @node-clicked="onNodeClicked"
         />
       </b-col>
-      <b-col
-        cols="12"
-        sm="6"
-        lg="6"
-        xl="5"
-        order-md="1"
-        order-lg="1"
-        order-xl="1"
-      >
+      <b-col cols="12" sm="6" lg="6" xl="5" order-md="1" order-lg="1" order-xl="1">
         <transition name="fade" mode="out-in">
           <div v-if="sensor === null && device === null" key="text">
             <p class="info-subtitle">
               Collect and visualize attached sensors
             </p>
             <p class="info-description">
-              Displayed with aloes-vuecomponents &
-              <a
-                href="https://framagit.org/getlarge/aloes-webcomponents"
-                target="_blank"
-                >aloes-webcomponents</a
-              >
-              set
+              Displayed with
+              <a href="https://framagit.org/getlarge/aloes-client" target="_blank">aloes-client</a>
+              &
+              <a href="https://framagit.org/aloes/sensor-snap" target="_blank">sensor-snap</a>
+              VueJS libraries
             </p>
           </div>
           <sensor-snap
@@ -151,6 +116,7 @@
             :id="sensor.id.toString()"
             :device-id="sensor.deviceId"
             :dev-eui="sensor.devEui"
+            :dev-addr="sensor.devAddr"
             :name="sensor.name"
             :type="sensor.type"
             :value="JSON.stringify(sensor.value)"
@@ -158,9 +124,11 @@
             :resources="JSON.stringify(sensor.resources)"
             :resource="sensor.resource"
             :icons="sensor.icons.toString()"
-            :colors="sensor.colors.toString()"
-            :protocol-name="sensor.protocolName"
-            :protocol-version="sensor.protocolVersion"
+            :colors="JSON.stringify(sensor.colors)"
+            :transport-protocol="sensor.transportProtocol"
+            :transport-protocol-version="sensor.transportProtocolVersion"
+            :message-protocol="sensor.messageProtocol"
+            :message-protocol-version="sensor.messageProtocolVersion"
             :input-path="sensor.inputPath || null"
             :output-path="sensor.outputPath || null"
             :in-prefix="sensor.inPrefix"
@@ -175,21 +143,14 @@
             @update-sensor="onUpdateSensor"
             @delete-sensor="onDeleteSensor"
           />
-          <device-card
-            v-else-if="device !== null"
-            :device="device"
-            ref="deviceCard"
-            key="device"
-          />
+          <device-card v-else-if="device !== null" :device="device" ref="deviceCard" key="device" />
         </transition>
       </b-col>
     </b-row>
     <b-row align-v="center" align-h="center">
       <b-col cols="12" sm="6" lg="5" xl="5">
         <object-composition
-          :source="
-            `${$store.state.clientUrl}/data/virtual-object-composition.json`
-          "
+          :source="`${$store.state.clientUrl}/data/virtual-object-composition.json`"
           :client-url="$store.state.clientUrl"
           @node-selected="onNodeSelected"
           @node-deselected="onNodeDeselected"
@@ -202,9 +163,10 @@
         </p>
         <p class="info-description">
           Share and control them from any web interface, thanks to
-          <a href="https://framagit.org/aloes/virtual-objects" target="_blank"
-            >virtual-objects</a
+          <a href="https://framagit.org/getlarge/node-red-bridge" target="_blank"
+            >node-red-bridge</a
           >
+          <a href="https://framagit.org/aloes/virtual-objects" target="_blank">virtual-objects</a>
         </p>
       </b-col>
     </b-row>
@@ -212,19 +174,19 @@
 </template>
 
 <script type="text/javascript">
-import { updateAloesSensors } from "aloes-handlers";
-import { SensorSnap } from "sensor-snap";
-import logger from "@/services/logger";
+import { updateAloesSensors } from 'aloes-handlers';
+//  import SensorSnap from 'sensor-snap';
+import logger from '@/services/logger';
 
 export default {
-  name: "HomeContainer",
+  name: 'HomeContainer',
 
   components: {
-    "device-card": () => import("@/components/Device/DeviceCard.vue"),
-    "device-tree": () => import("@/components/Device/DeviceTree.vue"),
-    "object-composition": () =>
-      import("@/components/VirtualObject/ObjectComposition.vue"),
-    "sensor-snap": SensorSnap
+    'device-card': () => import('@/components/Device/DeviceCard.vue'),
+    'device-tree': () => import('@/components/Device/DeviceTree.vue'),
+    'object-composition': () => import('@/components/VirtualObject/ObjectComposition.vue'),
+    'sensor-snap': () => import('sensor-snap'),
+    //  "sensor-snap": SensorSnap,
   },
 
   data() {
@@ -233,19 +195,19 @@ export default {
       deviceTwinSelected: false,
       svgSettings: {
         width: 500,
-        height: 400
+        height: 400,
       },
       vueElem: false,
       device: null,
       sensor: null,
       randomPics: [
-        "/icons/aloes/dither.png",
-        "/icons/aloes/camera.png",
-        "/icons/aloes/electrons.png",
-        "/icons/aloes/clock.png",
-        "/icons/aloes/pattern.png",
-        "/icons/aloes/arduino.png"
-      ]
+        '/icons/aloes/dither.png',
+        '/icons/aloes/camera.png',
+        '/icons/aloes/electrons.png',
+        '/icons/aloes/clock.png',
+        '/icons/aloes/pattern.png',
+        '/icons/aloes/arduino.png',
+      ],
     };
   },
 
@@ -258,6 +220,7 @@ export default {
   // },
 
   mounted() {
+    //  console.log('sensor-snap', SensorSnap);
     this.deviceTwinSelected = false;
     this.sensor = null;
     this.device = null;
@@ -274,7 +237,7 @@ export default {
     async onUpdateSensor(...args) {
       if (!args || !args[0].id) return null;
       let sensor = args[0];
-      logger.publish(4, "device", "onUpdateSensor:req", sensor);
+      logger.publish(4, 'device', 'onUpdateSensor:req', sensor);
       if (sensor.type === 3349 && args[1] === 5911) {
         const result = await this.cameraTest(2);
         args[1] = 5910;
@@ -288,16 +251,16 @@ export default {
     },
 
     onDeleteSensor(sensor) {
-      logger.publish(4, "device", "onDeleteSensor:req", sensor);
+      logger.publish(4, 'device', 'onDeleteSensor:req', sensor);
       //  this.$store.dispatch("device/delSensor", sensor.id)
     },
 
     onNodeSelected(node) {
-      logger.publish(4, "device", "onNodeSelected:req", node.data);
+      logger.publish(4, 'device', 'onNodeSelected:req', node.data);
     },
 
     onNodeDeselected() {
-      logger.publish(4, "device", "onNodeDeselected:req");
+      logger.publish(4, 'device', 'onNodeDeselected:req');
     },
 
     onNodeClicked(node) {
@@ -322,28 +285,25 @@ export default {
       setInterval(() => {
         const resource = this.sensor.resource.toString();
         const sensor = JSON.parse(JSON.stringify(this.sensor));
-        sensor.value =
-          this.sensor.resources[resource] + Math.floor(Math.random() + 10);
+        sensor.value = this.sensor.resources[resource] + Math.floor(Math.random() + 10);
         sensor.resources[resource] = sensor.value;
         this.sensor = sensor;
       }, 1000);
     },
 
     arrayBufferToBase64(buffer) {
-      let binary = "";
+      let binary = '';
       const bytes = [].slice.call(new Uint8Array(buffer));
       bytes.forEach(b => (binary += String.fromCharCode(b)));
       return window.btoa(binary);
     },
 
     async cameraTest(testNumber) {
-      const randomPic = this.randomPics[
-        Math.floor(Math.random() * this.randomPics.length)
-      ];
+      const randomPic = this.randomPics[Math.floor(Math.random() * this.randomPics.length)];
       const result = await fetch(`${randomPic}`)
         .then(response => {
           if (!response.ok) {
-            throw new Error("HTTP error, status = " + response.status);
+            throw new Error('HTTP error, status = ' + response.status);
           }
           return response.arrayBuffer();
         })
@@ -356,11 +316,11 @@ export default {
           return buffer;
         });
       return result;
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style lang="scss">
-@import "../../style/home-container.scss";
+@import '../../style/home-container.scss';
 </style>

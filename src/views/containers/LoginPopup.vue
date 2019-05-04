@@ -11,11 +11,7 @@
     @shown="onModalShown"
     @hidden="onModalHidden"
   >
-    <img
-      :src="$store.state.style.pictures.logo"
-      alt="Aloes logo"
-      class="header-popup-image"
-    />
+    <img :src="$store.state.style.pictures.logo" alt="Aloes logo" class="header-popup-image" />
     <login-master ref="loginMaster" :tab-index="newTabIndex">
       <b-button @click="hideModal">
         <i class="fa fa-angle-left" />
@@ -26,33 +22,33 @@
 </template>
 
 <script type="text/javascript">
-import bButton from "bootstrap-vue/es/components/button/button";
-import bModal from "bootstrap-vue/es/components/modal/modal";
-import LoginMaster from "@/components/Account/LoginMaster.vue";
+import bButton from 'bootstrap-vue/es/components/button/button';
+import bModal from 'bootstrap-vue/es/components/modal/modal';
+import LoginMaster from '@/components/Account/LoginMaster.vue';
 
 export default {
-  name: "LoginPopup",
+  name: 'LoginPopup',
 
   components: {
-    "b-button": bButton,
-    "b-modal": bModal,
-    "login-master": LoginMaster
+    'b-button': bButton,
+    'b-modal': bModal,
+    'login-master': LoginMaster,
   },
 
   props: {
     sessionError: {
       type: Error,
-      default: null
+      default: null,
     },
     tabIndex: {
       type: Number,
-      default: 0
-    }
+      default: 0,
+    },
   },
 
   data() {
     return {
-      newTabIndex: 0
+      newTabIndex: 0,
     };
   },
 
@@ -61,14 +57,14 @@ export default {
       handler(err) {
         this.error = err;
       },
-      immediate: true
+      immediate: true,
     },
     tabIndex: {
       handler(index) {
         this.newTabIndex = index;
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
 
   mounted() {
@@ -85,19 +81,19 @@ export default {
     },
 
     hideModal() {
-      if (this.$route.name !== "home") {
-        this.$router.push({ name: "home" });
+      if (this.$route.name !== 'home') {
+        this.$router.push({ name: 'home' });
       }
       this.$refs.loginPopup.hide();
     },
 
     showModal() {
       this.$refs.loginPopup.show();
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style lang="scss">
-@import "../../style/login-popup.scss";
+@import '../../style/login-popup.scss';
 </style>

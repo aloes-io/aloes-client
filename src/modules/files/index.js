@@ -1,11 +1,11 @@
-import * as actions from "./actions";
-import * as mutations from "./mutations";
+import * as actions from './actions';
+import * as mutations from './mutations';
 
 export default {
   namespaced: true,
   state: {
-    collectionName: "files",
-    resources: "Files",
+    collectionName: 'files',
+    resources: 'Files',
     counter: 0,
     headers: {},
     STATUS_INITIAL: 0,
@@ -13,34 +13,34 @@ export default {
     STATUS_SUCCESS: 2,
     STATUS_FAILED: 3,
     Audios: {
-      name: "",
+      name: '',
       file: [],
       url: [],
-      status: 0
+      status: 0,
     },
     Document: {
       attachment: {
-        name: "",
+        name: '',
         file: [],
         url: [],
-        status: 0
-      }
+        status: 0,
+      },
     },
     Images: {
       Header: {
-        name: "",
+        name: '',
         file: [],
-        url: "",
-        status: 0
+        url: '',
+        status: 0,
       },
       Avatar: {
-        name: "",
+        name: '',
         file: [],
-        url: "",
-        status: 0
-      }
-    }
+        url: '',
+        status: 0,
+      },
+    },
   },
   mutations,
-  actions
+  actions,
 };
