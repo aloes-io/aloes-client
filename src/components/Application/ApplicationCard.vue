@@ -64,6 +64,26 @@
         </b-col>
       </b-row>
     </b-card-footer>
+    <b-modal
+      id="refresh-token-popup"
+      ref="refreshTokenPopup"
+      title="refresh token ?"
+      size="sm"
+      hide-footer
+      lazy
+      class="refresh-token-popup-view"
+      modal-class="refresh-token-popup-modal"
+      header-class="refresh-token-popup-header"
+      body-class="refresh-token-popup-body"
+      @hidden="onModalHidden"
+    >
+      <b-button class="refresh-token-popup-button" @click.prevent.stop="refreshToken">
+        Confirm
+      </b-button>
+      <b-button class="refresh-token-popup-button" @click.prevent.stop="hideRefreshTokenPopup">
+        Cancel
+      </b-button>
+    </b-modal>
   </b-card>
 </template>
 

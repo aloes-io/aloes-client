@@ -92,7 +92,7 @@ export default {
       if (this.$props.userId && this.$props.userId !== null) {
         return this.$props.userId;
       }
-      if (this.deviceProps && his.deviceProps !== null) {
+      if (this.deviceProps && this.deviceProps !== null) {
         return this.deviceProps.id;
       }
       return '1';
@@ -239,8 +239,6 @@ export default {
       this.graphLinks !== null
     ) {
       this.nodeSimulation.nodes(this.graphNodes).on('tick', this.ticked);
-
-      console.log('graphnodes', this.graphNodes);
     }
   },
 
@@ -510,9 +508,9 @@ export default {
 
     ticked() {
       this.links.attr('d', d => {
-        const dX = d.target.x - d.source.x;
-        const dY = d.target.y - d.source.y;
-        const dR = Math.sqrt(dX * dX + dY * dY);
+        //  const dX = d.target.x - d.source.x;
+        //  const dY = d.target.y - d.source.y;
+        //  const dR = Math.sqrt(dX * dX + dY * dY);
         //  return `M ${d.source.x}, ${d.source.y} A ${dR}, ${dR} 0 0,1 ${d.target.x}, ${d.target.y}`;
         return `M ${d.source.x}, ${d.source.y} L ${d.target.x}, ${d.target.y}`;
       });
@@ -520,10 +518,10 @@ export default {
       this.images.attr('transform', this.nodeTransform);
     },
 
-    mouseClick(d, i) {
+    mouseClick(d) {
       if (d.data.group === 1) {
         d.data.show = !d.data.show;
-        console.log('node cliked', d.data.id);
+        //  console.log('node cliked', d.data.id);
         const state = d.data.show ? 'block' : 'none';
         select(`#device-tree-${this.rootNodeId}`)
           .selectAll(`path.link-sensor-${d.data.id}`)

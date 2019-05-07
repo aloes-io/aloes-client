@@ -66,7 +66,7 @@
               <a href="https://framagit.org/aloes/aloes-handlers" target="_blank">aloes-handlers</a>
               to encode/decode MQTT stream, and
               <a href="https://framagit.org/aloes/device-manager" target="_blank">device-manager</a>
-              to transport and persist data .
+              to transport and persist data.
             </p>
           </div>
           <div v-else-if="deviceTwinSelected" class="info-video" key="video">
@@ -114,7 +114,7 @@
               <a href="https://framagit.org/aloes/aloes-client" target="_blank">aloes-client</a>
               &
               <a href="https://framagit.org/aloes/sensor-snap" target="_blank">sensor-snap</a>
-              VueJS libraries
+              VueJS libraries.
             </p>
           </div>
           <sensor-snap
@@ -157,7 +157,7 @@
     <b-row align-v="center" align-h="center">
       <b-col cols="12" sm="6" lg="6" xl="6">
         <object-composition
-          :source="`${$store.state.clientUrl}/data/virtual-object-composition.json`"
+          :source="`/data/virtual-object-composition.json`"
           :client-url="$store.state.clientUrl"
           @node-selected="onNodeSelected"
           @node-deselected="onNodeDeselected"
@@ -171,19 +171,19 @@
         <p class="info-description">
           Easily create new device on any Linux machine
           <a href="https://framagit.org/aloes/node-red-device" target="_blank">node-red-device</a>
-          or any Arduino compatible Wifi device.
-          <a href="https://framagit.org/aloes/arduino-device" target="_blank">arduino-device</a>
+          or on ESP8266 / ESP32 microcrontrollers.
+          <a href="https://framagit.org/aloes/arduino-device" target="_blank">arduino-device</a>.
         </p>
       </b-col>
     </b-row>
     <b-row align-v="center" align-h="center">
       <b-col cols="12" sm="6" lg="4" xl="4">
         <p class="info-subtitle">
-          Compose devices stories
+          Script devices stories
         </p>
         <p class="info-description">
           Create custom scenarios where you can set the rules of interaction inside your network.
-          <a href="https://framagit.org/aloes/node-red-bridge" target="_blank">node-red-bridge</a>
+          <a href="https://framagit.org/aloes/node-red-bridge" target="_blank">node-red-bridge</a>.
         </p>
       </b-col>
       <b-col cols="12" sm="6" lg="6" xl="6"> </b-col>
