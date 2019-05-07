@@ -3,8 +3,11 @@
     <b-form @submit="onSubmit">
       <b-form-group
         v-if="access_token === null"
-        label="Mot de passe actuel"
+        label="Current password"
         label-for="changed-password"
+        label-cols="3"
+        label-size="sm"
+        breakpoint="sm"
       >
         <b-form-input
           id="changed-password"
@@ -13,10 +16,15 @@
           type="password"
           autocomplete="current-password"
           required
-          placeholder="Insérer votre mot de passe"
         />
       </b-form-group>
-      <b-form-group label="Nouveau mot de passe" label-for="new-password">
+      <b-form-group
+        label="New password"
+        label-for="new-password"
+        label-cols="3"
+        label-size="sm"
+        breakpoint="sm"
+      >
         <b-form-input
           id="new-password"
           v-model="newPassword"
@@ -24,10 +32,15 @@
           type="password"
           autocomplete="new-password"
           required
-          placeholder="Insérer votre mot de passe"
         />
       </b-form-group>
-      <b-form-group label="Email" label-for="confirm-new-password">
+      <b-form-group
+        label="Confirm password"
+        label-for="confirm-new-password"
+        label-cols="3"
+        label-size="sm"
+        breakpoint="sm"
+      >
         <b-form-input
           id="confirm-new-password"
           v-model="confirmPassword"
@@ -35,7 +48,6 @@
           type="password"
           autocomplete="new-password"
           required
-          placeholder="Insérer votre mot de passe"
         />
       </b-form-group>
       <b-alert v-if="error" vairant="danger">
@@ -85,6 +97,7 @@ export default {
       newPassword: null,
       confirmPassword: null,
       error: null,
+      success: null,
       loading: false,
     };
   },
@@ -110,7 +123,7 @@ export default {
         })
         .then(() => {
           this.loading = false;
-          this.success = { message: 'Mot de passe mis à jour' };
+          this.success = { message: 'Password updated' };
         })
         .catch(err => {
           this.error = err;

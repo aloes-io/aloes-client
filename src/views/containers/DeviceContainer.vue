@@ -113,9 +113,8 @@ import bAlert from 'bootstrap-vue/es/components/alert/alert';
 import bTabs from 'bootstrap-vue/es/components/tabs/tabs';
 import bTab from 'bootstrap-vue/es/components/tabs/tab';
 import has from 'lodash.has';
-import SensorSnap from 'sensor-snap';
+//  import SensorSnap from 'sensor-snap';
 import DeviceSensors from '@/components/Device/DeviceSensors.vue';
-//  import SearchMap from '@/components/Search/SearchMap.vue';
 import { EventBus } from '@/services/PubSub';
 import logger from '@/services/logger';
 
@@ -132,8 +131,8 @@ export default {
     'device-tree': () => import('@/components/Device/DeviceTree.vue'),
     'device-sensors': DeviceSensors,
     'search-map': () => import('@/components/Search/SearchMap.vue'),
-    //  'sensor-snap': () => import('sensor-snap'),
-    'sensor-snap': SensorSnap,
+    'sensor-snap': () => import('sensor-snap'),
+    //  'sensor-snap': SensorSnap,
   },
 
   props: {
@@ -303,6 +302,7 @@ export default {
         }
         delete device.group;
         delete device.size;
+        delete device.show;
         this.device = device;
         this.sensor = null;
         //  this.$store.commit('device/setModel', device);
@@ -320,6 +320,8 @@ export default {
       if (!args || !args[0].id) return null;
       let sensor = args[0];
       sensor = await updateAloesSensors(sensor, args[1], args[2]);
+      // updateDeviceTree
+
       await this.$store.dispatch('device/publishToSensor', {
         sensor,
         userId: this.$props.userId,
@@ -376,6 +378,8 @@ export default {
         if (device && !this.loading) {
           return setTimeout(this.loadDevices, 200);
         }
+        // updateDeviceTree
+
         // const updatedDevices = JSON.parse(JSON.stringify(this.devices));
         // const deviceDeleted = updatedDevices.find((s) => s.id === JSON.parse(device).id);
         // const index = updatedDevices.indexOf(deviceDeleted);
@@ -392,6 +396,8 @@ export default {
         if (device && !this.loading) {
           return setTimeout(this.loadDevices, 200);
         }
+        // updateDeviceTree
+
         // this.device = JSON.parse(device);
         // const updatedDevices = JSON.parse(JSON.stringify(this.devices));
         // updatedDevices.push(JSON.parse(device));
@@ -402,6 +408,8 @@ export default {
         if (device && !this.loading) {
           return setTimeout(this.loadDevices, 200);
         }
+        // updateDeviceTree
+
         // const updatedDevices = JSON.parse(JSON.stringify(this.devices));
         // const updatedDevice = updatedDevices.find((s) => s.id === JSON.parse(device).id);
         // const index = updatedDevices.indexOf(updatedDevice);

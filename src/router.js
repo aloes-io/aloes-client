@@ -85,7 +85,7 @@ const router = new Router({
       props: route => ({
         'access-token': route.query['access-token'],
         'user-id': route.query['user-id'],
-        appId: route.query.appId,
+        applicationId: route.query.applicationId,
       }),
       component: () => import(/* webpackChunkName: "register" */ './views/Application.vue'),
     },

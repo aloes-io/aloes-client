@@ -231,7 +231,7 @@ export default {
         .catch(err => {
           logger.publish(3, this.$props.profileType, 'checkProfile:err', err);
           this.error = {
-            message: 'Désolé, il semblerait que nous avons un problème pour afficher ce profil',
+            message: "Sorry, this profile can't be displayed",
           };
           return setTimeout(() => {
             this.$router.go(-1);
@@ -269,7 +269,7 @@ export default {
 
         if (profile.id) {
           this.loading = false;
-          this.success = { message: 'Modifications du profil enregistré' };
+          this.success = { message: 'Profile updated' };
           this.editorMode = false;
           await this.scrollUp();
           return this.success;

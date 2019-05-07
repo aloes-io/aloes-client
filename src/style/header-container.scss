@@ -15,9 +15,9 @@ img.brand-logo {
 }
 
 p.brand-font {
-  font-family: 'LemonMilkbold';
+  font-family: $head-fonts;
   color: $warning;
-  max-height: $icon-height-small;
+  max-height: $icon-height;
 }
 
 .title {
@@ -27,7 +27,7 @@ p.brand-font {
 }
 
 .thumb-icon {
-  max-height: $icon-height-small;
+  max-height: $icon-height;
   margin-right: 3px;
   margin-left: 3px;
 }

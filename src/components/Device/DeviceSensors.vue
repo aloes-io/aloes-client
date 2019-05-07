@@ -156,9 +156,9 @@ export default {
     },
 
     setListeners() {
-      EventBus.$on('onSensorDeleted', sensor => {
+      EventBus.$on('onSensorDeleted', async sensor => {
         if (sensor && !this.loading) {
-          this.loadSensors(sensor.deviceId);
+          return this.loadSensors(sensor.deviceId);
         }
       });
 

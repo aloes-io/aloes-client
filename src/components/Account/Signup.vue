@@ -2,7 +2,7 @@
   <b-card class="signup-view">
     <b-form @submit="onSignup" @reset="onReset">
       <signup-form>
-        <captcha ref="captcha" />
+        <!-- <captcha ref="captcha" /> -->
         <b-row align-h="center" class="signup-actions">
           <b-col sm="12" md="12" lg="12" xl="12">
             <b-button id="signup-button" type="submit" variant="primary">
@@ -47,7 +47,7 @@ import bAlert from 'bootstrap-vue/es/components/alert/alert';
 import bButton from 'bootstrap-vue/es/components/button/button';
 import bCard from 'bootstrap-vue/es/components/card/card';
 import bForm from 'bootstrap-vue/es/components/form/form';
-import Captcha from '@/components/Account/Captcha.vue';
+//  import Captcha from '@/components/Account/Captcha.vue';
 import SignupForm from '@/components/Account/SignupForm.vue';
 import notification from '@/views/mixins/notification';
 
@@ -60,7 +60,7 @@ export default {
     'b-card': bCard,
     'b-form': bForm,
     'signup-form': SignupForm,
-    captcha: Captcha,
+    //  captcha: Captcha,
   },
 
   mixins: [notification],
@@ -71,8 +71,6 @@ export default {
       default: null,
     },
   },
-
-  loadCoinHiveAPI: false,
 
   data() {
     return {
@@ -126,12 +124,7 @@ export default {
   },
 
   mounted() {
-    this.captchaBody = this.$el.querySelector('#coinhive-captcha');
-    // this.$nextTick(() => {
-    //   //  this.captchaBody.style.width = `${this.windowWidth / 5}px`;
-    //   //  this.captchaBody.style.width = "250px";
-    //   this.captchaBody.style.maxWidth = "100%";
-    // });
+    //  this.captchaBody = this.$el.querySelector('#coinhive-captcha');
   },
 
   methods: {
@@ -141,14 +134,14 @@ export default {
       if (evt) evt.preventDefault();
       if (evt) evt.stopPropagation();
       try {
-        const target = evt.target;
-        const success = await this.$refs.captcha.verifyCaptcha(target);
-        if (success !== true) {
-          this.error = {
-            message: 'Verify signup with captcha first',
-          };
-          return this.error;
-        }
+        // const target = evt.target;
+        // const success = await this.$refs.captcha.verifyCaptcha(target);
+        // if (success !== true) {
+        //   this.error = {
+        //     message: 'Verify signup with captcha first',
+        //   };
+        //   return this.error;
+        // }
 
         if (
           this.$store.state.auth.signup.password !== this.$store.state.auth.signup.confirmPassword

@@ -1,5 +1,5 @@
-@import "global";
-@import "~bootstrap/scss/bootstrap";
+@import 'global';
+@import '~bootstrap/scss/bootstrap';
 
 // Customize Bootstrap Components Style
 // (copy from node_modules/bootstrap/scss folder
@@ -9,15 +9,16 @@
 // @import "_forms";
 // @import "_fullcalendar";
 // @import "_modal";
-@import "_spinner";
+@import '_spinner';
 // @import "_tables";
 
-$fa-font-path: "~font-awesome/fonts";
-@import "~font-awesome/scss/font-awesome";
+$fa-font-path: '~font-awesome/fonts';
+@import '~font-awesome/scss/font-awesome';
 
 #app {
 	width: 100%;
-	font-family: "Arial";
+	font-family: $text-fonts;
+	/*font-family: "Aloes-Rg";*/
 	font-size: $font-size-base;
 	color: $primary;
 	background: $light-grey;

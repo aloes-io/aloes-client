@@ -51,9 +51,12 @@ export default new Vuex.Store({
       palette: {
         black: '#000000',
         grey: '#ededed',
-        green: '#77d1bf',
         blue: '#29abe2',
+        lightgreen: '#d6e6dc',
+        green: '#77d1bf',
+        lightblue: '#98d4ee',
         yellow: '#ffc85f',
+        lightyellow: '#f6d9a2',
       },
       pictures: {
         logo: `${process.env.VUE_APP_CLIENT_URL}/icons/aloesicon2.png`,

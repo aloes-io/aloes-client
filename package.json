@@ -5,7 +5,7 @@
   "scripts": {
     "start:dev": "cp deploy/.env_development .env && vue-cli-service serve",
     "start:local": "cp deploy/.env_local .env && vue-cli-service serve",
-    "build:dev": "cp deploy/.env_development .env && vue-cli-service build --dest build --modern",
+    "build:local": "cp deploy/.env_local .env && vue-cli-service build --dest build --modern",
     "build:stage": "cp deploy/.env_staging .env && vue-cli-service build --dest build --modern",
     "build:prod": "cp deploy/.env_production .env && vue-cli-service build --dest build --modern",
     "lint": "vue-cli-service lint",
@@ -13,7 +13,6 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.4.3",
-    "@vue/web-component-wrapper": "^1.2.0",
     "aloes-handlers": "^1.2.0",
     "aloes-logger": "^1.0.4",
     "animejs": "^3.0.1",

@@ -7,7 +7,7 @@ if (result.error) {
 module.exports = {
   apps: [
     {
-      name: 'aloes-client',
+      name: `${result.parsed.NODE_NAME}`,
       script: 'cp deploy/.env_local .env && vue-cli-service serve',
       interpreter: 'node',
       max_memory_restart: '1G',

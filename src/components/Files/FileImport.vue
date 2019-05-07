@@ -127,7 +127,7 @@ export default {
       maxSize: 10000000,
       fileCount: null,
       fileName: '',
-      imageUrl: null,
+      imageUrl: '',
       uploadedFile: null,
       STATUS_INITIAL: this.$store.state.files.STATUS_INITIAL,
       STATUS_SAVING: this.$store.state.files.STATUS_SAVING,
@@ -193,7 +193,7 @@ export default {
     },
     source: {
       get() {
-        if (this.$route.name === 'profile') {
+        if (this.$route.name === 'account' || this.$route.name === 'profile') {
           return this.$store.state.auth.account[`${this.$props.imageType.toLowerCase()}ImgUrl`];
         } else if (this.$route.name === 'application') {
           return this.$store.state.application.instance.icon;
@@ -201,7 +201,7 @@ export default {
         return null;
       },
       set(value) {
-        if (this.$route.name === 'profile') {
+        if (this.$route.name === 'account' || this.$route.name === 'profile') {
           this.$store.commit('auth/setModelKV', {
             key: `${this.$props.imageType.toLowerCase()}ImgUrl`,
             value,
@@ -341,7 +341,7 @@ export default {
         return reader.readAsDataURL(files[0]);
       }
       this.error = {
-        message: "Désolé, ce navigateur ne supporte pas l'envoi d'image",
+        message: "Sorry your browser can't send this picture",
       };
       logger.publish(4, 'files', 'onFilesChange:err', this.error);
       return this.error;
@@ -394,13 +394,13 @@ export default {
         this.$refs[`${this.imgType.toLowerCase()}Croppie`].bind({
           url: this.uploadedFile.url,
         });
-        this.success = { message: 'Votre image est enregistré' };
+        this.success = { message: 'Picture saved' };
         this.$parent.hide();
         return this.success;
       } else if (this.isFailed) {
         logger.publish(4, 'files', 'onFileSave:err', 'uploadFailed');
         this.error = {
-          message: "L'envoi de l'image a échoué, veuillez réessayer",
+          message: 'File upload has failed, please try again',
         };
         return this.error;
       }

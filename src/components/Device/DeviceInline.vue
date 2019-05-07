@@ -8,7 +8,7 @@
   >
     <b-row>
       <b-col cols="2" sm="4" md="4" lg="4" xl="3">
-        <img :src="updatedDevice.icons[0]" class="device-inline-icon" @click="goToDevice" />
+        <img :src="updatedDevice.icons[1]" class="device-inline-icon" @click="goToDevice" />
         <!--  <b-button
           class="device-inline-button"
           @click="goToDevice">
@@ -111,13 +111,9 @@ export default {
   },
 
   mounted() {
+    this.updateBackground();
     EventBus.$on('deviceSelected', device => {
-      if (device && device !== null && device.id.toString() === this.updatedDevice.id.toString()) {
-        this.$el.style.background = this.$store.state.style.color.secondary;
-      } else {
-        this.$el.style.background = 'white';
-      }
-      return null;
+      this.updateBackground(device);
     });
   },
 
@@ -126,6 +122,22 @@ export default {
   },
 
   methods: {
+    updateBackground(device) {
+      if (device && device !== null && device.id.toString() === this.updatedDevice.id.toString()) {
+        if (this.updatedDevice.status) {
+          this.$el.style.background = this.$store.state.style.palette.green;
+        } else {
+          this.$el.style.background = this.$store.state.style.palette.yellow;
+        }
+      } else {
+        if (this.updatedDevice.status) {
+          this.$el.style.background = this.$store.state.style.palette.lightgreen;
+        } else {
+          this.$el.style.background = this.$store.state.style.palette.lightyellow;
+        }
+      }
+    },
+
     highlightDevice(device) {
       EventBus.$emit('deviceSelected', device);
     },

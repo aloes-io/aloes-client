@@ -95,6 +95,8 @@
       :owner-id="updatedAccount.id"
       class="address-form"
     />
+    <change-password />
+
     <team-popup
       v-if="viewer && account.subscribed.startsWith('paid')"
       ref="teamPopup"
@@ -108,6 +110,8 @@ import bButton from 'bootstrap-vue/es/components/button/button';
 import bForm from 'bootstrap-vue/es/components/form/form';
 import bFormInput from 'bootstrap-vue/es/components/form-input/form-input';
 import AddressForm from '@/components/Address/AddressForm.vue';
+import ChangePassword from '@/components/Account/ChangePassword.vue';
+
 import { EventBus } from '@/services/PubSub';
 import logger from '@/services/logger';
 
@@ -119,6 +123,7 @@ export default {
     'b-form': bForm,
     'b-form-input': bFormInput,
     'address-form': AddressForm,
+    'change-password': ChangePassword,
     'team-popup': () => import('@/views/containers/TeamPopup.vue'),
   },
 

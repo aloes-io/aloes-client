@@ -1,7 +1,9 @@
-@import "global";
+@import 'global';
 
 .login-title {
   text-align: center;
+  font-family: $head-fonts;
+  color : $blue;
   font-weight: $font-weight-bold;
   font-size: 1.2em;
 }
@@ -14,9 +16,10 @@ button.btn.login {
   width: 46%;
   margin-left: 2%;
   margin-bottom: 8%;
-  background-color: $primary;
+  background-color: $btn-bg-color;
+  font-family: $btn-font;
   font-weight: $btn-font-weight;
-  color: white;
+  color: $btn-color;
   height: $btn-height;
   padding: $btn-padding;
   border-radius: $btn-border-radius;
@@ -27,9 +30,10 @@ button.btn.login {
 }
 
 button.btn.login:hover {
-  background-color: white;
-  border-color: white;
-  color: $primary;
+  background-color: $btn-bg-light-color;
+  font-family: $btn-font;
+  font-weight: $btn-font-weight;
+  color: $btn-color;
 }
 
 a.forgot-pass {
@@ -42,9 +46,10 @@ button.btn.send {
   width: 46%;
   margin-left: 2%;
   margin-right: 2%;
-  background-color: $primary;
+  background-color: $btn-bg-color;
+  font-family: $btn-font;
   font-weight: $btn-font-weight;
-  color: white;
+  color: $btn-color;
   height: $btn-height;
   padding: $btn-padding;
   border-radius: $btn-border-radius;
@@ -55,18 +60,19 @@ button.btn.send {
 }
 
 button.btn.send:hover {
-  background-color: white;
-  border-color: white;
-  color: $primary;
+  background-color: $btn-bg-light-color;
+  font-family: $btn-font;
+  font-weight: $btn-font-weight;
+  color: $btn-color;
 }
 
 button.btn.cancel {
   width: 46%;
   margin-right: 2%;
-  background-color: white;
-  border-color: white;
-  color: $primary;
+  background-color: $btn-bg-color;
+  font-family: $btn-font;
   font-weight: $btn-font-weight;
+  color: $btn-color;
   height: $btn-height;
   padding: $btn-padding;
   border-radius: $btn-border-radius;
@@ -77,9 +83,10 @@ button.btn.cancel {
 }
 
 button.btn.cancel:hover {
-  background-color: $primary;
-  border-color: $primary;
-  color: white;
+  background-color: $btn-bg-light-color;
+  font-family: $btn-font;
+  font-weight: $btn-font-weight;
+  color: $btn-color;
 }
 
 button.return-button {
@@ -87,9 +94,10 @@ button.return-button {
   margin-left: 2%;
   margin-right: 2%;
   margin-bottom: 8%;
-  background-color: white;
+  background-color: $btn-bg-color;
+  font-family: $btn-font;
   font-weight: $btn-font-weight;
-  color: $primary;
+  color: $btn-color;
   height: $btn-height;
   padding: $btn-padding;
   border-radius: $btn-border-radius;
@@ -100,7 +108,8 @@ button.return-button {
 }
 
 button.btn.return-button:hover {
-  background-color: $primary;
-  border-color: $primary;
-  color: white;
+  background-color: $btn-bg-light-color;
+  font-family: $btn-font;
+  font-weight: $btn-font-weight;
+  color: $btn-color;
 }

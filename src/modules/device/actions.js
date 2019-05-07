@@ -131,7 +131,7 @@ export async function delDevice({ state, commit }, { device }) {
 
 export async function findSensorsByDevice({ state, commit }, deviceId) {
   return loopback
-    .get(`${state.resources}/${deviceId}/sensors`)
+    .get(`/${state.resources}/${deviceId}/sensors`)
     .then(sensors => {
       commit('setStateKV', { key: 'sensors', value: sensors });
       //  logger.publish(3, state.collectionName, "dispatch:findSensorsByDevice:res", sensors);
@@ -192,7 +192,7 @@ export async function updateSensor({ state, commit }, { sensor }) {
 export async function delSensor({ state, commit }, { deviceId, sensor }) {
   try {
     const deletedSensor = await loopback.delete(
-      `/${state.resources}/${deviceId}/sensors/${sensor.id}`,
+      `/${state.collectionName}/${deviceId}/sensors/${sensor.id}`,
     );
     await commit('setModelKV', {
       key: 'success',
@@ -206,17 +206,14 @@ export async function delSensor({ state, commit }, { deviceId, sensor }) {
   }
 }
 
-export async function refreshToken({ state, commit }, { device }) {
-  return (
-    loopback
-      .post(`/${state.resources}/refresh-token`, device)
-      //  .post(`/${state.resources.toLowerCase()}`, device)
-      .then(res => {
-        logger.publish(4, state.collectionName, 'dispatch:refreshToken:res', res);
-        commit('setModel', res);
-        return res;
-      })
-      .catch(err => err)
-  );
+export async function refreshToken({ state, commit }, device) {
+  return loopback
+    .post(`/${state.resources}/refresh-token`, { device })
+    .then(res => {
+      logger.publish(4, state.collectionName, 'dispatch:refreshToken:res', res);
+      commit('setModel', res);
+      return res;
+    })
+    .catch(err => err);
   //  return result;
 }

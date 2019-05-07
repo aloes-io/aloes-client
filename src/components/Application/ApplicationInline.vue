@@ -114,17 +114,9 @@ export default {
   },
 
   mounted() {
+    this.updateBackground();
     EventBus.$on('applicationSelected', application => {
-      if (
-        application &&
-        application !== null &&
-        application.id.toString() === this.updatedApplication.id.toString()
-      ) {
-        this.$el.style.background = this.$store.state.style.color.secondary;
-      } else {
-        this.$el.style.background = 'white';
-      }
-      return null;
+      this.updateBackground(application);
     });
   },
 
@@ -133,6 +125,26 @@ export default {
   },
 
   methods: {
+    updateBackground(application) {
+      if (
+        application &&
+        application !== null &&
+        application.id.toString() === this.updatedApplication.id.toString()
+      ) {
+        if (this.updatedApplication.status) {
+          this.$el.style.background = this.$store.state.style.palette.green;
+        } else {
+          this.$el.style.background = this.$store.state.style.palette.yellow;
+        }
+      } else {
+        if (this.updatedApplication.status) {
+          this.$el.style.background = this.$store.state.style.palette.lightgreen;
+        } else {
+          this.$el.style.background = this.$store.state.style.palette.lightyellow;
+        }
+      }
+    },
+
     highlightApplication(application) {
       EventBus.$emit('applicationSelected', application);
     },

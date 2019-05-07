@@ -16,17 +16,17 @@
     <b-collapse id="nav_collapse" is-nav>
       <b-navbar-nav v-if="!access_token || access_token === null" class="w-55">
         <b-nav-item @click.prevent.stop="$refs.loginPopup.showModal()">
-          Signin
+          <i class="fa fa-sign-in" /> Signin
         </b-nav-item>
         <b-nav-item @click.prevent.stop="$refs.signupPopup.showModal()">
-          Signup
+          <i class="fa fa-user-plus" /> Signup
         </b-nav-item>
         <login-popup ref="loginPopup" />
         <signup-popup ref="signupPopup" />
       </b-navbar-nav>
       <b-navbar-nav v-else-if="access_token && !account" class="w-55">
         <b-nav-item @click.prevent.stop="onLogoutClick">
-          <b-img :src="$store.state.style.pictures.signOut" class="thumb-icon" />
+          <i class="fa fa-sign-out" /> Signout
         </b-nav-item>
       </b-navbar-nav>
       <b-navbar-nav v-else-if="access_token && account" class="w-55">
@@ -39,15 +39,15 @@
             },
           }"
         >
-          <b-img :src="$store.state.style.pictures.search" class="thumb-icon" />
+          <i class="fa fa-search-o" />
         </b-nav-item>
-        <b-nav-item
+        <!-- <b-nav-item
           :to="{
             name: 'team',
           }"
         >
-          <b-img :src="$store.state.style.pictures.team" class="thumb-icon" />
-        </b-nav-item>
+          <i class="fa fa-users" />
+        </b-nav-item> -->
         <b-nav-item
           :disabled="!account.subscribed.startsWith('paid')"
           :to="{
@@ -96,13 +96,13 @@
             :src="$store.state.auth.account.avatarImgUrl"
             class="thumb-icon"
           />
-          <b-img v-else :src="$store.state.style.pictures.user" class="thumb-icon" />
+          <i v-else class="fa fa-user" />
           <small v-show="screenIsLarge">
             {{ $store.state.auth.account.firstName }}
           </small>
         </b-nav-item>
         <b-nav-item @click.prevent.stop="onLogoutClick">
-          <b-img :src="$store.state.style.pictures.signOut" class="thumb-icon" />
+          <i class="fa fa-sign-out" /> Signout
         </b-nav-item>
       </b-navbar-nav>
     </b-collapse>

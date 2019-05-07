@@ -1,4 +1,4 @@
-@import "global";
+@import 'global';
 
 .login-form-inline {
   margin-top: 1%;
@@ -62,9 +62,10 @@
     width: 28%;
     height: 30px;
     padding: 0.2rem 0.5rem;
-    background-color: $primary;
+    background-color: $btn-bg-color;
+    font-family: $btn-font;
     font-weight: $btn-font-weight;
-    color: white;
+    color: $btn-color;
     border-radius: $btn-border-radius;
     border: 1px solid transparent;
     box-shadow: $btn-shadow;
@@ -73,9 +74,10 @@
   }
 
   button.btn.login-button:hover {
-    background-color: white;
-    color: $primary;
-    border-color: $primary;
+    background-color: $btn-bg-light-color;
+    font-family: $btn-font;
+    font-weight: $btn-font-weight;
+    color: $btn-color;
   }
 }
 
@@ -134,7 +136,7 @@
 
 /* Create the checkmark/indicator (hidden when not checked) */
 .checkmark:after {
-  content: "";
+  content: '';
   position: absolute;
   display: none;
 }

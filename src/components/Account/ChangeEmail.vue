@@ -84,7 +84,7 @@ export default {
         })
         .then(() => {
           this.loading = false;
-          this.success = { message: 'Addresse email mise à jour' };
+          this.success = { message: 'Email address updated' };
         })
         .catch(err => {
           this.error = err;

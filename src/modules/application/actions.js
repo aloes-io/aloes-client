@@ -125,3 +125,15 @@ export async function delApplication({ state, commit }, { application }) {
     return error;
   }
 }
+
+export async function refreshToken({ state, commit }, application) {
+  return loopback
+    .post(`/${state.resources}/refresh-token`, { application })
+    .then(res => {
+      logger.publish(4, state.collectionName, 'dispatch:refreshToken:res', res);
+      commit('setModel', res);
+      return res;
+    })
+    .catch(err => err);
+  //  return result;
+}

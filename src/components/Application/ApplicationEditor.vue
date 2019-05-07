@@ -28,7 +28,6 @@
         <b-col cols="12" sm="12" md="6" lg="6" xl="6">
           <b-form-group
             id="application-name-group"
-            horizontal
             label-cols="4"
             label="Name :"
             label-for="application-name"
@@ -51,7 +50,6 @@
         <b-col cols="12" sm="12" md="6" lg="6" xl="6">
           <b-form-group
             id="app-eui-group"
-            horizontal
             label-cols="4"
             label="AppEUI :"
             label-for="app-eui"
@@ -75,7 +73,6 @@
         <b-col cols="12" sm="12">
           <b-form-group
             id="application-description-group"
-            horizontal
             label-cols="2"
             label="Description :"
             label-for="application-description"
@@ -98,7 +95,6 @@
         <b-col cols="12" sm="12">
           <b-form-group
             id="application-pattern-group"
-            horizontal
             label-cols="2"
             label="MQTT Pattern :"
             label-for="application-pattern"
@@ -125,7 +121,6 @@
         <b-col cols="12" sm="12" md="6" lg="6" xl="6">
           <b-form-group
             id="access-point-url-group"
-            horizontal
             label-cols="4"
             label="Access point:"
             label-for="access-point-url"
@@ -150,7 +145,6 @@
           <b-form-group
             id="application-transport-protocol-group"
             label-cols="4"
-            horizontal
             label="Transport :"
             label-for="application-transport-protocol"
             label-size="sm"
@@ -170,7 +164,6 @@
         <b-col cols="12" sm="12" md="6" lg="6" xl="6">
           <b-form-group
             id="application-protocol-version-group"
-            horizontal
             label-cols="4"
             label="API version :"
             label-for="application-protocol-version"
@@ -226,6 +219,8 @@ import bFormSelect from 'bootstrap-vue/es/components/form-select/form-select';
 import bImg from 'bootstrap-vue/es/components/image/img';
 import BInputGroup from 'bootstrap-vue/es/components/input-group/input-group';
 import BInputGroupAppend from 'bootstrap-vue/es/components/input-group/input-group-append';
+// import ApplicationValidators from '@/components/Application/ApplicationValidators.vue';
+// import FileImportContainer from '@/views/containers/FileImportContainer.vue';
 import builder from '@/services/builder';
 
 export default {
@@ -242,6 +237,8 @@ export default {
     'b-img': bImg,
     'b-input-group': BInputGroup,
     'b-input-group-append': BInputGroupAppend,
+    //  'application-validators': ApplicationValidators,
+    //  'file-import-container': FileImportContainer,
     'application-validators': () => import('@/components/Application/ApplicationValidators.vue'),
     'file-import-container': () => import('@/views/containers/FileImportContainer.vue'),
   },
