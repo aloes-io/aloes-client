@@ -26,7 +26,7 @@
       :device="device"
     />
     <b-button class="add-device" @click="newDevice">
-      <i class="fa fa-plus" />
+      <fa-icon icon="plus" size="lg" />
     </b-button>
   </div>
 </template>

@@ -89,13 +89,35 @@
         </b-col>
       </b-row>
     </b-form>
+    <b-row v-if="!viewer" class="profile-header-title">
+      <b-col cols="12" sm="8" md="7" lg="6" xl="6">
+        <b-form-input
+          id="change-email"
+          v-model="email"
+          :plaintext="!editorMode"
+          :disabled="!editorMode"
+          size="sm"
+          type="email"
+          autocomplete="email"
+          aria-describedby="emailHelp"
+          required
+        />
+      </b-col>
+    </b-row>
+    <br />
     <address-form
       :is-viewer="viewer"
       :edit-mode="editorMode"
       :owner-id="updatedAccount.id"
       class="address-form"
     />
-    <change-password />
+    <b-button class="save-profile" @click="saveProfile">
+      <fa-icon icon="check" size="lg" />
+      UPDATE PROFILE
+    </b-button>
+    <br />
+    <br />
+    <change-password :is-viewer="viewer" :edit-mode="editorMode" />
 
     <team-popup
       v-if="viewer && account.subscribed.startsWith('paid')"
@@ -149,6 +171,8 @@ export default {
   data() {
     return {
       error: null,
+      succes: null,
+      loading: null,
       viewer: true,
       updatedStatus: null,
       updatedAccount: null,
@@ -179,6 +203,17 @@ export default {
       set(value) {
         this.$store.commit('auth/setModelKV', {
           key: 'description',
+          value,
+        });
+      },
+    },
+    email: {
+      get() {
+        return this.$store.state.auth.account.email;
+      },
+      set(value) {
+        this.$store.commit('auth/setModelKV', {
+          key: 'email',
           value,
         });
       },
@@ -239,6 +274,20 @@ export default {
     },
     validLastName() {
       return this.lastNameState === true ? 'Thank you' : '';
+    },
+    fullName: {
+      get() {
+        if (this.viewer) {
+          return this.$store.state.auth.viewed.fullName;
+        }
+        return this.$store.state.auth.account.fullName;
+      },
+      set(value) {
+        this.$store.commit('auth/setModelKV', {
+          key: 'fullName',
+          value,
+        });
+      },
     },
     status: {
       get() {
@@ -377,6 +426,30 @@ export default {
         this.editorMode = false;
       }
       logger.publish(4, 'profile', 'toggleEditMode:res', this.editorMode);
+    },
+
+    async saveProfile(evt) {
+      if (evt) evt.preventDefault();
+      if (evt) evt.stopPropagation();
+      this.error = null;
+      this.success = null;
+      try {
+        this.fullName = `${this.firstName} ${this.lastName}`;
+        const profile = await this.$store.dispatch('auth/updateAccount', this.profile);
+
+        if (profile.id) {
+          this.loading = false;
+          this.success = { message: 'Profile updated' };
+          this.editorMode = false;
+          window.scrollTo(0, 100);
+          return this.success;
+        }
+        logger.publish(4, this.updatedProfileType, 'saveProfile:err', profile);
+        return null;
+      } catch (error) {
+        logger.publish(3, this.updatedProfileType, 'saveProfile:err', error);
+        throw error;
+      }
     },
 
     sendMessage(evt) {

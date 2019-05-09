@@ -20,7 +20,7 @@
             @mouseleave="displayIconButton = false"
             @click.prevent.stop="$refs.avatarImport.showModal()"
           >
-            <i class="fa fa-picture-o " />
+            <fa-icon icon="image" size="lg" />
           </b-button>
         </b-col>
       </b-row>
@@ -187,14 +187,14 @@
     </b-card-body>
     <b-card-footer>
       <b-button :disabled="!complete" class="save-application" @click="saveApplication">
-        <i class="fa fa-check" />
+        <fa-icon icon="check" size="lg" />
       </b-button>
       <b-button
         :disabled="!applicationIdExists"
         class="remove-application"
         @click="removeApplication"
       >
-        <i class="fa fa-trash" />
+        <fa-icon icon="trash" size="lg" />
       </b-button>
     </b-card-footer>
     <file-import-container

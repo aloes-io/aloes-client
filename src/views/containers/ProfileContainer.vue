@@ -12,17 +12,8 @@
       :is-viewer="viewer"
       :edit-mode="editMode"
       class="account-profile"
-    /> -->
-    <br />
-    <b-row align-h="center">
-      <b-col v-if="!viewer && editorMode" sm="3">
-        <b-button class="save-profile" @click="saveProfile">
-          <i class="fa fa-check " />
-          Enregistrer
-        </b-button>
-      </b-col>
-    </b-row>
-    <br />
+    /> 
+    <br />-->
 
     <!-- todo : wrap this in a modal and a editor mode message -->
 
@@ -41,7 +32,6 @@
 
 <script type="text/javascript">
 import bAlert from 'bootstrap-vue/es/components/alert/alert';
-import bButton from 'bootstrap-vue/es/components/button/button';
 import ProfileHeader from '@/components/Profile/ProfileHeader.vue';
 //  import ProfileDescription from '@/components/Profile/ProfileDescription.vue';
 import logger from '@/services/logger';
@@ -51,7 +41,6 @@ export default {
 
   components: {
     'b-alert': bAlert,
-    'b-button': bButton,
     'profile-header': ProfileHeader,
     // 'profile-description': ProfileDescription,
   },
@@ -133,36 +122,6 @@ export default {
       set(value) {
         this.$store.commit('auth/setModelKV', {
           key: 'status',
-          value,
-        });
-      },
-    },
-    firstName: {
-      get() {
-        if (this.viewer) {
-          return this.$store.state.auth.viewed.firstName;
-        }
-        return this.$store.state.auth.account.firstName;
-      },
-    },
-    lastName: {
-      get() {
-        if (this.viewer) {
-          return this.$store.state.auth.viewed.lastName;
-        }
-        return this.$store.state.auth.account.lastName;
-      },
-    },
-    fullName: {
-      get() {
-        if (this.viewer) {
-          return this.$store.state.auth.viewed.fullName;
-        }
-        return this.$store.state.auth.account.fullName;
-      },
-      set(value) {
-        this.$store.commit('auth/setModelKV', {
-          key: 'fullName',
           value,
         });
       },
@@ -252,34 +211,6 @@ export default {
         editMode: this.editMode,
       });
       return null;
-    },
-
-    scrollUp() {
-      window.scrollTo(0, 100);
-    },
-
-    async saveProfile(evt) {
-      if (evt) evt.preventDefault();
-      if (evt) evt.stopPropagation();
-      this.error = null;
-      this.success = null;
-      try {
-        this.fullName = `${this.firstName} ${this.lastName}`;
-        const profile = await this.$store.dispatch('auth/updateAccount', this.profile);
-
-        if (profile.id) {
-          this.loading = false;
-          this.success = { message: 'Profile updated' };
-          this.editorMode = false;
-          await this.scrollUp();
-          return this.success;
-        }
-        logger.publish(4, this.updatedProfileType, 'saveProfile:err', profile);
-        return null;
-      } catch (error) {
-        logger.publish(3, this.updatedProfileType, 'saveProfile:err', error);
-        throw error;
-      }
     },
   },
 };

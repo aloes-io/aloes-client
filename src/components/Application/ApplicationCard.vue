@@ -59,7 +59,7 @@
             class="refresh-token-btn"
             @click.prevent.stop="showRefreshTokenPopup"
           >
-            <i class="fa fa-refresh" />
+            <fa-icon icon="sync" size="lg" />
           </b-button>
         </b-col>
       </b-row>

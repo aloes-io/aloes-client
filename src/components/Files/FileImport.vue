@@ -1,7 +1,7 @@
 <template lang="html">
   <div class="file-import">
     <div v-if="isSaving">
-      <i class="fa fa-spinner" />
+      <fa-icon icon="spinner" :transform="{ rotate: 42 }" size="lg" />
       uploading {{ fileCount }} files...
     </div>
     <b-row v-else-if="!isSaving" align-h="center">
@@ -66,11 +66,12 @@
       <b-col cols="10" sm="10">
         <br />
         <b-alert v-if="error" :show="error !== null" variant="warning">
-          <i class="fa fa-circle failed" />
+          <fa-icon icon="circle" class="failed" size="lg" />
+
           {{ error }}
         </b-alert>
         <b-alert v-if="success" :show="success !== null" variant="success">
-          <i class="fa fa-circle file-added" />
+          <fa-icon icon="circle" class="file-added" size="lg" />
           {{ success.message }}
         </b-alert>
       </b-col>

@@ -34,7 +34,7 @@
             placeholder="Search for description..."
             @keyup="searchFor()"
           />
-          <i id="search-icon" class="fa fa-search" />
+          <fa-icon icon="search" size="lg" />
         </b-col>
       </b-row>
     </b-container>

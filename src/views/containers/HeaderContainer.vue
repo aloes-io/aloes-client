@@ -16,17 +16,17 @@
     <b-collapse id="nav_collapse" is-nav>
       <b-navbar-nav v-if="!access_token || access_token === null" class="w-55">
         <b-nav-item @click.prevent.stop="$refs.loginPopup.showModal()">
-          <i class="fa fa-sign-in" /> Signin
+          <fa-icon icon="sign-in-alt" size="lg" /> Signin
         </b-nav-item>
         <b-nav-item @click.prevent.stop="$refs.signupPopup.showModal()">
-          <i class="fa fa-user-plus" /> Signup
+          <fa-icon icon="user-plus" size="lg" /> Signup
         </b-nav-item>
         <login-popup ref="loginPopup" />
         <signup-popup ref="signupPopup" />
       </b-navbar-nav>
       <b-navbar-nav v-else-if="access_token && !account" class="w-55">
         <b-nav-item @click.prevent.stop="onLogoutClick">
-          <i class="fa fa-sign-out" /> Signout
+          <fa-icon icon="sign-out-alt" size="lg" /> Signout
         </b-nav-item>
       </b-navbar-nav>
       <b-navbar-nav v-else-if="access_token && account" class="w-55">
@@ -39,7 +39,7 @@
             },
           }"
         >
-          <i class="fa fa-search-o" />
+          <fa-icon icon="search" size="lg" />
         </b-nav-item>
         <!-- <b-nav-item
           :to="{
@@ -96,13 +96,13 @@
             :src="$store.state.auth.account.avatarImgUrl"
             class="thumb-icon"
           />
-          <i v-else class="fa fa-user" />
+          <fa-icon v-else icon="user" size="lg" />
           <small v-show="screenIsLarge">
             {{ $store.state.auth.account.firstName }}
           </small>
         </b-nav-item>
         <b-nav-item @click.prevent.stop="onLogoutClick">
-          <i class="fa fa-sign-out" /> Signout
+          <fa-icon icon="sign-out-alt" size="lg" />
         </b-nav-item>
       </b-navbar-nav>
     </b-collapse>

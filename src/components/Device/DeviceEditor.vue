@@ -102,11 +102,11 @@
     </b-card-body>
     <b-card-footer>
       <b-button :disabled="!complete" class="save-device" @click="saveDevice">
-        <i class="fa fa-check" />
+        <fa-icon icon="check" size="lg" />
         <small>save</small>
       </b-button>
       <b-button :disabled="!deviceIdExists" class="remove-device" @click="removeDevice">
-        <i class="fa fa-trash" />
+        <fa-icon icon="trash" size="lg" />
         <small>delete</small>
       </b-button>
     </b-card-footer>

@@ -28,8 +28,8 @@
           />
         </div>
         <b-button type="submit" class="reset-pass">
-          <i v-if="loading" class="fa fa-spinner" />
-          <i v-else class="fa fa-check" />
+          <fa-icon v-if="loading" icon="spinner" :transform="{ rotate: 42 }" size="lg" />
+          <fa-icon v-else icon="check" size="lg" />
           Confirm
         </b-button>
         <b-alert v-if="error" :show="error !== null" variant="warning">

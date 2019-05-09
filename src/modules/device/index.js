@@ -14,7 +14,6 @@ export default {
     loading: null,
     outputTopic: 'IoTAgent',
     collection: [],
-    network: {},
     instance: {
       ownerId: null,
       name: null,
@@ -38,7 +37,9 @@ export default {
       nwkSKey: null,
       authMode: null,
     },
+    sensorsCollection: [],
     sensors: [],
+    network: {},
   },
   mutations,
   actions,

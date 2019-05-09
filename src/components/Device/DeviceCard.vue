@@ -2,12 +2,12 @@
   <b-card :class="className" no-body class="device-card">
     <b-card-header>
       <b-row>
-        <b-col cols="6" sm="6">
+        <b-col cols="7" sm="7">
           <h5>
             {{ device.name }}
           </h5>
         </b-col>
-        <b-col cols="6" sm="6">
+        <b-col cols="5" sm="5">
           <h5>
             {{ device.type }}
           </h5>
@@ -62,7 +62,7 @@
             class="refresh-token-btn"
             @click.prevent.stop="showRefreshTokenPopup"
           >
-            <i class="fa fa-refresh" />
+            <fa-icon icon="sync" size="lg" />
           </b-button>
         </b-col>
       </b-row>

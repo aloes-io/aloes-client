@@ -15,11 +15,14 @@ import logger from '@/services/logger';
 
 Vue.use(Vuex);
 
-const vuexLocal = new VuexPersistence({
+const profileStorage = new VuexPersistence({
   key: 'profile',
   storage: window.localStorage,
   reducer: state => ({
     account: state.auth.account,
+    device: state.device.instance,
+    //  devices: state.device.collection,
+    //  sensors: state.device.sensorsCollection,
     address: state.address,
   }),
   asyncStorage: false,
@@ -57,6 +60,10 @@ export default new Vuex.Store({
         lightblue: '#98d4ee',
         yellow: '#ffc85f',
         lightyellow: '#f6d9a2',
+      },
+      fonts: {
+        head: `LemonMilkbold`,
+        text: `'JosefinSlab-SemiBold', serif`,
       },
       pictures: {
         logo: `${process.env.VUE_APP_CLIENT_URL}/icons/aloesicon2.png`,
@@ -199,8 +206,12 @@ export default new Vuex.Store({
       }
     },
   },
-  plugins: [vuexLocal.plugin, vuexSession.plugin, vuexCache({ timeout: 2000 })],
-  //  plugins: [vuexLocal.plugin, vuexCache({timeout: 2000})],
+  plugins: [
+    profileStorage.plugin,
+    //  deviceStorage.plugin,
+    vuexSession.plugin,
+    vuexCache({ timeout: 2000 }),
+  ],
   modules: {
     async, // async namespaced
     auth, // auth namespaced

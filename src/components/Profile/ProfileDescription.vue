@@ -8,7 +8,7 @@
         </b-col>
         <b-col sm="1">
           <b-button size="sm" class="favorite-color-button" @click="addFavoriteColor">
-            <i class="fa fa-plus " />
+            <fa-icon icon="plus" size="lg" />
           </b-button>
         </b-col>
       </b-row>
@@ -27,7 +27,7 @@
             class="favorite-color-button"
             @click="delFavoriteColor(index)"
           >
-            <i class="fa fa-times" />
+            <fa-icon icon="times" size="lg" />
           </b-button>
         </b-col>
       </b-row>

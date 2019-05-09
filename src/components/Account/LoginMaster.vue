@@ -32,7 +32,7 @@
     <b-row v-if="newTabIndex === 0" align-h="center">
       <b-col sm="12" md="10" lg="8" xl="8">
         <b-button class="return-button" @click="$router.push({ name: 'home' })">
-          <i class="fa fa-angle-left" />
+          <fa-icon icon="chevron-left" size="lg" />
           Back
         </b-button>
         <b-button type="submit" class="login" @click="sendReq">

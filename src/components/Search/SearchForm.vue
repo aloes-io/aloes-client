@@ -15,10 +15,10 @@
       <!-- TODO : add a reset parameter button  -->
       <b-col cols="4" sm="2" lg="2" xl="2">
         <b-button id="search-custom" type="submit">
-          <i :aria-hidden="true" class="fa fa-search" />
+          <fa-icon icon="search" size="md" />
         </b-button>
         <b-button id="search-geolocation" @click="getUserLocation">
-          <i :aria-hidden="true" class="fa fa-map-marker" />
+          <fa-icon icon="map-marker" size="md" />
         </b-button>
       </b-col>
     </b-row>

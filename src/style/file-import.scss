@@ -1,4 +1,4 @@
-@import "global";
+@import 'global';
 
 .file-import {
 }
@@ -115,8 +115,10 @@ label.add-file:hover {
 .file-added {
   color: $secondary;
   fill: $secondary;
-  font-size: 1.2rem;
   opacity: 0.6;
+  path {
+    font-size: 1.2rem;
+  }
 }
 
 .try-again {
@@ -128,9 +130,11 @@ label.add-file:hover {
 
 .failed {
   color: $danger;
-  fill: $danger;
   font-size: 1.2rem;
   opacity: 0.8;
+  path {
+    fill: $danger;
+  }
 }
 
 @media only screen and (min-device-width: 320px) and (max-device-width: 480px) {

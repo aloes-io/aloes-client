@@ -88,8 +88,6 @@
           :client-url="$store.state.clientUrl"
           :width="300"
           :height="250"
-          @node-selected="onNodeSelected"
-          @node-deselected="onNodeDeselected"
           @node-clicked="onNodeClicked"
         />
       </b-col>
@@ -159,8 +157,6 @@
         <object-composition
           :source="`/data/virtual-object-composition.json`"
           :client-url="$store.state.clientUrl"
-          @node-selected="onNodeSelected"
-          @node-deselected="onNodeDeselected"
           @node-clicked="onNodeClicked"
         />
       </b-col>
@@ -254,7 +250,7 @@ export default {
     async onUpdateSensor(...args) {
       if (!args || !args[0].id) return null;
       let sensor = args[0];
-      logger.publish(4, 'device', 'onUpdateSensor:req', sensor);
+      logger.publish(4, 'demo-device', 'onUpdateSensor:req', sensor);
       if (sensor.type === 3349 && args[1] === 5911) {
         const result = await this.cameraTest(2);
         args[1] = 5910;
@@ -264,24 +260,17 @@ export default {
       //   this.measurementTest();
       // }
       sensor = await updateAloesSensors(sensor, args[1], args[2]);
+      this.$refs.deviceTree.onNodeUpdated(sensor);
       this.sensor = sensor;
     },
 
     onDeleteSensor(sensor) {
-      //  this.refs.deviceTree.removeNode(sensor.id);
-      logger.publish(4, 'device', 'onDeleteSensor:req', sensor);
-    },
-
-    onNodeSelected(node) {
-      logger.publish(4, 'device', 'onNodeSelected:req', node.data);
-    },
-
-    onNodeDeselected() {
-      logger.publish(4, 'device', 'onNodeDeselected:req');
+      logger.publish(4, 'demo-device', 'onDeleteSensor:req', sensor);
+      this.$refs.deviceTree.onNodeDeleted(sensor);
     },
 
     onNodeClicked(node) {
-      logger.publish(4, 'device', 'onNodeClicked:req', node.data);
+      logger.publish(5, 'demo-device', 'onNodeClicked:req', node.data);
       if (node.data && node.data.group === 1) {
         const device = { ...node.data };
         if (device.children) {

@@ -2,7 +2,6 @@
   <div class="change-password-view">
     <b-form @submit="onSubmit">
       <b-form-group
-        v-if="access_token === null"
         label="Current password"
         label-for="changed-password"
         label-cols="3"
@@ -12,6 +11,8 @@
         <b-form-input
           id="changed-password"
           v-model="password"
+          :plaintext="!editorMode"
+          :disabled="!editorMode"
           size="md"
           type="password"
           autocomplete="current-password"
@@ -28,6 +29,8 @@
         <b-form-input
           id="new-password"
           v-model="newPassword"
+          :plaintext="!editorMode"
+          :disabled="!editorMode"
           size="md"
           type="password"
           autocomplete="new-password"
@@ -44,6 +47,8 @@
         <b-form-input
           id="confirm-new-password"
           v-model="confirmPassword"
+          :plaintext="!editorMode"
+          :disabled="!editorMode"
           size="md"
           type="password"
           autocomplete="new-password"
@@ -59,7 +64,7 @@
       <b-button type="submit" variant="success">
         <i v-if="loading" class="fa fa-spinner" />
         <i v-else class="fa fa-check" />
-        SAVE
+        Update password
       </b-button>
     </b-form>
   </div>
@@ -84,10 +89,13 @@ export default {
   },
 
   props: {
-    // eslint-disable-next-line camelcase
-    access_token: {
-      type: String,
-      default: null,
+    'is-viewer': {
+      type: Boolean,
+      default: true,
+    },
+    'edit-mode': {
+      type: Boolean,
+      default: false,
     },
   },
 
@@ -99,7 +107,37 @@ export default {
       error: null,
       success: null,
       loading: false,
+      viewer: true,
     };
+  },
+
+  computed: {
+    editorMode: {
+      get() {
+        if (this.viewer) {
+          return null;
+        }
+        return this.$store.state.auth.editorMode;
+      },
+      set(value) {
+        this.$store.commit('auth/setEditorMode', value);
+      },
+    },
+  },
+
+  watch: {
+    isViewer: {
+      handler(state) {
+        this.viewer = state;
+      },
+      immediate: true,
+    },
+    // editMode: {
+    //   handler(mode) {
+    //     this.editorMode = mode;
+    //   },
+    //   immediate: true,
+    // },
   },
 
   methods: {
@@ -118,8 +156,6 @@ export default {
         .dispatch('auth/changePassword', {
           oldPassword: this.password,
           newPassword: this.newPassword,
-          // eslint-disable-next-line camelcase
-          access_token: this.access_token,
         })
         .then(() => {
           this.loading = false;

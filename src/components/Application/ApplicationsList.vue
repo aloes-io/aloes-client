@@ -8,7 +8,7 @@
       :application="application"
     />
     <b-button class="add-application" @click="newApplication">
-      <i class="fa fa-plus" />
+      <fa-icon icon="plus" size="lg" />
     </b-button>
   </div>
 </template>

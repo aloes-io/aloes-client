@@ -197,7 +197,7 @@ input#confirm-signup.form-control:hover {
 
 /* When the checkbox is checked, add a blue background */
 .container input:checked ~ .checkmark {
-  background-color: $success;
+  background-color: $blue;
 }
 
 /* Create the checkmark/indicator (hidden when not checked) */
@@ -226,7 +226,6 @@ input#confirm-signup.form-control:hover {
 }
 
 button.btn {
-  background-color: $primary;
   margin-top: 2%;
   width: 100%;
   background-color: $btn-bg-color;

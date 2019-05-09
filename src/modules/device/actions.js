@@ -6,20 +6,28 @@ import logger from '@/services/logger';
 const userResources = 'users';
 
 export async function findDevicesByAccount({ state, commit }, ownerId) {
-  // return loopback
-  //   .get(`/${userResources}/${ownerId}/${state.resources.toLowerCase()}`)
-  return loopback
-    .find(`/${state.resources}`, {
+  try {
+    const devices = await loopback.find(`/${state.resources}`, {
       where: { ownerId },
-      include: 'deviceAddress',
-      limit: 20,
-    })
-    .then(devices => {
-      logger.publish(3, state.collectionName, 'dispatch:findDevicesByAccount:res', devices);
-      commit('setCollection', devices);
-      return devices;
-    })
-    .catch(err => err);
+      include: ['sensors', 'deviceAddress'],
+      //  include: 'sensors',
+      limit: 40,
+    });
+    const collection = devices;
+    delete collection.sensors;
+    //  logger.publish(3, state.collectionName, 'dispatch:findDevicesByAccount:res', collection);
+    commit('setStateKV', { key: 'collection', value: collection });
+    const sensors = devices.map(device => {
+      if (device.sensors) {
+        return device.sensors;
+      }
+      return;
+    });
+    commit('setStateKV', { key: 'sensorsCollection', value: sensors });
+    return devices;
+  } catch (error) {
+    return error;
+  }
 }
 
 export async function findDeviceById({ state, commit }, id) {
@@ -27,11 +35,11 @@ export async function findDeviceById({ state, commit }, id) {
     .get(`/${state.resources}/${id}`)
     .then(device => {
       if (device.id) {
-        logger.publish(2, state.collectionName, 'dispatch:findDeviceById:res', device);
-        commit('setModel', { viewer: false, device });
+        //  logger.publish(2, state.collectionName, 'dispatch:findDeviceById:res', device);
+        commit('setModel', device);
         return device;
       }
-      const error = new Error('invalid device');
+      const error = new Error('No device found');
       return error;
     })
     .catch(err => err);
@@ -84,8 +92,8 @@ export async function saveDevice({ dispatch }, { device }) {
 export async function createDevice({ state, commit }, { device }) {
   return (
     loopback
-      .post(`/${userResources}/${device.ownerId}/${state.resources.toLowerCase()}`, device)
-      //  .post(`/${state.resources.toLowerCase()}`, device)
+      //.post(`/${userResources}/${device.ownerId}/${state.resources.toLowerCase()}`, device)
+      .post(`/${state.resources}`, device)
       .then(res => {
         logger.publish(4, state.collectionName, 'dispatch:createDevice:res', res);
         commit('setModel', res);
@@ -93,6 +101,7 @@ export async function createDevice({ state, commit }, { device }) {
       })
       .catch(err => err)
   );
+
   //  return result;
 }
 
@@ -102,7 +111,7 @@ export async function updateDevice({ state, commit }, { device }) {
       //  .put(`/${userResources}/${device.ownerId}/${state.resources.toLowerCase()}/${device.id}`, device)
       .put(`/${state.resources}/${device.id}`, device)
       .then(res => {
-        logger.publish(3, state.collectionName, 'dispatch:updateDevice:res', res);
+        //  logger.publish(3, state.collectionName, 'dispatch:updateDevice:res', res);
         commit('setModel', res);
         return res;
       })
@@ -171,7 +180,7 @@ export async function updateSensor({ state, commit }, { sensor }) {
       `/${state.resources}/${sensor.deviceId}/sensors/${sensor.id}`,
       sensor,
     );
-    logger.publish(3, state.collectionName, 'dispatch:updateSensor:res', updatedSensor);
+    //  logger.publish(3, state.collectionName, 'dispatch:updateSensor:res', updatedSensor);
     // todo : create a cache with this structure :
     // devices = { deviceId: {instance} }
     // sensors = { sensorId: {instance} }
@@ -182,6 +191,7 @@ export async function updateSensor({ state, commit }, { sensor }) {
       key: 'success',
       value: { message: 'sensor updated' },
     });
+    return updatedSensor;
   } catch (error) {
     await commit('setModelKV', { key: 'error', value: error });
     logger.publish(4, state.collectionName, 'dispatch:updateSensor:err', error);
