@@ -222,7 +222,7 @@ PubSub.handler = async (topic, message) => {
 
 PubSub.publish = async (client, options) => {
   try {
-    logger.publish(5, 'pubsub', 'publish:req', options);
+    logger.publish(4, 'pubsub', 'publish:req', options);
     if (options && client) {
       options.pattern = 'aloesClient';
       const packet = await aloesClientEncoder(options);
@@ -237,13 +237,13 @@ PubSub.publish = async (client, options) => {
   }
 };
 
-PubSub.publishToInstance = (client, collectionName, userId, modelId, payload) =>
+PubSub.publishToInstance = (client, collectionName, userId, modelId, data) =>
   PubSub.publish(client, {
     userId,
     collectionName,
     modelId,
     method: 'PUT',
-    payload,
+    data,
   });
 
 PubSub.close = async client => await PubSub.removeListeners(client);

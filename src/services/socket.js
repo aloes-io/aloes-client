@@ -17,7 +17,6 @@ const baseOptions = {
 };
 
 const socket = {};
-let client;
 
 socket.setToken = async token => {
   try {
@@ -31,8 +30,8 @@ socket.setToken = async token => {
       username: token.userId.toString(),
       password: token.id.toString(),
     };
-    // if (client && client._client.connected) {
-    //   client = mqtt.connect(brokerUrl, options);
+    // if (socket.client && socket.client._client.connected) {
+    //   socket.client = mqtt.connect(brokerUrl, options);
     //   return socket;
     // }
     return socket.initSocket(options);
@@ -54,23 +53,23 @@ socket.removeToken = async () => {
 
 socket.initSocket = options => {
   logger.publish(3, 'socket', 'initSocket', options);
-  client = mqtt.connect(brokerUrl, options);
+  socket.client = mqtt.connect(brokerUrl, options);
 
-  client.on('connect', async state => {
-    if (client && client._client.connected) {
-      await PubSub.setListeners(client, socket.token);
+  socket.client.on('connect', async state => {
+    if (socket.client && socket.client._client.connected) {
+      await PubSub.setListeners(socket.client, socket.token);
     }
     //  socket.client.publish(`${token.userId.toString()}/Authentication/POST`, "yooo");
     return null;
   });
 
-  client.on('disconnect', async state => {
+  socket.client.on('disconnect', async state => {
     logger.publish(3, 'socket', 'onDisconnect', state);
-    await PubSub.close(client);
+    await PubSub.close(socket.client);
     return null;
   });
 
-  client.on('message', async (topic, message) => {
+  socket.client.on('message', async (topic, message) => {
     logger.publish(3, 'socket', 'onMessage', topic);
     await PubSub.handler(topic, message);
   });

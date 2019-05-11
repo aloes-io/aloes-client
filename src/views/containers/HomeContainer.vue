@@ -289,8 +289,8 @@ export default {
         //  this.$store.commit('device/setModel', device);
       } else if (node.data && node.data.group === 2) {
         const sensor = { ...node.data };
-        //  delete sensor.group;
-        //  delete sensor.size;
+        delete sensor.group;
+        delete sensor.size;
         this.sensor = sensor;
         this.device = null;
       }

@@ -2,7 +2,6 @@
 const express = require('express');
 const localtunnel = require('localtunnel');
 const dotenv = require('dotenv');
-//  const fs = require('fs');
 const path = require('path');
 const webRoot = path.join(__dirname, 'build');
 const app = express();

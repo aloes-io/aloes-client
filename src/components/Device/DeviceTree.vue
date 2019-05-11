@@ -632,9 +632,7 @@ export default {
     },
 
     textTransform(d) {
-      return (
-        `translate(${d.target.y}, ${d.target.x})`
-      );
+      return `translate(${d.target.y}, ${d.target.x})`;
     },
 
     textBlink(id, wait, dur) {
