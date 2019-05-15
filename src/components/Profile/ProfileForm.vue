@@ -302,7 +302,7 @@ export default {
         return this.$store.state.teams.collection;
       },
     },
-    sender: {
+    profile: {
       get() {
         return this.$store.state.auth.account;
       },
@@ -387,7 +387,7 @@ export default {
       this.error = null;
       this.success = null;
       return this.$store
-        .dispatch('team/loadTeams', this.sender.id)
+        .dispatch('team/loadTeams', this.profile.id)
         .then(res => {
           this.loaderCounter = 0;
           return res;
@@ -444,10 +444,10 @@ export default {
           window.scrollTo(0, 100);
           return this.success;
         }
-        logger.publish(4, this.updatedProfileType, 'saveProfile:err', profile);
+        logger.publish(4, 'Profile', 'saveProfile:err', profile);
         return null;
       } catch (error) {
-        logger.publish(3, this.updatedProfileType, 'saveProfile:err', error);
+        logger.publish(3, 'Profile', 'saveProfile:err', error);
         throw error;
       }
     },
@@ -455,7 +455,7 @@ export default {
     sendMessage(evt) {
       if (evt) evt.preventDefault();
       if (evt) evt.stopPropagation();
-      this.$refs.messagePopup.showModal(this.receiver, this.sender, '', 'greet');
+      this.$refs.messagePopup.showModal(this.receiver, this.profile, '', 'greet');
     },
   },
 };

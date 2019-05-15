@@ -151,53 +151,48 @@ export default {
     },
     links() {
       if (this.graphLinks) {
-        return (
-          this.svg
-            .append('g')
-            .attr('class', 'links-group')
-            .selectAll('path.link')
-            //  .data(this.graphLinks, d => d.target.id)
-            .data(this.graphLinks, d => d.target.data.id)
-            .enter()
-            .insert('path')
-            .attr('id', d => (d.target.data.id ? `link-${d.target.data.id}` : ''))
-            .attr('class', this.linkClass)
-            .style('stroke-width', this.linkWidth)
-            .style('stroke', this.colors.lightblue)
-            .style('opacity', '0.4')
-            .style('fill', 'none')
-        );
+        return this.svg
+          .append('g')
+          .attr('class', 'links-group')
+          .selectAll('path.link')
+          .data(this.graphLinks, d => d.target.data.id)
+          .enter()
+          .insert('path')
+          .attr('id', d => (d.target.data.id ? `link-${d.target.data.id}` : ''))
+          .attr('class', this.linkClass)
+          .style('stroke-width', this.linkWidth)
+          .style('stroke', this.colors.lightblue)
+          .style('opacity', '0.4')
+          .style('fill', 'none');
       }
       return null;
     },
     images() {
       if (this.graphNodes) {
-        return (
-          this.svg
-            .append('g')
-            .attr('class', 'images-group')
-            .selectAll('image')
-            .data(this.graphNodes, d => d.data.id)
-            .enter()
-            .append('image')
-            .attr('class', this.imageClass)
-            .attr('xlink:href', this.imageUrl)
-            .attr('crossOrigin', 'anonymous')
-            .attr('x', d => `${(-1 * this.nodeRadius(d)) / 2}`)
-            .attr('y', d => `${(-1 * this.nodeRadius(d)) / 2}`)
-            .attr('width', d => `${this.nodeRadius(d)}px`)
-            .attr('height', d => `${this.nodeRadius(d)}px`)
-            .style('cursor', 'pointer')
-            .on('click', this.mouseClick)
-            // .on('mouseenter', this.mouseEnter)
-            // .on('mouseleave', this.mouseLeave)
-            .on('mouseover', d => {
-              select(`#node-${d.data.id}`).attr('filter', 'url(#circle-shadow-selected)');
-            })
-            .on('mouseout', d => {
-              select(`#node-${d.data.id}`).attr('filter', 'url(#circle-shadow)');
-            })
-        );
+        return this.svg
+          .append('g')
+          .attr('class', 'images-group')
+          .selectAll('image')
+          .data(this.graphNodes, d => d.data.id)
+          .enter()
+          .append('image')
+          .attr('class', this.imageClass)
+          .attr('xlink:href', this.imageUrl)
+          .attr('crossOrigin', 'anonymous')
+          .attr('x', d => `${(-1 * this.nodeRadius(d)) / 2}`)
+          .attr('y', d => `${(-1 * this.nodeRadius(d)) / 2}`)
+          .attr('width', d => `${this.nodeRadius(d)}px`)
+          .attr('height', d => `${this.nodeRadius(d)}px`)
+          .style('cursor', 'pointer')
+          .on('click', this.mouseClick)
+          .on('mouseenter', this.mouseEnter)
+          .on('mouseleave', this.mouseLeave)
+          .on('mouseover', d => {
+            select(`#node-${d.data.id}`).attr('filter', 'url(#circle-shadow-selected)');
+          })
+          .on('mouseout', d => {
+            select(`#node-${d.data.id}`).attr('filter', 'url(#circle-shadow)');
+          });
       }
       return null;
     },
@@ -223,6 +218,15 @@ export default {
           .text(this.textValue);
       }
       return null;
+    },
+    tooltip() {
+      return this.svg
+        .append('g')
+        .attr('class', 'tooltip-group')
+        .style('display', 'none')
+        .style('cursor', 'pointer')
+        .on('mouseleave', this.hideTooltip)
+        .on('click', this.hideTooltip);
     },
   },
 
@@ -644,6 +648,42 @@ export default {
         .styleTween('fill', () => interpolate(this.colors.yellow, this.colors.lightblue));
     },
 
+    showTooltip(d) {
+      [...this.$el.getElementsByClassName('tooltip-class')].map(n => n && n.remove());
+      // const tootltip = this.svg.selectAll('.tooltip-group');
+      // tootltip.each(function(index) {
+      //   const gnode = this.parentNode;
+      //   gnode.parentNode.appendChild(gnode);
+      // });
+
+      const text = d.data.name;
+      this.tooltip
+        .style('display', 'block')
+        .append('rect')
+        .attr('class', 'tooltip-class')
+        .attr('x', d.x + 20)
+        .attr('y', d.y - 20)
+        .attr('width', '140')
+        .attr('height', '40')
+        .attr('fill', '#F2F2F2')
+        .style('opacity', '0.4');
+
+      this.tooltip
+        .insert('text')
+        .attr('x', d.x + 30)
+        .attr('y', d.y)
+        .attr('class', 'tooltip-class')
+        .attr('font-family', this.fonts.text)
+        .attr('fill', this.colors.blue)
+        .style('font-size', '12px')
+        .text(text);
+    },
+
+    hideTooltip(d) {
+      this.tooltip.style('display', 'none');
+      [...this.$el.getElementsByClassName('tooltip-class')].map(n => n && n.remove());
+    },
+
     ticked() {
       this.links.attr('d', this.linkTransform);
       this.descriptions.attr('transform', this.textTransform);
@@ -668,12 +708,15 @@ export default {
       this.$emit('node-clicked', d);
     },
 
-    mouseEnter(...args) {
-      this.$emit('node-selected', ...args);
+    mouseEnter(d) {
+      //  console.log('mouseEnter', d);
+      this.showTooltip(d);
+      this.$emit('node-selected', d);
     },
 
-    mouseLeave(...args) {
-      this.$emit('node-deselected', ...args);
+    mouseLeave(d) {
+      //  this.hideTooltip(d);
+      this.$emit('node-deselected', d);
     },
 
     dragStarted(d) {

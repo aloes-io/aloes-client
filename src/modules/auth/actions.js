@@ -249,11 +249,17 @@ export async function verifyEmail({ state }, user) {
   }
 }
 
-export function changePassword(ctx, { oldPassword, newPassword }) {
-  return loopback.post(`/${ctx.state.resources}/change-password`, {
-    oldPassword,
-    newPassword,
-  });
+export async function changePassword({ state }, { oldPassword, newPassword }) {
+  try {
+    const res = await loopback.post(`/${state.resources}/set-new-password`, {
+      oldPassword,
+      newPassword,
+    });
+    logger.publish(3, state.collectionName, 'dispatch:changePassword:res', res);
+  } catch (error) {
+    logger.publish(2, state.collectionName, 'dispatch:changePassword:err', error);
+    return error;
+  }
 }
 
 export function rememberPassword(ctx, email) {

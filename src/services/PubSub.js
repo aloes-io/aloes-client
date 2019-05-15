@@ -49,6 +49,9 @@ PubSub.unSubscribeWhere = async (client, options) => {
   try {
     if (options && client && Storage) {
       let name;
+      if (!options.collectionName || !options.method || !options.userId) {
+        throw new Error('Missing options');
+      }
       if (options.modelId) {
         name = `/${options.userId}/${options.collectionName}/${options.method}/${options.modelId}`;
       } else {
@@ -72,7 +75,7 @@ PubSub.unSubscribeWhere = async (client, options) => {
         );
         return true;
       }
-      throw new Error('unSubscribeWhere:err : element not found');
+      return null;
     }
     throw new Error('unSubscribeWhere:err Invalid Params');
   } catch (error) {

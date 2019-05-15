@@ -13,7 +13,7 @@
           v-model="password"
           :plaintext="!editorMode"
           :disabled="!editorMode"
-          size="md"
+          size="sm"
           type="password"
           autocomplete="current-password"
           required
@@ -31,7 +31,7 @@
           v-model="newPassword"
           :plaintext="!editorMode"
           :disabled="!editorMode"
-          size="md"
+          size="sm"
           type="password"
           autocomplete="new-password"
           required
@@ -49,7 +49,7 @@
           v-model="confirmPassword"
           :plaintext="!editorMode"
           :disabled="!editorMode"
-          size="md"
+          size="sm"
           type="password"
           autocomplete="new-password"
           required
@@ -62,8 +62,8 @@
         {{ success.message }}
       </b-alert>
       <b-button type="submit" variant="success">
-        <i v-if="loading" class="fa fa-spinner" />
-        <i v-else class="fa fa-check" />
+        <fa-icon v-if="loading" icon="spinner" :transform="{ rotate: 42 }" size="lg" />
+        <fa-icon v-else icon="check" size="lg" />
         Update password
       </b-button>
     </b-form>
@@ -141,30 +141,28 @@ export default {
   },
 
   methods: {
-    onSubmit(evt) {
+    async onSubmit(evt) {
       evt.preventDefault();
       this.loading = true;
       this.error = null;
 
-      if (this.newPassword !== this.confirmPassword) {
-        this.loading = false;
-        this.error = new Error('The password does not match, please try again');
-        return;
-      }
-
-      this.$store
-        .dispatch('auth/changePassword', {
+      try {
+        if (this.newPassword !== this.confirmPassword) {
+          throw new Error('The password does not match, please try again');
+          //  this.error = new Error('The password does not match, please try again');
+        }
+        await this.$store.dispatch('auth/changePassword', {
           oldPassword: this.password,
           newPassword: this.newPassword,
-        })
-        .then(() => {
-          this.loading = false;
-          this.success = { message: 'Password updated' };
-        })
-        .catch(err => {
-          this.error = err;
-          this.loading = false;
         });
+        this.loading = false;
+        this.success = { message: 'Password updated' };
+        return null;
+      } catch (error) {
+        this.error = error;
+        this.loading = false;
+        return error;
+      }
     },
   },
 };

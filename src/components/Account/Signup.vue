@@ -6,7 +6,7 @@
         <b-row align-h="center" class="signup-actions">
           <b-col sm="12" md="12" lg="12" xl="12">
             <b-button id="signup-button" type="submit" variant="primary">
-              <i v-if="loading" class="fa fa-spinner" />
+              <fa-icon v-if="loading" icon="spinner" :transform="{ rotate: 42 }" size="lg" />
               Signup
             </b-button>
           </b-col>

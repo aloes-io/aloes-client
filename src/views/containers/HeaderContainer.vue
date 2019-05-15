@@ -24,11 +24,11 @@
         <login-popup ref="loginPopup" />
         <signup-popup ref="signupPopup" />
       </b-navbar-nav>
-      <b-navbar-nav v-else-if="access_token && !account" class="w-55">
+      <!--   <b-navbar-nav v-else-if="access_token && !account" class="w-55">
         <b-nav-item @click.prevent.stop="onLogoutClick">
           <fa-icon icon="sign-out-alt" size="lg" /> Signout
         </b-nav-item>
-      </b-navbar-nav>
+      </b-navbar-nav> -->
       <b-navbar-nav v-else-if="access_token && account" class="w-55">
         <b-nav-item
           :to="{
