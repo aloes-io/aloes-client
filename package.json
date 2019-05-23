@@ -18,7 +18,7 @@
     "@fortawesome/fontawesome-svg-core": "^1.2.18",
     "@fortawesome/free-solid-svg-icons": "^5.8.2",
     "@fortawesome/vue-fontawesome": "^0.1.6",
-    "aloes-handlers": "^1.2.3",
+    "aloes-handlers": "^1.2.4",
     "aloes-logger": "^1.0.4",
     "animejs": "^3.0.1",
     "async-mqtt": "^2.0.0",

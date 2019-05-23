@@ -13,7 +13,7 @@
   >
     <img :src="$store.state.style.pictures.logo" alt="Aloes logo" class="header-popup-image" />
     <login-master ref="loginMaster" :tab-index="newTabIndex">
-      <b-button @click="hideModal">
+      <b-button @click.prevent.stop="hideModal">
         <fa-icon icon="chevron-left" size="lg" />
         Back
       </b-button>

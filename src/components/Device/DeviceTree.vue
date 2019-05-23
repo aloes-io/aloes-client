@@ -324,8 +324,8 @@ export default {
             icons: ['/icons/aloes/iot.png', '/icons/aloes/iot-white.png'],
             children: [],
           };
-
-          this.$props.devices.forEach(device => {
+          const devices = { ...this.$props.devices };
+          devices.forEach(device => {
             device.size = 0.4;
             device.group = 1;
             device.show = true;
@@ -338,14 +338,15 @@ export default {
               delete device.sensors;
             }
           });
-          graph.children = this.$props.devices;
+          graph.children = devices;
           // this.$store.state.device.graph = graph
         } else if (this.$props.device && this.$props.device !== null) {
-          if (this.$props.device.sensors) {
-            this.$props.device.children = this.$props.device.sensors;
-            delete this.device.sensors;
+          let device = { ...this.$props.device };
+          if (device.sensors) {
+            device.children = device.sensors;
+            delete device.sensors;
           }
-          graph = this.device;
+          graph = device;
         } else {
           graph = await json(this.watchSensors);
         }

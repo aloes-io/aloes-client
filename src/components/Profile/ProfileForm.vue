@@ -435,6 +435,7 @@ export default {
       this.success = null;
       try {
         this.fullName = `${this.firstName} ${this.lastName}`;
+        this.profile.username = this.email;
         const profile = await this.$store.dispatch('auth/updateAccount', this.profile);
 
         if (profile.id) {

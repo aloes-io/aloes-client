@@ -181,6 +181,9 @@ export async function signIn({ state, commit, dispatch }, { email, password, sav
       email,
       password,
     });
+    if (!accessToken || accessToken === null || accessToken instanceof Error) {
+      throw new Error('Invalid token');
+    }
     await commit('setAccessToken', accessToken);
     if (state.access_token !== null) {
       loopback.setToken(state.access_token, save);

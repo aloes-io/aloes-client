@@ -422,6 +422,10 @@ export default {
       if (!this.device.ownerId) {
         this.device.ownerId = this.$store.state.auth.account.id;
       }
+      // delete this.device.children;
+      // delete this.device.size;
+      // delete this.device.group;
+      // delete this.device.show;
       const device = await this.$store.dispatch('device/saveDevice', {
         device: this.device,
       });

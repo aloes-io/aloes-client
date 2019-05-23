@@ -13,7 +13,7 @@ export async function findAddress({ state, commit }, { route, ownerId, viewer })
         return address;
       })
       .catch(err => err);
-  } else if (route === 'account' || 'profile') {
+  } else if (route === 'account' || route === 'profile') {
     return (
       loopback
         .get(`/${userResources}/${ownerId}/profileAddress`)
@@ -26,41 +26,48 @@ export async function findAddress({ state, commit }, { route, ownerId, viewer })
         .catch(err => err)
     );
   }
+  return null;
 }
 
 export async function verifyAddress({ state, commit }, route) {
-  let newAddress;
-  if (route === 'device') {
-    newAddress = {
-      street: state.deviceAddress.street,
-      postalCode: state.deviceAddress.postalCode,
-      city: state.deviceAddress.city,
-      public: state.deviceAddress.public,
-    };
-  } else if (route === 'account') {
-    newAddress = {
-      street: state.profileAddress.street,
-      postalCode: state.profileAddress.postalCode,
-      city: state.profileAddress.city,
-      public: state.profileAddress.public,
-    };
-  }
-  const address = await loopback
-    .post(`/${userResources}/verify-address`, { address: newAddress })
-    .then(res => res.updatedAddress)
-    .catch(err => err);
+  try {
+    let newAddress;
+    if (route === 'device') {
+      newAddress = {
+        street: state.deviceAddress.street,
+        postalCode: state.deviceAddress.postalCode,
+        city: state.deviceAddress.city,
+        public: state.deviceAddress.public,
+      };
+    } else if (route === 'account' || route === 'profile') {
+      newAddress = {
+        street: state.profileAddress.street,
+        postalCode: state.profileAddress.postalCode,
+        city: state.profileAddress.city,
+        public: state.profileAddress.public,
+      };
+    } else {
+      throw new Error('Wrong route');
+    }
+    const address = await loopback
+      .post(`/${userResources}/verify-address`, { address: newAddress })
+      .then(res => res.updatedAddress)
+      .catch(err => err);
 
-  if (address.message) {
+    if (address.message) {
+      return address;
+    }
+    logger.publish(4, state.collectionName, 'dispatch:verifyAddress:res', address);
+    if (route === 'device') {
+      await commit('setDeviceAddress', address);
+    } else {
+      await commit('setProfileAddress', { viewer: false, address });
+    }
+    await commit('setModelKV', { route, key: 'verified', value: true });
     return address;
+  } catch (error) {
+    return error;
   }
-  logger.publish(4, state.collectionName, 'dispatch:verifyAddress:res', address);
-  if (route === 'device') {
-    await commit('setDeviceAddress', address);
-  } else {
-    await commit('setProfileAddress', { viewer: false, address });
-  }
-  await commit('setModelKV', { route, key: 'verified', value: true });
-  return address;
 }
 
 export async function updateAddress({ state, commit }, { route, ownerId }) {
@@ -74,7 +81,7 @@ export async function updateAddress({ state, commit }, { route, ownerId }) {
         return address;
       })
       .catch(err => err);
-  } else if (route === 'account' || 'profile') {
+  } else if (route === 'account' || route === 'profile') {
     return loopback
       .put(`/${userResources}/${ownerId}/profileAddress`, state.profileAddress)
       .then(address => {
@@ -84,4 +91,5 @@ export async function updateAddress({ state, commit }, { route, ownerId }) {
       })
       .catch(err => err);
   }
+  return null;
 }
