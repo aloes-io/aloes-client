@@ -168,7 +168,9 @@
           Easily create new device on any Linux machine
           <a href="https://framagit.org/aloes/node-red-device" target="_blank">node-red-device</a>
           or on ESP8266 / ESP32 microcrontrollers.
-          <a href="https://framagit.org/aloes/arduino-device" target="_blank">arduino-device</a>.
+          <a href="https://framagit.org/aloes/arduino-device-mqtt" target="_blank"
+            >arduino-device-mqtt</a
+          >.
         </p>
       </b-col>
     </b-row>
@@ -178,7 +180,7 @@
           Script devices stories
         </p>
         <p class="info-description">
-          Create custom scenarios where you can set the rules of interaction inside your network.
+          Create custom scenarios where you can set the rules of interaction inside your network
           <a href="https://framagit.org/aloes/node-red-bridge" target="_blank">node-red-bridge</a>.
         </p>
       </b-col>

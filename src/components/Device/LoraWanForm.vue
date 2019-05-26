@@ -4,7 +4,6 @@
       <b-form-group
         id="device-message-protocol-group"
         label-cols="4"
-        horizontal
         label="Message API :"
         label-for="device-message-protocol"
         label-size="sm"
@@ -24,7 +23,6 @@
       <b-form-group
         id="device-auth-mode-group"
         label-cols="4"
-        horizontal
         label="Auth mode :"
         label-for="device-auth-mode"
         label-size="sm"
@@ -44,7 +42,6 @@
     <b-col cols="12" sm="12" md="6" lg="6" xl="6">
       <b-form-group
         id="app-eui-group"
-        horizontal
         label-cols="4"
         label="App EUI :"
         label-for="app-eui"
@@ -67,7 +64,6 @@
     <b-col v-if="authMode === 'ABP'" cols="12" sm="12" md="6" lg="6" xl="6">
       <b-form-group
         id="device-addr-group"
-        horizontal
         label-cols="4"
         label="Device Address :"
         label-for="device-addr"
@@ -89,7 +85,6 @@
     <b-col v-if="authMode === 'ABP'" cols="12" sm="12" md="6" lg="6" xl="6">
       <b-form-group
         id="device-appSKey-group"
-        horizontal
         label-cols="4"
         label="AppSKey :"
         label-for="device-appSKey"
@@ -112,7 +107,6 @@
     <b-col v-if="authMode === 'ABP'" cols="12" sm="12" md="6" lg="6" xl="6">
       <b-form-group
         id="device-nwkSKey-group"
-        horizontal
         label-cols="4"
         label="NwkSKey :"
         label-for="device-nwkSKey"
@@ -135,7 +129,6 @@
     <b-col v-if="authMode === 'OTAA'" cols="12" sm="12" md="6" lg="6" xl="6">
       <b-form-group
         id="device-eui-group"
-        horizontal
         label-cols="4"
         label="Device EUI :"
         label-for="device-eui"
@@ -158,7 +151,6 @@
     <b-col v-if="authMode === 'OTAA'" cols="12" sm="12" md="6" lg="6" xl="6">
       <b-form-group
         id="join-eui-group"
-        horizontal
         label-cols="4"
         label="Join EUI :"
         label-for="join-eui"
@@ -180,7 +172,6 @@
     <b-col v-if="authMode === 'OTAA'" cols="12" sm="12" md="6" lg="6" xl="6">
       <b-form-group
         id="device-appKey-group"
-        horizontal
         label-cols="4"
         label="AppKey :"
         label-for="device-appKey"

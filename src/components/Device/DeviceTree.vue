@@ -93,6 +93,8 @@ export default {
       graphLinks: null,
       nodeSimulation: null,
       nodeLockedMode: false,
+      showSensors: false,
+      showDescriptions: false,
     };
   },
 
@@ -194,6 +196,9 @@ export default {
             select(`#node-${d.data.id}`).attr('filter', 'url(#circle-shadow)');
           });
       }
+      //       .style('display', d =>
+      //   d.data.group === 2 ? (this.showSensors ? 'block' : 'none') : 'block',
+      // )
       return null;
     },
     descriptions() {
@@ -217,6 +222,7 @@ export default {
           .style('font-size', '10px')
           .text(this.textValue);
       }
+      //          .style('display', d => (this.showDescriptions ? 'block' : 'none'))
       return null;
     },
     tooltip() {
@@ -324,7 +330,8 @@ export default {
             icons: ['/icons/aloes/iot.png', '/icons/aloes/iot-white.png'],
             children: [],
           };
-          const devices = { ...this.$props.devices };
+          const devices = this.$props.devices;
+
           devices.forEach(device => {
             device.size = 0.4;
             device.group = 1;
@@ -420,6 +427,7 @@ export default {
       this.removeLinks();
       this.removeImages();
       this.removeTexts();
+      this.removeTooltip();
     },
 
     fullUpdateDeviceTree() {
@@ -453,6 +461,8 @@ export default {
         const tree = this.generateTree(graph);
         this.graphNodes = tree.nodes;
         this.graphLinks = tree.links;
+        //  console.log('graph', graph, this.graphNodes, this.graphLinks);
+
         this.applyForce(tree.nodes, tree.links);
         return tree;
       } catch (error) {
@@ -685,6 +695,10 @@ export default {
       [...this.$el.getElementsByClassName('tooltip-class')].map(n => n && n.remove());
     },
 
+    removeTooltip() {
+      [...this.$el.getElementsByClassName('tooltip-group')].map(n => n && n.remove());
+    },
+
     ticked() {
       this.links.attr('d', this.linkTransform);
       this.descriptions.attr('transform', this.textTransform);
@@ -701,6 +715,8 @@ export default {
     },
 
     toggleDescriptions(state) {
+      // this.removeTexts();
+      // this.showDescriptions = state;
       const display = state ? 'block' : 'none';
       this.svg.selectAll(`.descriptions-group`).style('display', display);
     },
