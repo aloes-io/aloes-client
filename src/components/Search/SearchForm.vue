@@ -15,10 +15,10 @@
       <!-- TODO : add a reset parameter button  -->
       <b-col cols="4" sm="2" lg="2" xl="2">
         <b-button id="search-custom" type="submit">
-          <fa-icon icon="search" size="md" />
+          <fa-icon icon="search" size="lg" />
         </b-button>
         <b-button id="search-geolocation" @click="getUserLocation">
-          <fa-icon icon="map-marker" size="md" />
+          <fa-icon icon="map-marker" size="lg" />
         </b-button>
       </b-col>
     </b-row>
@@ -135,7 +135,6 @@ export default {
 
       const filter = {
         place: this.placeSearch,
-        accountType: this.accountType,
       };
       logger.publish(4, 'search', 'composeFilter:req', filter);
       const profiles = await this.$store
@@ -154,7 +153,6 @@ export default {
       };
       this.searchLocation = location;
       const filter = {
-        accountType: this.accountType,
         location,
         maxDistance: 1000,
         unit: 'kilometers',

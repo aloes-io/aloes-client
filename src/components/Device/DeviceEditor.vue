@@ -296,6 +296,11 @@ export default {
         });
       },
     },
+    address: {
+      get() {
+        return this.$store.state.address.deviceAddress;
+      },
+    },
     deviceIdExists() {
       //  console.log(has(this.device, "id"));
       return has(this.device, 'id');
@@ -422,10 +427,17 @@ export default {
       if (!this.device.ownerId) {
         this.device.ownerId = this.$store.state.auth.account.id;
       }
-      // delete this.device.children;
+      if (this.device.children) {
+        delete this.device.children;
+      }
       // delete this.device.size;
       // delete this.device.group;
       // delete this.device.show;
+      if (this.address) {
+        this.device.fullAddress = `${this.address.street} ${this.address.postalCode} ${
+          this.address.city
+        }`;
+      }
       const device = await this.$store.dispatch('device/saveDevice', {
         device: this.device,
       });

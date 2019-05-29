@@ -158,7 +158,8 @@ export default {
         } else if (this.$route.name === 'account') {
           return this.$store.state.address.profileAddress.street;
         } else if (this.$route.name === 'profile') {
-          return this.$store.state.address.viewedProfileAddress.street;
+          return this.$store.state.address.profileAddress.street;
+          //  return this.$store.state.address.viewedProfileAddress.street;
         }
         return null;
       },

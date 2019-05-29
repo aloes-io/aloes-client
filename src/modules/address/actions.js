@@ -73,6 +73,7 @@ export async function verifyAddress({ state, commit }, route) {
 export async function updateAddress({ state, commit }, { route, ownerId }) {
   // todo update device or profile address
   if (route === 'device') {
+    state.deviceAddress.deviceId = ownerId;
     return loopback
       .put(`/Devices/${ownerId}/deviceAddress`, state.deviceAddress)
       .then(address => {
@@ -82,6 +83,7 @@ export async function updateAddress({ state, commit }, { route, ownerId }) {
       })
       .catch(err => err);
   } else if (route === 'account' || route === 'profile') {
+    state.profileAddress.userId = ownerId;
     return loopback
       .put(`/${userResources}/${ownerId}/profileAddress`, state.profileAddress)
       .then(address => {

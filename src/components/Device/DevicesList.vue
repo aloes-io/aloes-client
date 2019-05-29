@@ -1,21 +1,24 @@
 <template lang="html">
   <div class="devices-list-view">
-    <!-- add view filter  -->
     <b-form-select v-model="devicesFilter" class="mb-3" @input="updateDevicesFilter">
       <option :value="null">Select a filter</option>
       <optgroup label="Type">
-        <option :value="{ key: 'type', value: 'bot' }">Bot</option>
-        <option :value="{ key: 'type', value: 'browser' }">Browser</option>
-        <option :value="{ key: 'type', value: 'camera' }">Camera</option>
-        <option :value="{ key: 'type', value: 'gateway' }">Gateway</option>
-        <option :value="{ key: 'type', value: 'phone' }">Mobile</option>
-        <option :value="{ key: 'type', value: 'node' }">Node</option>
+        <option
+          v-for="(elem, index) in deviceTypes"
+          :key="index"
+          :value="{ key: 'type', value: elem.value }"
+        >
+          {{ elem.text }}
+        </option>
       </optgroup>
       <optgroup label="Transport">
-        <option :value="{ key: 'transportProtocol', value: 'aloeslight' }">Aloes Light</option>
-        <option :value="{ key: 'transportProtocol', value: 'aloesclient' }">Aloes Client</option>
-        <option :value="{ key: 'transportProtocol', value: 'lorawan' }">LoRaWAN</option>
-        <option :value="{ key: 'transportProtocol', value: 'mysensors' }">MySensors</option>
+        <option
+          v-for="(elem, index) in transportProtocolNames"
+          :key="index"
+          :value="{ key: 'transportProtocol', value: elem.value }"
+        >
+          {{ elem.text }}
+        </option>
       </optgroup>
     </b-form-select>
     <device-inline
@@ -75,6 +78,15 @@ export default {
   computed: {
     devicesCollection() {
       return this.$store.state.device.collection;
+    },
+    deviceTypes() {
+      return this.$store.state.deviceTypes.slice(1, this.$store.state.deviceTypes.length);
+    },
+    transportProtocolNames() {
+      return this.$store.state.transportProtocolNames.slice(
+        1,
+        this.$store.state.transportProtocolNames.length,
+      );
     },
   },
 

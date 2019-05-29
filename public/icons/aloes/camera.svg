@@ -10,7 +10,7 @@
    version="1.1"
    x="0px"
    y="0px"
-   viewBox="0 0 100 100"
+   viewBox="0 0 80 80"
    id="svg10"
    sodipodi:docname="camera.svg"
    width="100"
@@ -39,19 +39,20 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="867"
-     inkscape:window-height="480"
+     inkscape:window-width="1277"
+     inkscape:window-height="718"
      id="namedview12"
      showgrid="false"
      inkscape:zoom="1.888"
      inkscape:cx="50"
      inkscape:cy="62.5"
      inkscape:window-x="0"
-     inkscape:window-y="0"
+     inkscape:window-y="27"
      inkscape:window-maximized="0"
-     inkscape:current-layer="svg10" />
+     inkscape:current-layer="svg10"
+     scale-x="0.8" />
   <g
-     transform="translate(0,-953.36218)"
+     transform="translate(-9.2690678,-961.94269)"
      id="g4">
     <path
        style="color:#000000;text-indent:0;text-transform:none;direction:ltr;baseline-shift:baseline;display:inline;overflow:visible;visibility:visible;fill:#000000;fill-opacity:1;stroke:none;enable-background:accumulate"

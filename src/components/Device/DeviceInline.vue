@@ -18,12 +18,9 @@
       <b-col cols="10" sm="8" md="8" lg="8" xl="9">
         <b-row class="device-inline-row">
           <b-col class="device-props" sm="12">
-            <h6 class="device-inline-name">{{ updatedDevice.name }} - {{ updatedDevice.type }}</h6>
+            <h6 class="device-inline-name">{{ updatedDevice.name }}</h6>
             <p v-if="updatedDevice.fullAddress" class="device-inline-address">
               {{ updatedDevice.fullAddress }}
-            </p>
-            <p class="device-inline-description">
-              {{ updatedDevice.description }}
             </p>
           </b-col>
         </b-row>
@@ -99,6 +96,7 @@ export default {
     device: {
       handler(device) {
         this.updatedDevice = device;
+        this.updateBackground(device);
       },
       immediate: true,
     },
@@ -123,6 +121,7 @@ export default {
 
   methods: {
     updateBackground(device) {
+      if (!this.$el) return null;
       if (device && device !== null && device.id.toString() === this.updatedDevice.id.toString()) {
         if (this.updatedDevice.status) {
           this.$el.style.background = this.$store.state.style.palette.green;
