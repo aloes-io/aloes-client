@@ -4,7 +4,6 @@
       <b-col cols="12" sm="7" md="7" lg="7" xl="7">
         <b-form-group
           id="street-group"
-          horizontal
           label-cols="3"
           label="Street :"
           label-for="street"
@@ -26,7 +25,6 @@
       <b-col cols="6" sm="5" md="5" lg="5" xl="5">
         <b-form-group
           id="city-group"
-          horizontal
           label-cols="3"
           label="City :"
           label-for="city"
@@ -48,7 +46,6 @@
       <b-col cols="6" sm="5" md="5" lg="5" xl="5">
         <b-form-group
           id="zip-code-group"
-          horizontal
           label-cols="4"
           label="Zipcode :"
           label-for="zip-code"
@@ -79,7 +76,6 @@
       <b-col cols="6" sm="5" md="4" lg="4" xl="4">
         <b-form-group
           id="verify-address-group"
-          horizontal
           label-cols="8"
           label="Check address :"
           label-for="verify-address"
@@ -162,7 +158,8 @@ export default {
         } else if (this.$route.name === 'account') {
           return this.$store.state.address.profileAddress.street;
         } else if (this.$route.name === 'profile') {
-          return this.$store.state.address.viewedProfileAddress.street;
+          return this.$store.state.address.profileAddress.street;
+          //  return this.$store.state.address.viewedProfileAddress.street;
         }
         return null;
       },

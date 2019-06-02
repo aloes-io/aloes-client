@@ -1,4 +1,4 @@
-@import "global";
+@import 'global';
 
 .signup-form {
   z-index: 4;
@@ -197,12 +197,12 @@ input#confirm-signup.form-control:hover {
 
 /* When the checkbox is checked, add a blue background */
 .container input:checked ~ .checkmark {
-  background-color: $success;
+  background-color: $blue;
 }
 
 /* Create the checkmark/indicator (hidden when not checked) */
 .checkmark:after {
-  content: "";
+  content: '';
   position: absolute;
   display: none;
 }
@@ -226,10 +226,12 @@ input#confirm-signup.form-control:hover {
 }
 
 button.btn {
-  color: white;
-  background-color: $primary;
   margin-top: 2%;
   width: 100%;
+  background-color: $btn-bg-color;
+  font-family: $btn-font;
+  font-weight: $btn-font-weight;
+  color: $btn-color;
   height: $btn-height;
   padding: $btn-padding;
   font-weight: $btn-font-weight;
@@ -241,15 +243,11 @@ button.btn {
   transition: box-shadow 150ms ease;
 }
 button.btn:hover {
-  color: $primary;
-  border-color: $primary;
-  background-color: white;
+  background-color: $btn-bg-light-color;
+  font-family: $btn-font;
+  font-weight: $btn-font-weight;
+  color: $btn-color;
 }
-
-.col-sm-4 {
-  width: 40%;
-}
-
 
 /* Smartphones (portrait and landscape) ----------- */
 @media only screen and (min-device-width: 320px) and (max-device-width: 480px) {

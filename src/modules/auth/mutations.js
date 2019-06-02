@@ -78,7 +78,6 @@ export function cleanLogin(state) {
 export function cleanSignup(state) {
   state.signup = {
     accountType: null,
-    accountTypes: [{ text: 'Professeur', value: 'Teacher' }, { text: 'Studio', value: 'Studio' }],
     confirmPassword: '',
     checked: [],
     verified: false,
@@ -87,7 +86,7 @@ export function cleanSignup(state) {
     error: null,
     loading: false,
   };
-  logger.publish(4, state.collectionName, 'commit:cleanLogin:res', state.signup);
+  logger.publish(4, state.collectionName, 'commit:cleanSignup:res', state.signup);
 }
 
 export function setViewer(state, value) {

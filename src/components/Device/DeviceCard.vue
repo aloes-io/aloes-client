@@ -2,12 +2,12 @@
   <b-card :class="className" no-body class="device-card">
     <b-card-header>
       <b-row>
-        <b-col cols="6" sm="6">
+        <b-col cols="7" sm="7">
           <h5>
             {{ device.name }}
           </h5>
         </b-col>
-        <b-col cols="6" sm="6">
+        <b-col cols="5" sm="5">
           <h5>
             {{ device.type }}
           </h5>
@@ -16,69 +16,100 @@
     </b-card-header>
     <b-card-body class="device-sensors">
       <b-row>
-        <b-col cols="6" sm="6" md="4" lg="2" xl="2">
+        <b-col cols="4" sm="4" md="4" lg="4" xl="4">
           <img v-if="device.icons" :src="device.icons[0]" class="device-icon" />
         </b-col>
-        <b-col cols="6" sm="6" md="4" lg="3" xl="3">
+        <b-col cols="4" sm="4" md="4" lg="4" xl="4">
           <div v-if="device.id">
-            id :
-            <p>{{ device.id }}</p>
-          </div>
-          <div>
-            devEui :
-            <p>{{ device.devEui }}</p>
+            <p>id : {{ device.id }}</p>
+
+            <p>devEui : {{ device.devEui }}</p>
           </div>
         </b-col>
-        <b-col cols="6" sm="6" md="4" lg="3" xl="3">
-          <div class="device-status">
-            status :
-            <img v-if="!device.status" :src="$store.state.style.pictures.deviceOff" />
-            <img v-else-if="device.status" :src="$store.state.style.pictures.deviceOn" />
-          </div>
-          <br />
+        <b-col cols="4" sm="4" md="4" lg="4" xl="4">
           <div>
-            last signal :
-            <p>{{ lastSignal }}</p>
-          </div>
-          <div class="device-status">
-            frame counter :
-            <p>{{ device.frameCounter }}</p>
-          </div>
-        </b-col>
-        <b-col cols="6" sm="6" md="4" lg="3" xl="3">
-          <div>
-            AP link :
             <div id="qr-holder" ref="qrHolder" class="qr-code-holder" />
           </div>
         </b-col>
       </b-row>
+      <b-row>
+        <b-col cols="6" sm="4" md="4" lg="4" xl="4" class="device-status">
+          status :
+          <img v-if="!device.status" :src="$store.state.style.pictures.deviceOff" />
+          <img v-else-if="device.status" :src="$store.state.style.pictures.deviceOn" />
+        </b-col>
+        <b-col cols="6" sm="4" md="4" lg="4" xl="4" class="device-status">
+          frame counter :
+          <p>{{ device.frameCounter }}</p>
+        </b-col>
+        <b-col cols="6" sm="4" md="4" lg="4" xl="4">
+          last signal :
+          <p>{{ lastSignal }}</p>
+        </b-col>
+      </b-row>
     </b-card-body>
     <b-card-footer @click="showToken = !showToken">
-      API key :
-      <p v-show="showToken && device.apiKey !== null">
-        {{ device.apiKey }}
-      </p>
-
-      <!-- refreshtoken button -->
+      <b-row>
+        <b-col cols="9" sm="10" md="9" lg="9" xl="10">
+          API key :
+          <p v-show="showToken && device.apiKey !== null">
+            {{ device.apiKey }}
+          </p>
+        </b-col>
+        <b-col cols="3" sm="2" md="3" lg="3" xl="2">
+          <b-button
+            :disabled="!device.id"
+            class="refresh-token-btn"
+            @click.prevent.stop="showRefreshTokenPopup"
+          >
+            <fa-icon icon="sync" size="lg" />
+          </b-button>
+        </b-col>
+      </b-row>
     </b-card-footer>
+
+    <b-modal
+      id="refresh-token-popup"
+      ref="refreshTokenPopup"
+      title="refresh token ?"
+      size="sm"
+      hide-footer
+      lazy
+      class="refresh-token-popup-view"
+      modal-class="refresh-token-popup-modal"
+      header-class="refresh-token-popup-header"
+      body-class="refresh-token-popup-body"
+      @hidden="onModalHidden"
+    >
+      <b-button class="refresh-token-popup-button" @click.prevent.stop="refreshToken">
+        Confirm
+      </b-button>
+      <b-button class="refresh-token-popup-button" @click.prevent.stop="hideRefreshTokenPopup">
+        Cancel
+      </b-button>
+    </b-modal>
   </b-card>
 </template>
 
 <script type="text/javascript">
-import qrcode from 'qrcode-generator';
+import bButton from 'bootstrap-vue/es/components/button/button';
 import bCard from 'bootstrap-vue/es/components/card/card';
 import bCardBody from 'bootstrap-vue/es/components/card/card-body';
 import bCardHeader from 'bootstrap-vue/es/components/card/card-header';
 import bCardFooter from 'bootstrap-vue/es/components/card/card-footer';
+import bModal from 'bootstrap-vue/es/components/modal/modal';
+import qrcode from 'qrcode-generator';
 
 export default {
   name: 'DeviceCard',
 
   components: {
+    'b-button': bButton,
     'b-card': bCard,
     'b-card-body': bCardBody,
     'b-card-footer': bCardFooter,
     'b-card-header': bCardHeader,
+    'b-modal': bModal,
   },
 
   props: {
@@ -103,6 +134,16 @@ export default {
   },
 
   computed: {
+    windowWidth: {
+      get() {
+        return this.$store.state.windowWidth;
+      },
+    },
+    windowHeight: {
+      get() {
+        return this.$store.state.windowHeight;
+      },
+    },
     className() {
       // if (this.device.accountId === this.$store.state.auth.account.id.toString() && !this.$props.newDevice) {
       //   return "owner";
@@ -128,6 +169,20 @@ export default {
       //   }
       // },
     },
+
+    qrCodeSize() {
+      if (window.innerWidth >= 320 && window.innerWidth <= 480) {
+        return '70px';
+      } else if (window.innerWidth >= 480 && window.innerWidth <= 768) {
+        return '90px';
+      } else if (window.innerWidth >= 768 && window.innerWidth <= 1024) {
+        return '100px';
+      } else if (window.innerWidth >= 1024 && window.innerWidth <= 1400) {
+        return '120px';
+      } else {
+        return '120px';
+      }
+    },
   },
 
   mounted() {
@@ -148,11 +203,27 @@ export default {
       this.qr.addData(data);
       this.qr.make();
       this.$el.querySelector('#qr-holder').innerHTML = this.qr.createImgTag();
+      this.$el.querySelector('#qr-holder > img').style.width = this.qrCodeSize;
+      this.$el.querySelector('#qr-holder > img').style.height = this.qrCodeSize;
     },
 
-    async refreshtoken(deviceId) {
-      // prompt for confirm
-      const device = await this.$store.dispatch('device/refreshtoken', deviceId);
+    onModalHidden() {
+      this.error = null;
+      this.success = null;
+      this.profile = null;
+      this.loading = false;
+    },
+
+    hideRefreshTokenPopup() {
+      this.$refs.refreshTokenPopup.hide();
+    },
+
+    showRefreshTokenPopup() {
+      this.$refs.refreshTokenPopup.show();
+    },
+
+    async refreshToken() {
+      const device = await this.$store.dispatch('device/refreshToken', this.device);
       if (device && device.apiKey) {
         return true;
       }

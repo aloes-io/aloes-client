@@ -64,15 +64,23 @@ button.btn.application-inline-button {
   margin-top: 2%;
   height: $btn-height;
   font-size: 90%;
+  background-color: $btn-bg-color;
+  font-family: $btn-font;
   font-weight: $btn-font-weight;
-  color: white;
-  background-color: $primary;
+  color: $btn-color;
   position: relative;
   border-radius: $btn-border-radius;
   border: 1px solid transparent;
   box-shadow: $btn-shadow;
   -webkit-transition: box-shadow 150ms ease;
   transition: box-shadow 150ms ease;
+}
+
+button.btn.application-inline-button:hover {
+  background-color: $btn-bg-light-color;
+  font-family: $btn-font;
+  font-weight: $btn-font-weight;
+  color: $btn-color;
 }
 
 @media only screen and (max-width: 760px),

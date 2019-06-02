@@ -12,22 +12,12 @@ export function setModelKV(state, { key, value }) {
 
 export function setModel(state, device) {
   state.instance = device;
-  logger.publish(4, state.collectionName, 'commit:setModel:res', state.instance);
-}
-
-export function setCollection(state, devices) {
-  state.collection = devices;
-  // logger.publish(
-  //   4,
-  //   state.collectionName,
-  //   "commit:setCollection:res",
-  //   state.collection
-  // );
+  //  logger.publish(4, state.collectionName, 'commit:setModel:res', state.instance);
 }
 
 export function setStateKV(state, { key, value }) {
   state[key] = value;
-  logger.publish(4, state.collectionName, 'commit:setStateKV:res', state[key]);
+  //  logger.publish(4, state.collectionName, 'commit:setStateKV:res', state[key]);
 }
 
 export function setEditorMode(state, value) {

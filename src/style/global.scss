@@ -4,8 +4,7 @@
 //
 // Color system
 //;
-$primary: #528fa2;
-//$primary: #3c3c3c;
+$primary: #3c3c3c;
 $secondary: #ededed;
 $success: #2bb673;
 $lightsuccess: #d6e6dc;
@@ -15,12 +14,66 @@ $lightwarning: #ffe7ba;
 $danger: #f94b39;
 $light: #e9edef;
 $grey: #ededed;
+$blue: #528fa2;
+$blue1: #29abe2;
+$light-blue: #98d4ee;
+$green: #77d1bf;
+$light-green: #d6e6dc;
+$yellow: #ffc85f;
+$light-yellow: #f6d9a2;
 $icon-grey: #ededed;
 $light-grey: #fbfbfb;
 $dark-grey: #2b2b2b;
 
 // Fonts
+
+// Import custom fonts
+@font-face {
+	font-family: 'LemonMilkbold';
+	font-weight: normal;
+	font-style: normal;
+	src: url('/fonts/LemonMilkbold/LemonMilkbold.eot');
+	src: url('/fonts/LemonMilkbold/LemonMilkbold.woff2') format('woff2'),
+		url('/fonts/LemonMilkbold/LemonMilkbold.woff') format('woff'),
+		url('/fonts/LemonMilkbold/LemonMilkbold.ttf') format('truetype'),
+		url('/fonts/LemonMilkbold/LemonMilkbold.eot?#iefix') format('embedded-opentype');
+}
+
+/*@font-face {
+	font-family: "Lemon/Milk";
+	src: url("/fonts/LemonMilk/LemonMilk.eot");
+	src: url("/fonts/LemonMilk/LemonMilk.woff2") format("woff2"), url("/fonts/LemonMilk/LemonMilk.woff") format("woff"),
+		url("/fonts/LemonMilk/LemonMilk.ttf") format("truetype"),
+		url("/fonts/LemonMilk/LemonMilk.eot?#iefix") format("embedded-opentype");
+}
+*/
+
+@font-face {
+	font-family: 'JosefinSlab-SemiBold';
+	src: url('/fonts/Josefin-Slab/JosefinSlab-SemiBold.eot');
+	src: url('/fonts/Josefin-Slab/JosefinSlab-SemiBold.eot?#iefix') format('embedded-opentype'),
+		url('/fonts/Josefin-Slab/JosefinSlab-SemiBold.svg#JosefinSlab-SemiBold') format('svg'),
+		url('/fonts/Josefin-Slab/JosefinSlab-SemiBold.woff') format('woff'),
+		url('/fonts/Josefin-Slab/JosefinSlab-SemiBold.woff2') format('woff2');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'JosefinSlab-SemiBoldItalic';
+	src: url('/fonts/Josefin-Slab/JosefinSlab-SemiBoldItalic.eot');
+	src: url('/fonts/Josefin-Slab/JosefinSlab-SemiBoldItalic.eot?#iefix') format('embedded-opentype'),
+		url('/fonts/Josefin-Slab/JosefinSlab-SemiBoldItalic.svg#JosefinSlab-SemiBoldItalic')
+			format('svg'),
+		url('/fonts/Josefin-Slab/JosefinSlab-SemiBoldItalic.woff') format('woff'),
+		url('/fonts/Josefin-Slab/JosefinSlab-SemiBoldItalic.woff2') format('woff2');
+	font-weight: normal;
+	font-style: normal;
+}
+
 $font-size-base: 1rem;
+$head-fonts: 'LemonMilkbold';
+$text-fonts: 'JosefinSlab-SemiBold', serif;
 $font-size-mobile: 0.9rem;
 $font-weight-bold: 700;
 // $font-family-sans-serif: "OpenSans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
@@ -33,10 +86,10 @@ $icon-height-mid: 30px;
 $icon-height-small: 20px;
 
 // Links
-$link-color: $dark-grey;
+$link-color: $blue;
 
 // Cards
-$card-border-radius: 5px;
+$card-border-radius: 0px;
 $card-padding: 2%;
 $card-shadow: 0 2px 3px 0px #6e6e6e;
 $card-shadow-selected: 0 1px 2px 0px #6e6e6e;
@@ -44,18 +97,22 @@ $mini-card-shadow: 0 1px 2px 0px #6e6e6e;
 $mini-card-shadow-selected: 0 0px 1px 0px #6e6e6e;
 
 // Components
-$border-radius: 10px;
+$border-radius: 0px;
 // $border-radius-lg: 0px;
 // $border-radius-sm: 0px;
 
 // Buttons
-$btn-border-radius: 3px;
-$btn-round-border-radius: 50%;
+$btn-border-radius: 0px;
+$btn-round-border-radius: 0%;
 $btn-round-radius: 25px;
 $btn-round-radius-lg: 30px;
 // $btn-border-radius-lg: 1.250em;
 // $btn-border-radius-sm: 1.250em;
 $btn-font-weight: $font-weight-bold;
+$btn-font: $head-fonts;
+$btn-bg-color: $blue;
+$btn-bg-light-color: $light-blue;
+$btn-color: white;
 $btn-height: 40px;
 $btn-padding: 0.4rem 0.8rem;
 $btn-height-small: 30px;
@@ -66,7 +123,7 @@ $btn-shadow-selected: 0 0px 1px 0px #6e6e6e;
 // Forms
 // $input-color: $secondary;
 // $input-border-color: $light;
-$input-border-radius: 4px;
+$input-border-radius: 0px;
 $input-height: 40px;
 $input-height-small: 30px;
 $input-padding: 5px 12px;
@@ -83,57 +140,5 @@ $input-shadow-selected: 0 0px 1px 0px #6e6e6e;
 
 // Import Global Bootstrap Variables
 // (the previous variables will not be overitten)
-@import "~bootstrap/scss/_functions";
-@import "~bootstrap/scss/_variables";
-
-// Import custom fonts
-@font-face {
-	font-family: "LemonMilkbold";
-	font-weight: normal;
-	font-style: normal;
-	src: url("/fonts/LemonMilkbold/LemonMilkbold.eot");
-	src: url("/fonts/LemonMilkbold/LemonMilkbold.woff2") format("woff2"),
-		url("/fonts/LemonMilkbold/LemonMilkbold.woff") format("woff"),
-		url("/fonts/LemonMilkbold/LemonMilkbold.ttf") format("truetype"),
-		url("/fonts/LemonMilkbold/LemonMilkbold.eot?#iefix") format("embedded-opentype");
-}
-
-/*@font-face {
-	font-family: "Lemon/Milk";
-	src: url("/fonts/LemonMilk/LemonMilk.eot");
-	src: url("/fonts/LemonMilk/LemonMilk.woff2") format("woff2"), url("/fonts/LemonMilk/LemonMilk.woff") format("woff"),
-		url("/fonts/LemonMilk/LemonMilk.ttf") format("truetype"),
-		url("/fonts/LemonMilk/LemonMilk.eot?#iefix") format("embedded-opentype");
-}
-*/
-@font-face {
-	font-family: "/fonts/Recoleta/Recoleta-Regular";
-	src: url("/fonts/Recoleta/Recoleta-Regular.eot");
-	src: url("/fonts/Recoleta/Recoleta-Regular.woff2") format("woff2"), url("/fonts/Recoleta/Recoleta-Regular.woff") format("woff"),
-		url("/fonts/Recoleta/Recoleta-Regular.ttf") format("truetype"), url("/fonts/Recoleta/Recoleta-Regular.svg#/fonts/Recoleta/Recoleta-Regular") format("svg"),
-		url("/fonts/Recoleta/Recoleta-Regular.eot?#iefix") format("embedded-opentype");
-	font-weight: normal;
-	font-style: normal;
-}
-
-@font-face {
-  /* Aloes Regular - latin */
-  font-family: 'Aloes-Rg';
-  font-weight: normal;
-  font-style: normal;
-  src: url('/fonts/Aloes/Aloes-Rg.woff2') format('woff2'),
-    url('/fonts/Aloes/Aloes-Rg.woff') format('woff'),
-    url('/fonts/Aloes/Aloes-Rg.eot') format('embedded-opentype'),
-    url('/fonts/Aloes/Aloes-Rg.ttf') format('truetype');
-}
-
-@font-face {
-  /* Aloes Bold - latin */
-  font-family: 'Aloes-Bd';
-  font-weight: normal;
-  font-style: normal;
-  src: url('/fonts/Aloes/Aloes-Bd.woff2') format('woff2'),
-    url('/fonts/Aloes/Aloes-Bd.woff') format('woff'),
-    url('/fonts/Aloes/Aloes-Bd.eot') format('embedded-opentype'),
-    url('/fonts/Aloes/Aloes-Bd.ttf') format('truetype');
-}
+@import '~bootstrap/scss/_functions';
+@import '~bootstrap/scss/_variables';

@@ -2,7 +2,7 @@
   <b-form ref="form" class="forgot-form-view" @submit.prevent="sendRecoverEmail">
     <b-form-group
       id="reset-password-group"
-      label="Entrez l'adresse email de votre compte"
+      label="Enter email address of your account"
       label-for="reset-password"
     >
       <b-form-input
@@ -14,7 +14,6 @@
         type="email"
         size="sm"
         plain
-        placeholder="Votre addresse email"
         @keydown.enter="sendRecoverEmail"
       />
     </b-form-group>
@@ -102,7 +101,7 @@ export default {
         .then(() => {
           this.loading = false;
           this.success = {
-            message: 'Un mail pour créer un nouveau mot de passe a été envoyé',
+            message: 'A mail to create a new password has been sent',
           };
           return this.success;
         })
@@ -110,7 +109,7 @@ export default {
           if (err.details && err.code === 'EMAIL_NOT_FOUND') {
             this.error = {
               code: err.code,
-              message: 'Addresse email introuvable',
+              message: 'Email address not found',
             };
           } else {
             this.error = err;
@@ -119,14 +118,6 @@ export default {
           return this.error;
           //  console.log('error sending mail', err);
         });
-      // } else {
-      //   this.loading = false;
-      //   this.error = {
-      //     message: 'Veuillez introduire votre addresse email',
-      //   };
-      //   return this.error;
-      // }
-      //  return null;
     },
   },
 };

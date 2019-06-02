@@ -1,4 +1,4 @@
-@import "global";
+@import 'global';
 
 div.row.address-editor {
   margin-bottom: 1%;
@@ -34,11 +34,13 @@ input.form-control:invalid {
 }
 
 button.btn.verify-address {
-  color: white;
+  background-color: $btn-bg-color;
+  font-family: $btn-font;
+  font-weight: $btn-font-weight;
+  color: $btn-color;
   height: $btn-round-radius;
   width: $btn-round-radius;
   padding: 0px;
-  background-color: $primary;
   border-radius: $btn-round-border-radius;
   border: 1px solid transparent;
   box-shadow: $btn-shadow;
@@ -50,19 +52,17 @@ button.btn.verify-address {
 }
 
 button.btn.verify-address:disabled {
-  border-radius: $btn-round-border-radius;
-  height: 30px;
-  width: 30px;
-  border: 1px solid transparent;
-  box-shadow: $btn-shadow;
-  -webkit-transition: box-shadow 150ms ease;
-  transition: box-shadow 150ms ease;
+  background-color: $light-grey;
+  font-family: $btn-font;
+  font-weight: $btn-font-weight;
+  color: $btn-color;
 }
 
 button.btn.verify-address:hover {
-  color: $primary;
-  border-color: $primary;
-  background-color: white;
+  background-color: $btn-bg-light-color;
+  font-family: $btn-font;
+  font-weight: $btn-font-weight;
+  color: $btn-color;
 }
 
 /* The container */
@@ -115,12 +115,12 @@ button.btn.verify-address:hover {
 
 /* When the checkbox is checked, add a blue background */
 .container input:checked ~ .checkmark {
-  background-color: $success;
+  background-color: $blue;
 }
 
 /* Create the checkmark/indicator (hidden when not checked) */
 .checkmark:after {
-  content: "";
+  content: '';
   position: absolute;
   display: none;
 }

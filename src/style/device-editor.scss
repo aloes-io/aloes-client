@@ -8,6 +8,17 @@ div.card.device-editor {
   -webkit-transition: box-shadow 150ms ease;
   transition: box-shadow 150ms ease;
 
+  .card-header {
+    padding: 10px 10px;
+    height: 50px;
+    background-color: $light-grey;
+  }
+
+  .card-footer {
+    padding: 10px 10px;
+    background-color: $light-grey;
+  }
+
   label {
     color: $primary;
   }
@@ -78,9 +89,10 @@ div.card.device-editor {
     margin-left: 2%;
     margin-right: 2%;
     margin-bottom: 4%;
-    background-color: $primary;
+    background-color: $btn-bg-color;
+    font-family: $btn-font;
     font-weight: $btn-font-weight;
-    color: white;
+    color: $btn-color;
     height: $btn-height;
     padding: $btn-padding;
     border-radius: $btn-border-radius;
@@ -91,8 +103,9 @@ div.card.device-editor {
   }
 
   button.btn:hover {
-    background-color: white;
-    border-color: white;
-    color: $primary;
+    background-color: $btn-bg-light-color;
+    font-family: $btn-font;
+    font-weight: $btn-font-weight;
+    color: $btn-color;
   }
 }

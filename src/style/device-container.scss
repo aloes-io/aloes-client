@@ -8,6 +8,22 @@
   width: 90%;
 }
 
+.nav-tabs {
+  font-family: $head-fonts;
+  .nav-link {
+    color: $light-blue;
+    font-weight: 400;
+  }
+  .nav-link.active {
+    color: $blue;
+    font-weight: 400;
+  }
+  .nav-link.disabled {
+    color: $light-grey;
+    font-weight: 400;
+  }
+}
+
 @media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
   .device-container {
     width: 100% !important;

@@ -15,11 +15,14 @@ import logger from '@/services/logger';
 
 Vue.use(Vuex);
 
-const vuexLocal = new VuexPersistence({
+const profileStorage = new VuexPersistence({
   key: 'profile',
   storage: window.localStorage,
   reducer: state => ({
     account: state.auth.account,
+    device: state.device.instance,
+    //  devices: state.device.collection,
+    //  sensors: state.device.sensorsCollection,
     address: state.address,
   }),
   asyncStorage: false,
@@ -51,9 +54,16 @@ export default new Vuex.Store({
       palette: {
         black: '#000000',
         grey: '#ededed',
-        green: '#77d1bf',
         blue: '#29abe2',
+        lightgreen: '#d6e6dc',
+        green: '#77d1bf',
+        lightblue: '#98d4ee',
         yellow: '#ffc85f',
+        lightyellow: '#f6d9a2',
+      },
+      fonts: {
+        head: `LemonMilkbold`,
+        text: `'JosefinSlab-SemiBold', serif`,
       },
       pictures: {
         logo: `${process.env.VUE_APP_CLIENT_URL}/icons/aloesicon2.png`,
@@ -107,12 +117,20 @@ export default new Vuex.Store({
     },
     deviceTypes: [
       { text: 'type', value: null, disabled: true },
-      { text: 'Gateway', value: 'gateway' },
-      { text: 'Node', value: 'node' },
-      { text: 'Phone', value: 'phone' },
-      { text: 'Camera', value: 'camera' },
+      { text: 'Audio recorder', value: 'audio-input' },
+      { text: 'Audio player', value: 'audio-output' },
       { text: 'Bot', value: 'bot' },
       { text: 'Browser', value: 'browser' },
+      { text: 'Camera', value: 'camera' },
+      { text: 'Gateway', value: 'gateway' },
+      { text: 'Light controller', value: 'light-output' },
+      { text: 'Midi recorder', value: 'midi-input' },
+      { text: 'Midi player', value: 'midi-output' },
+      { text: 'Node', value: 'node' },
+      { text: 'Phone', value: 'phone' },
+      { text: 'Rfid', value: 'rfid' },
+      { text: 'Switch input', value: 'switch-input' },
+      { text: 'Switch output', value: 'switch-output' },
     ],
     transportProtocolNames: [
       { text: 'name', value: null, disabled: true },
@@ -121,35 +139,6 @@ export default new Vuex.Store({
       { text: 'MySensors', value: 'mySensors' },
       { text: 'LoraWan', value: 'loraWan' },
     ],
-    virtualObjectTypes: [
-      { text: 'type', value: null, disabled: true },
-      { text: 'Gateway', value: 'gateway' },
-      { text: 'Node', value: 'node' },
-      { text: 'Phone', value: 'phone' },
-      { text: 'Camera', value: 'camera' },
-      { text: 'Thermostat', value: 'thermostat' },
-      // {text: "Bot", value: "bot"},
-    ],
-    schedulerTypes: [
-      {
-        value: null,
-        text: 'Scheduler type',
-        disabled: true,
-      },
-      {
-        value: 'watcher',
-        text: 'Watcher',
-      },
-      {
-        value: 'trigger',
-        text: 'trigger',
-      },
-    ],
-    appointmentsStyles: {
-      watcher: { title: 'watcher', color: '#528fa2' },
-      trigger: { title: 'trigger', color: '#7ebcaf' },
-      default: { title: '', color: '#5478c0' },
-    },
     windowWidth: 0,
     windowHeight: 0,
     contactForm: {
@@ -196,8 +185,12 @@ export default new Vuex.Store({
       }
     },
   },
-  plugins: [vuexLocal.plugin, vuexSession.plugin, vuexCache({ timeout: 2000 })],
-  //  plugins: [vuexLocal.plugin, vuexCache({timeout: 2000})],
+  plugins: [
+    profileStorage.plugin,
+    //  deviceStorage.plugin,
+    vuexSession.plugin,
+    vuexCache({ timeout: 2000 }),
+  ],
   modules: {
     async, // async namespaced
     auth, // auth namespaced

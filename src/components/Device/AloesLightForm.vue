@@ -3,7 +3,6 @@
     <b-col cols="12" sm="12" md="6" lg="6" xl="6">
       <b-form-group
         id="access-point-url-group"
-        horizontal
         label-cols="4"
         label="Access point:"
         label-for="access-point-url"
@@ -26,7 +25,6 @@
     <b-col cols="12" sm="12" md="6" lg="6" xl="6">
       <b-form-group
         id="device-eui-group"
-        horizontal
         label-cols="4"
         label="Device EUI :"
         label-for="device-eui"

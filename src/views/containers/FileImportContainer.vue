@@ -27,7 +27,7 @@ import bModal from 'bootstrap-vue/es/components/modal/modal';
 import FileImport from '@/components/Files/FileImport.vue';
 
 export default {
-  name: 'FileImport',
+  name: 'FileImportContainer',
 
   components: {
     'file-import': FileImport,

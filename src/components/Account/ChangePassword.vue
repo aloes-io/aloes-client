@@ -2,40 +2,57 @@
   <div class="change-password-view">
     <b-form @submit="onSubmit">
       <b-form-group
-        v-if="access_token === null"
-        label="Mot de passe actuel"
+        label="Current password"
         label-for="changed-password"
+        label-cols="3"
+        label-size="sm"
+        breakpoint="sm"
       >
         <b-form-input
           id="changed-password"
           v-model="password"
-          size="md"
+          :plaintext="!editorMode"
+          :disabled="!editorMode"
+          size="sm"
           type="password"
           autocomplete="current-password"
           required
-          placeholder="Insérer votre mot de passe"
         />
       </b-form-group>
-      <b-form-group label="Nouveau mot de passe" label-for="new-password">
+      <b-form-group
+        label="New password"
+        label-for="new-password"
+        label-cols="3"
+        label-size="sm"
+        breakpoint="sm"
+      >
         <b-form-input
           id="new-password"
           v-model="newPassword"
-          size="md"
+          :plaintext="!editorMode"
+          :disabled="!editorMode"
+          size="sm"
           type="password"
           autocomplete="new-password"
           required
-          placeholder="Insérer votre mot de passe"
         />
       </b-form-group>
-      <b-form-group label="Email" label-for="confirm-new-password">
+      <b-form-group
+        label="Confirm password"
+        label-for="confirm-new-password"
+        label-cols="3"
+        label-size="sm"
+        breakpoint="sm"
+      >
         <b-form-input
           id="confirm-new-password"
           v-model="confirmPassword"
-          size="md"
+          :plaintext="!editorMode"
+          :disabled="!editorMode"
+          size="sm"
           type="password"
           autocomplete="new-password"
           required
-          placeholder="Insérer votre mot de passe"
         />
       </b-form-group>
       <b-alert v-if="error" vairant="danger">
@@ -45,9 +62,9 @@
         {{ success.message }}
       </b-alert>
       <b-button type="submit" variant="success">
-        <i v-if="loading" class="fa fa-spinner" />
-        <i v-else class="fa fa-check" />
-        SAVE
+        <fa-icon v-if="loading" icon="spinner" :transform="{ rotate: 42 }" size="lg" />
+        <fa-icon v-else icon="check" size="lg" />
+        Update password
       </b-button>
     </b-form>
   </div>
@@ -72,10 +89,13 @@ export default {
   },
 
   props: {
-    // eslint-disable-next-line camelcase
-    access_token: {
-      type: String,
-      default: null,
+    'is-viewer': {
+      type: Boolean,
+      default: true,
+    },
+    'edit-mode': {
+      type: Boolean,
+      default: false,
     },
   },
 
@@ -85,37 +105,64 @@ export default {
       newPassword: null,
       confirmPassword: null,
       error: null,
+      success: null,
       loading: false,
+      viewer: true,
     };
   },
 
+  computed: {
+    editorMode: {
+      get() {
+        if (this.viewer) {
+          return null;
+        }
+        return this.$store.state.auth.editorMode;
+      },
+      set(value) {
+        this.$store.commit('auth/setEditorMode', value);
+      },
+    },
+  },
+
+  watch: {
+    isViewer: {
+      handler(state) {
+        this.viewer = state;
+      },
+      immediate: true,
+    },
+    // editMode: {
+    //   handler(mode) {
+    //     this.editorMode = mode;
+    //   },
+    //   immediate: true,
+    // },
+  },
+
   methods: {
-    onSubmit(evt) {
+    async onSubmit(evt) {
       evt.preventDefault();
       this.loading = true;
       this.error = null;
 
-      if (this.newPassword !== this.confirmPassword) {
-        this.loading = false;
-        this.error = new Error('The password does not match, please try again');
-        return;
-      }
-
-      this.$store
-        .dispatch('auth/changePassword', {
+      try {
+        if (this.newPassword !== this.confirmPassword) {
+          throw new Error('The password does not match, please try again');
+          //  this.error = new Error('The password does not match, please try again');
+        }
+        await this.$store.dispatch('auth/changePassword', {
           oldPassword: this.password,
           newPassword: this.newPassword,
-          // eslint-disable-next-line camelcase
-          access_token: this.access_token,
-        })
-        .then(() => {
-          this.loading = false;
-          this.success = { message: 'Mot de passe mis à jour' };
-        })
-        .catch(err => {
-          this.error = err;
-          this.loading = false;
         });
+        this.loading = false;
+        this.success = { message: 'Password updated' };
+        return null;
+      } catch (error) {
+        this.error = error;
+        this.loading = false;
+        return error;
+      }
     },
   },
 };

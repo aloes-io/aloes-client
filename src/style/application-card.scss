@@ -8,9 +8,17 @@ div.card.application-card {
   -webkit-transition: box-shadow 150ms ease;
   transition: box-shadow 150ms ease;
 
-  .card-header {
+ .card-header {
+    font-family: $head-fonts;
+    color: $blue;
     padding: 10px 10px;
-    height: 50px;
+    max-height: 80px;
+    background-color: $light-grey;
+  }
+
+  .card-footer {
+    padding: 10px 10px;
+    background-color: $light-grey;
   }
 
   img.application-icon {
@@ -25,4 +33,126 @@ div.card.application-card {
 
 div.card.application-card:hover {
   box-shadow: $mini-card-shadow-selected;
+}
+
+
+button.btn.refresh-token-btn {
+  background-color: $btn-bg-color;
+  font-family: $btn-font;
+  font-weight: $btn-font-weight;
+  color: $btn-color;
+  height: $btn-height;
+  padding: $btn-padding;
+  border-radius: $btn-border-radius;
+  border: 1px solid transparent;
+  box-shadow: $btn-shadow;
+  -webkit-transition: box-shadow 150ms ease;
+  transition: box-shadow 150ms ease;
+}
+
+button.btn.refresh-token-btn:hover {
+  background-color: $btn-bg-light-color;
+  font-family: $btn-font;
+  font-weight: $btn-font-weight;
+  color: $btn-color;
+}
+
+div#refresh-token-popup > .modal-dialog > .modal-content {
+  color: $primary;
+  border-radius: $card-border-radius;
+  border: 1px solid transparent;
+  box-shadow: $mini-card-shadow;
+  -webkit-transition: box-shadow 150ms ease;
+  transition: box-shadow 150ms ease;
+}
+
+.refresh-token-popup-header {
+  color: $primary;
+}
+.refresh-token-popup-body {
+  color: $primary;
+  border-radius: 10px;
+}
+
+div.refresh-token-popup-body > button.btn.refresh-token-popup-button {
+  background-color: $btn-bg-color;
+  font-family: $btn-font;
+  font-weight: $btn-font-weight;
+  color: $btn-color;
+  padding: 10px 12px;
+  margin-top: 2%;
+  border-radius: $btn-border-radius;
+  border: 1px solid transparent;
+  box-shadow: $btn-shadow;
+  -webkit-transition: box-shadow 150ms ease;
+  transition: box-shadow 150ms ease;
+}
+
+div.refresh-token-popup-body > button.btn.refresh-token-popup-button:hover {
+  background-color: $btn-bg-light-color;
+  font-family: $btn-font;
+  font-weight: $btn-font-weight;
+  color: $btn-color;
+}
+
+@media only screen and (max-width: 1024px) {
+  div.card.device-card {
+    max-height: 100vh;
+    img.application-icon {
+      max-height: 60px;
+    }
+  }
+  div#qr-holder {
+    img {
+      width: 100px;
+      height: 100px;
+    }
+  }
+}
+
+@media only screen and (max-width: 760px),
+  (min-device-width: 768px) and (max-device-width: 1024px) {
+  div.card.application-card {
+    max-height: 100vh;
+    img.application-icon {
+      max-height: 60px;
+    }
+  }
+  div#qr-holder {
+    img {
+      width: 80px;
+      height: 80px;
+    }
+  }
+}
+
+/* iPads (portrait and landscape) ----------- */
+@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
+  div.card.application-card {
+    max-height: 100%;
+    img.application-icon {
+      max-height: 60px;
+    }
+  }
+  div#qr-holder {
+    img {
+      width: 80px;
+      height: 80px;
+    }
+  }
+}
+
+@media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
+  div.card.application-card {
+    max-height: 100%;
+    img.application-icon {
+      max-height: 60px;
+    }
+  }
+  div#qr-holder {
+    img {
+      width: 80px;
+      height: 80px;
+    }
+  }
 }

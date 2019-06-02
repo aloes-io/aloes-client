@@ -87,9 +87,10 @@ div.card.application-editor {
     margin-left: 2%;
     margin-right: 2%;
     margin-bottom: 4%;
-    background-color: $primary;
+    background-color: $btn-bg-color;
+    font-family: $btn-font;
     font-weight: $btn-font-weight;
-    color: white;
+    color: $btn-color;
     height: $btn-height;
     padding: $btn-padding;
     border-radius: $btn-border-radius;
@@ -101,9 +102,10 @@ div.card.application-editor {
     margin-left: 2%;
     margin-right: 2%;
     margin-bottom: 4%;
-    background-color: $primary;
+    background-color: $btn-bg-color;
+    font-family: $btn-font;
     font-weight: $btn-font-weight;
-    color: white;
+    color: $btn-color;
     height: $btn-height;
     padding: $btn-padding;
     border-radius: $btn-border-radius;
@@ -116,8 +118,9 @@ div.card.application-editor {
   }
 
   button.btn:hover {
-    background-color: white;
-    border-color: white;
-    color: $primary;
+    background-color: $btn-bg-light-color;
+    font-family: $btn-font;
+    font-weight: $btn-font-weight;
+    color: $btn-color;
   }
 }

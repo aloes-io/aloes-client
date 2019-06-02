@@ -55,7 +55,7 @@
           </g>
         </svg>
       </b-col>
-      <b-col cols="12" sm="6" md="6" lg="5" xl="5">
+      <b-col cols="12" sm="6" md="6" lg="4" xl="3">
         <transition name="fade" mode="out-in">
           <div v-if="!deviceTwinSelected" key="text">
             <p class="info-subtitle">
@@ -63,14 +63,10 @@
             </p>
             <p class="info-description">
               Powered by
-              <a href="https://framagit.org/getlarge/aloes-handlers" target="_blank"
-                >aloes-handlers</a
-              >
+              <a href="https://framagit.org/aloes/aloes-handlers" target="_blank">aloes-handlers</a>
               to encode/decode MQTT stream, and
-              <a href="https://framagit.org/getlarge/device-manager" target="_blank"
-                >device-manager</a
-              >
-              to transport and persist data .
+              <a href="https://framagit.org/aloes/device-manager" target="_blank">device-manager</a>
+              to transport and persist data.
             </p>
           </div>
           <div v-else-if="deviceTwinSelected" class="info-video" key="video">
@@ -84,19 +80,28 @@
       </b-col>
     </b-row>
     <b-row align-v="center" align-h="center">
-      <b-col cols="12" sm="6" lg="5" xl="5" order-md="12" order-lg="12" order-xl="12">
+      <b-col cols="12" sm="12" md="6" lg="6" xl="5" order-md="12" order-lg="12" order-xl="12">
         <device-tree
           v-if="deviceTreeLoaded"
-          :source="`/data/device-tree2.json`"
+          ref="deviceTree"
+          :source="`/data/device-tree.json`"
           :client-url="$store.state.clientUrl"
-          :width="800"
-          :height="1000"
-          @node-selected="onNodeSelected"
-          @node-deselected="onNodeDeselected"
+          :width="300"
+          :height="250"
           @node-clicked="onNodeClicked"
         />
       </b-col>
-      <b-col cols="12" sm="6" lg="6" xl="5" order-md="1" order-lg="1" order-xl="1">
+      <b-col
+        cols="12"
+        sm="12"
+        md="6"
+        lg="5"
+        xl="5"
+        order-md="1"
+        order-lg="1"
+        order-xl="1"
+        offset-xl="1"
+      >
         <transition name="fade" mode="out-in">
           <div v-if="sensor === null && device === null" key="text">
             <p class="info-subtitle">
@@ -104,10 +109,10 @@
             </p>
             <p class="info-description">
               Displayed with
-              <a href="https://framagit.org/getlarge/aloes-client" target="_blank">aloes-client</a>
+              <a href="https://framagit.org/aloes/aloes-client" target="_blank">aloes-client</a>
               &
               <a href="https://framagit.org/aloes/sensor-snap" target="_blank">sensor-snap</a>
-              VueJS libraries
+              VueJS libraries.
             </p>
           </div>
           <sensor-snap
@@ -148,27 +153,38 @@
       </b-col>
     </b-row>
     <b-row align-v="center" align-h="center">
-      <b-col cols="12" sm="6" lg="5" xl="5">
+      <b-col cols="12" sm="6" lg="6" xl="6">
         <object-composition
-          :source="`${$store.state.clientUrl}/data/virtual-object-composition.json`"
+          :source="`/data/virtual-object-composition.json`"
           :client-url="$store.state.clientUrl"
-          @node-selected="onNodeSelected"
-          @node-deselected="onNodeDeselected"
           @node-clicked="onNodeClicked"
         />
       </b-col>
-      <b-col cols="12" sm="6" lg="5" xl="5">
+      <b-col cols="12" sm="6" lg="4" xl="4">
         <p class="info-subtitle">
-          Compose custom objects
+          Compose custom device
         </p>
         <p class="info-description">
-          Share and control them from any web interface, thanks to
-          <a href="https://framagit.org/getlarge/node-red-bridge" target="_blank"
-            >node-red-bridge</a
-          >
-          <a href="https://framagit.org/aloes/virtual-objects" target="_blank">virtual-objects</a>
+          Easily create new device on any Linux machine
+          <a href="https://framagit.org/aloes/node-red-device" target="_blank">node-red-device</a>
+          or on ESP8266 / ESP32 microcrontrollers.
+          <a href="https://framagit.org/aloes/arduino-device-mqtt" target="_blank"
+            >arduino-device-mqtt</a
+          >.
         </p>
       </b-col>
+    </b-row>
+    <b-row align-v="center" align-h="center">
+      <b-col cols="12" sm="6" lg="4" xl="4">
+        <p class="info-subtitle">
+          Script devices stories
+        </p>
+        <p class="info-description">
+          Create custom scenarios where you can set the rules of interaction inside your network
+          <a href="https://framagit.org/aloes/node-red-bridge" target="_blank">node-red-bridge</a>.
+        </p>
+      </b-col>
+      <b-col cols="12" sm="6" lg="6" xl="6"> </b-col>
     </b-row>
   </b-container>
 </template>
@@ -186,7 +202,6 @@ export default {
     'device-tree': () => import('@/components/Device/DeviceTree.vue'),
     'object-composition': () => import('@/components/VirtualObject/ObjectComposition.vue'),
     'sensor-snap': () => import('sensor-snap'),
-    //  "sensor-snap": SensorSnap,
   },
 
   data() {
@@ -237,7 +252,7 @@ export default {
     async onUpdateSensor(...args) {
       if (!args || !args[0].id) return null;
       let sensor = args[0];
-      logger.publish(4, 'device', 'onUpdateSensor:req', sensor);
+      logger.publish(4, 'demo-device', 'onUpdateSensor:req', sensor);
       if (sensor.type === 3349 && args[1] === 5911) {
         const result = await this.cameraTest(2);
         args[1] = 5910;
@@ -247,37 +262,39 @@ export default {
       //   this.measurementTest();
       // }
       sensor = await updateAloesSensors(sensor, args[1], args[2]);
+      this.$refs.deviceTree.onNodeUpdated(sensor);
       this.sensor = sensor;
     },
 
     onDeleteSensor(sensor) {
-      logger.publish(4, 'device', 'onDeleteSensor:req', sensor);
-      //  this.$store.dispatch("device/delSensor", sensor.id)
-    },
-
-    onNodeSelected(node) {
-      logger.publish(4, 'device', 'onNodeSelected:req', node.data);
-    },
-
-    onNodeDeselected() {
-      logger.publish(4, 'device', 'onNodeDeselected:req');
+      logger.publish(4, 'demo-device', 'onDeleteSensor:req', sensor);
+      this.$refs.deviceTree.onNodeDeleted(sensor);
     },
 
     onNodeClicked(node) {
-      //  const node = node.detail[0];
-      if (node.data && node.data.resources && this.sensor === null) {
-        this.device = null;
-        this.sensor = { ...node.data };
-      } else if (node.data && node.data.resources) {
+      logger.publish(5, 'demo-device', 'onNodeClicked:req', node.data);
+      if (node.data && node.data.group === 1) {
+        const device = { ...node.data };
+        if (device.children) {
+          // device.children.forEach(sensor => {
+          //   delete sensor.group;
+          //   delete sensor.size;
+          // });
+          // this.$store.commit('device/setStateKV', { key: 'sensors', value: device.children });
+          delete device.children;
+        }
+        delete device.group;
+        delete device.size;
+        delete device.show;
+        this.device = device;
         this.sensor = null;
+        //  this.$store.commit('device/setModel', device);
+      } else if (node.data && node.data.group === 2) {
+        const sensor = { ...node.data };
+        delete sensor.group;
+        delete sensor.size;
+        this.sensor = sensor;
         this.device = null;
-      }
-      if (node.data && node.data.qrCode && this.device === null) {
-        this.device = { ...node.data };
-        this.sensor = null;
-      } else if (node.data && node.data.qrCode) {
-        this.device = null;
-        this.sensor = null;
       }
     },
 

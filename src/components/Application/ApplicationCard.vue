@@ -46,28 +46,65 @@
       </b-row>
     </b-card-body>
     <b-card-footer @click="showToken = !showToken">
-      API key :
-      <p v-show="showToken && application.apiKey !== null">
-        {{ application.apiKey }}
-      </p>
+      <b-row>
+        <b-col cols="9" sm="10" md="9" lg="9" xl="10">
+          API key :
+          <p v-show="showToken && application.apiKey !== null">
+            {{ application.apiKey }}
+          </p>
+        </b-col>
+        <b-col cols="3" sm="2" md="3" lg="3" xl="2">
+          <b-button
+            :disabled="!application.id"
+            class="refresh-token-btn"
+            @click.prevent.stop="showRefreshTokenPopup"
+          >
+            <fa-icon icon="sync" size="lg" />
+          </b-button>
+        </b-col>
+      </b-row>
     </b-card-footer>
+    <b-modal
+      id="refresh-token-popup"
+      ref="refreshTokenPopup"
+      title="refresh token ?"
+      size="sm"
+      hide-footer
+      lazy
+      class="refresh-token-popup-view"
+      modal-class="refresh-token-popup-modal"
+      header-class="refresh-token-popup-header"
+      body-class="refresh-token-popup-body"
+      @hidden="onModalHidden"
+    >
+      <b-button class="refresh-token-popup-button" @click.prevent.stop="refreshToken">
+        Confirm
+      </b-button>
+      <b-button class="refresh-token-popup-button" @click.prevent.stop="hideRefreshTokenPopup">
+        Cancel
+      </b-button>
+    </b-modal>
   </b-card>
 </template>
 
 <script type="text/javascript">
+import bButton from 'bootstrap-vue/es/components/button/button';
 import bCard from 'bootstrap-vue/es/components/card/card';
 import bCardBody from 'bootstrap-vue/es/components/card/card-body';
 import bCardHeader from 'bootstrap-vue/es/components/card/card-header';
 import bCardFooter from 'bootstrap-vue/es/components/card/card-footer';
+import bModal from 'bootstrap-vue/es/components/modal/modal';
 
 export default {
   name: 'ApplicationCard',
 
   components: {
+    'b-button': bButton,
     'b-card': bCard,
     'b-card-body': bCardBody,
     'b-card-footer': bCardFooter,
     'b-card-header': bCardHeader,
+    'b-modal': bModal,
   },
 
   props: {
@@ -116,9 +153,30 @@ export default {
 
   mounted() {},
 
-  updated() {},
+  methods: {
+    onModalHidden() {
+      this.error = null;
+      this.success = null;
+      this.profile = null;
+      this.loading = false;
+    },
 
-  methods: {},
+    hideRefreshTokenPopup() {
+      this.$refs.refreshTokenPopup.hide();
+    },
+
+    showRefreshTokenPopup() {
+      this.$refs.refreshTokenPopup.show();
+    },
+
+    async refreshToken() {
+      const application = await this.$store.dispatch('application/refreshToken', this.application);
+      if (application && application.apiKey) {
+        return true;
+      }
+      return false;
+    },
+  },
 };
 </script>
 

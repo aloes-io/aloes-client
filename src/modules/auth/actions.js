@@ -181,6 +181,9 @@ export async function signIn({ state, commit, dispatch }, { email, password, sav
       email,
       password,
     });
+    if (!accessToken || accessToken === null || accessToken instanceof Error) {
+      throw new Error('Invalid token');
+    }
     await commit('setAccessToken', accessToken);
     if (state.access_token !== null) {
       loopback.setToken(state.access_token, save);
@@ -249,11 +252,17 @@ export async function verifyEmail({ state }, user) {
   }
 }
 
-export function changePassword(ctx, { oldPassword, newPassword }) {
-  return loopback.post(`/${ctx.state.resources}/change-password`, {
-    oldPassword,
-    newPassword,
-  });
+export async function changePassword({ state }, { oldPassword, newPassword }) {
+  try {
+    const res = await loopback.post(`/${state.resources}/set-new-password`, {
+      oldPassword,
+      newPassword,
+    });
+    logger.publish(3, state.collectionName, 'dispatch:changePassword:res', res);
+  } catch (error) {
+    logger.publish(2, state.collectionName, 'dispatch:changePassword:err', error);
+    return error;
+  }
 }
 
 export function rememberPassword(ctx, email) {

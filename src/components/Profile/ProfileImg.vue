@@ -27,7 +27,7 @@
           displayHeaderButton = false;
         "
       >
-        <i class="fa fa-picture-o " />
+        <fa-icon icon="image" size="lg" />
       </b-button>
       <b-button
         v-else-if="!viewer && editorMode && displayAvatarButton"
@@ -36,7 +36,7 @@
         @mouseleave="displayAvatarButton = false"
         @click.prevent.stop="$refs.avatarImport.showModal()"
       >
-        <i class="fa fa-picture-o " />
+        <fa-icon icon="image" size="md" />
       </b-button>
     </b-card>
     <file-import-container
@@ -102,12 +102,15 @@ export default {
   },
 
   computed: {
+    serverUrl() {
+      return this.$store.state.serverUrl;
+    },
     headerImgUrl: {
       get() {
         if (this.viewer) {
-          return this.$store.state.auth.viewed.headerImgUrl;
+          return `${this.serverUrl}${this.$store.state.auth.viewed.headerImgUrl}`;
         }
-        return this.$store.state.auth.account.headerImgUrl;
+        return `${this.serverUrl}${this.$store.state.auth.account.headerImgUrl}`;
       },
       set(value) {
         this.$store.commit('auth/setModelKV', {
@@ -119,9 +122,9 @@ export default {
     avatarImgUrl: {
       get() {
         if (this.viewer) {
-          return this.$store.state.viewed.avatarImgUrl;
+          return `${this.serverUrl}${this.$store.state.viewed.avatarImgUrl}`;
         }
-        return this.$store.state.auth.account.avatarImgUrl;
+        return `${this.serverUrl}${this.$store.state.auth.account.avatarImgUrl}`;
       },
       set(value) {
         this.$store.commit('auth/setModelKV', {

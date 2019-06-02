@@ -5,7 +5,6 @@
         <b-col cols="12" sm="12" md="6" lg="6" xl="6">
           <b-form-group
             id="device-name-group"
-            horizontal
             label-cols="4"
             label="Device name :"
             label-for="device-name"
@@ -27,10 +26,10 @@
         </b-col>
 
         <b-col sm="12" md="6" lg="6" xl="6">
+          <!-- horizontal -->
           <b-form-group
             id="device-type-group"
             label-cols="4"
-            horizontal
             label="Device type :"
             label-for="device-type"
             label-size="sm"
@@ -51,7 +50,6 @@
           <b-form-group
             id="device-transport-protocol-group"
             label-cols="4"
-            horizontal
             label="Transport API :"
             label-for="device-transport-protocol"
             label-size="sm"
@@ -70,7 +68,6 @@
         <b-col cols="12" sm="12" md="6" lg="6" xl="6">
           <b-form-group
             id="device-protocol-version-group"
-            horizontal
             label-cols="4"
             label="API version :"
             label-for="device-protocol-version"
@@ -105,10 +102,12 @@
     </b-card-body>
     <b-card-footer>
       <b-button :disabled="!complete" class="save-device" @click="saveDevice">
-        <i class="fa fa-check" />
+        <fa-icon icon="check" size="lg" />
+        <small>save</small>
       </b-button>
       <b-button :disabled="!deviceIdExists" class="remove-device" @click="removeDevice">
-        <i class="fa fa-trash" />
+        <fa-icon icon="trash" size="lg" />
+        <small>delete</small>
       </b-button>
     </b-card-footer>
   </b-card>
@@ -297,6 +296,11 @@ export default {
         });
       },
     },
+    address: {
+      get() {
+        return this.$store.state.address.deviceAddress;
+      },
+    },
     deviceIdExists() {
       //  console.log(has(this.device, "id"));
       return has(this.device, 'id');
@@ -348,15 +352,16 @@ export default {
 
   methods: {
     deviceName() {
-      if (this.name !== null && this.name.length && this.name.length > 2) return true;
+      if (this.name && this.name !== null && this.name.length && this.name.length > 2) return true;
       return false;
     },
     deviceType() {
-      if (this.type !== null && this.type.length && this.type.length > 3) return true;
+      if (this.type && this.type !== null && this.type.length && this.type.length > 3) return true;
       return false;
     },
     deviceProtocolName() {
       if (
+        this.transportProtocol &&
         this.transportProtocol !== null &&
         this.transportProtocol.length &&
         this.transportProtocol.length > 3
@@ -366,6 +371,7 @@ export default {
     },
     deviceProtocolVersion() {
       if (
+        this.protocolVersion &&
         this.protocolVersion !== null &&
         this.protocolVersion.length &&
         this.protocolVersion.length > 0
@@ -420,6 +426,17 @@ export default {
       this.dismissCountDown = this.dismissSecs;
       if (!this.device.ownerId) {
         this.device.ownerId = this.$store.state.auth.account.id;
+      }
+      if (this.device.children) {
+        delete this.device.children;
+      }
+      // delete this.device.size;
+      // delete this.device.group;
+      // delete this.device.show;
+      if (this.address) {
+        this.device.fullAddress = `${this.address.street} ${this.address.postalCode} ${
+          this.address.city
+        }`;
       }
       const device = await this.$store.dispatch('device/saveDevice', {
         device: this.device,

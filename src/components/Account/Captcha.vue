@@ -29,14 +29,14 @@ export default {
     };
   },
 
-  created() {
+  mounted() {
     this.recaptchaScript = document.createElement('script');
     this.recaptchaScript.setAttribute('src', 'https://authedmine.com/lib/captcha.min.js');
     this.recaptchaScript.setAttribute('async', true);
     document.body.appendChild(this.recaptchaScript);
   },
 
-  mounted() {},
+  //  mounted() {},
 
   beforeDestroy() {
     document.body.removeChild(this.recaptchaScript);

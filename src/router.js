@@ -32,7 +32,7 @@ const router = new Router({
       path: '/auth',
       name: 'auth',
       meta: { requiresAuth: false },
-      component: () => import(/* webpackChunkName: "profile" */ './views/Auth.vue'),
+      component: () => import(/* webpackChunkName: "auth" */ './views/Auth.vue'),
       props: route => ({
         'access-token': route.query['access-token'],
         'user-id': route.query['user-id'],
@@ -76,7 +76,7 @@ const router = new Router({
         'user-id': route.query['user-id'],
         deviceId: route.query.deviceId,
       }),
-      component: () => import(/* webpackChunkName: "register" */ './views/Device.vue'),
+      component: () => import(/* webpackChunkName: "device" */ './views/Device.vue'),
     },
     {
       path: '/application',
@@ -85,9 +85,9 @@ const router = new Router({
       props: route => ({
         'access-token': route.query['access-token'],
         'user-id': route.query['user-id'],
-        appId: route.query.appId,
+        applicationId: route.query.applicationId,
       }),
-      component: () => import(/* webpackChunkName: "register" */ './views/Application.vue'),
+      component: () => import(/* webpackChunkName: "application" */ './views/Application.vue'),
     },
     {
       path: '/search',

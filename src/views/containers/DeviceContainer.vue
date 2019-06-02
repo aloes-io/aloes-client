@@ -45,19 +45,81 @@
         </b-row>
       </b-tab>
       <b-tab title="Tree">
-        <b-row align-v="center" align-h="center">
-          <b-col cols="12" sm="12" lg="8" xl="8" order-md="12" order-lg="12" order-xl="12">
+        <b-row v-if="fullDevices" v-show="fullDevices !== null" align-v="center" align-h="center">
+          <b-col cols="12" sm="12" md="6" lg="7" xl="8" order-md="12" order-lg="12" order-xl="12">
             <device-tree
+              ref="deviceTree"
               :client-url="$store.state.clientUrl"
               :height="500"
               :width="600"
-              :user-id="userId"
+              :devices="fullDevices"
+              :nodes-radius="nodesRadius"
+              :links-length="linksLength"
               @node-selected="onNodeSelected"
               @node-deselected="onNodeDeselected"
               @node-clicked="onNodeClicked"
             />
           </b-col>
-          <b-col cols="12" sm="12" lg="4" xl="4" order-md="1" order-lg="1" order-xl="1">
+          <b-col cols="12" sm="12" md="6" lg="5" xl="4" order-md="1" order-lg="1" order-xl="1">
+            <b-form-group
+              id="nodes-radius-group"
+              label-cols="4"
+              label="Nodes radius :"
+              label-for="nodes-radius"
+              label-size="sm"
+              breakpoint="sm"
+            >
+              <b-form-input
+                id="nodes-radius"
+                type="range"
+                min="6"
+                max="20"
+                v-model.number="nodesRadius"
+              />
+            </b-form-group>
+            <b-form-group
+              id="links-length-group"
+              label-cols="4"
+              label="Links length :"
+              label-for="links-length"
+              label-size="sm"
+              breakpoint="sm"
+            >
+              <b-form-input
+                id="links-length"
+                class="form-control"
+                type="range"
+                min="0.2"
+                max="1.5"
+                step="0.1"
+                v-model.number="linksLength"
+              />
+            </b-form-group>
+            <b-row>
+              <b-col cols="5" sm="5" lg="4" xl="3">
+                Sensors
+              </b-col>
+              <b-col cols="3" sm="3" lg="3" xl="2">
+                <b-button class="show-sensors" @click.prevent.stop="toggleSensors(!showSensors)">
+                  <fa-icon v-if="showSensors" icon="toggle-on" size="lg" />
+                  <fa-icon v-else icon="toggle-off" size="lg" />
+                </b-button>
+              </b-col>
+            </b-row>
+            <b-row>
+              <b-col cols="5" sm="5" lg="4" xl="3">
+                Descriptions
+              </b-col>
+              <b-col cols="3" sm="3" lg="3" xl="2">
+                <b-button
+                  class="show-sensors"
+                  @click.prevent.stop="toggleDescriptions(!showDescriptions)"
+                >
+                  <fa-icon v-if="showDescriptions" icon="toggle-on" size="lg" />
+                  <fa-icon v-else icon="toggle-off" size="lg" />
+                </b-button>
+              </b-col>
+            </b-row>
             <sensor-snap
               v-if="sensor && sensor !== null"
               :ref="`sensorSnap-${sensor.id}`"
@@ -110,12 +172,14 @@
 <script type="text/javascript">
 import { updateAloesSensors } from 'aloes-handlers';
 import bAlert from 'bootstrap-vue/es/components/alert/alert';
+import bButton from 'bootstrap-vue/es/components/button/button';
+import bFormInput from 'bootstrap-vue/es/components/form-input/form-input';
+import bFormGroup from 'bootstrap-vue/es/components/form-group/form-group';
 import bTabs from 'bootstrap-vue/es/components/tabs/tabs';
 import bTab from 'bootstrap-vue/es/components/tabs/tab';
 import has from 'lodash.has';
-import SensorSnap from 'sensor-snap';
+//  import SensorSnap from 'sensor-snap';
 import DeviceSensors from '@/components/Device/DeviceSensors.vue';
-//  import SearchMap from '@/components/Search/SearchMap.vue';
 import { EventBus } from '@/services/PubSub';
 import logger from '@/services/logger';
 
@@ -124,6 +188,9 @@ export default {
 
   components: {
     'b-alert': bAlert,
+    'b-button': bButton,
+    'b-form-input': bFormInput,
+    'b-form-group': bFormGroup,
     'b-tabs': bTabs,
     'b-tab': bTab,
     'device-card': () => import('@/components/Device/DeviceCard.vue'),
@@ -132,8 +199,8 @@ export default {
     'device-tree': () => import('@/components/Device/DeviceTree.vue'),
     'device-sensors': DeviceSensors,
     'search-map': () => import('@/components/Search/SearchMap.vue'),
-    //  'sensor-snap': () => import('sensor-snap'),
-    'sensor-snap': SensorSnap,
+    'sensor-snap': () => import('sensor-snap'),
+    //  'sensor-snap': SensorSnap,
   },
 
   props: {
@@ -161,11 +228,17 @@ export default {
 
   data() {
     return {
+      fullDevices: null,
       deviceTreeLoaded: true,
+      deviceTree: null,
       viewer: false,
       editorMode: true,
       loading: false,
       sensor: null,
+      nodesRadius: 17,
+      linksLength: 1,
+      showSensors: true,
+      showDescriptions: false,
     };
   },
 
@@ -208,7 +281,10 @@ export default {
         return this.$store.state.device.collection;
       },
       set(value) {
-        this.$store.commit('device/setCollection', value);
+        this.$store.commit('device/setStateKV', {
+          key: 'collection',
+          value,
+        });
       },
     },
     device: {
@@ -265,6 +341,11 @@ export default {
     this.loading = false;
     await this.loadDevices();
     await this.setListeners();
+    this.deviceTree = this.$refs.deviceTree;
+  },
+
+  updated() {
+    this.deviceTree = this.$refs.deviceTree;
   },
 
   beforeDestroy() {
@@ -275,70 +356,6 @@ export default {
   methods: {
     countDownChanged(dismissCountDown) {
       this.dismissCountDown = dismissCountDown;
-    },
-
-    onNodeSelected(node) {
-      if (node && node.id) {
-        logger.publish(4, 'device', 'onNodeSelected:req', node.data.id);
-      }
-    },
-
-    onNodeDeselected(node) {
-      if (node && node.id) {
-        logger.publish(4, 'device', 'onNodeDeselected:req', node.data.id);
-      }
-    },
-
-    onNodeClicked(node) {
-      logger.publish(4, 'device', 'onNodeClicked:req', node.data);
-      if (node.data && node.data.group === 1) {
-        const device = { ...node.data };
-        if (device.children) {
-          // device.children.forEach(sensor => {
-          //   delete sensor.group;
-          //   delete sensor.size;
-          // });
-          // this.$store.commit('device/setStateKV', { key: 'sensors', value: device.children });
-          delete device.children;
-        }
-        delete device.group;
-        delete device.size;
-        this.device = device;
-        this.sensor = null;
-        //  this.$store.commit('device/setModel', device);
-      } else if (node.data && node.data.group === 2) {
-        const sensor = { ...node.data };
-        //  delete sensor.group;
-        //  delete sensor.size;
-        this.sensor = sensor;
-        this.$store.commit('device/cleanModel');
-      }
-    },
-
-    async onUpdateSensor(...args) {
-      logger.publish(4, 'device', 'onUpdateSensor:req', args);
-      if (!args || !args[0].id) return null;
-      let sensor = args[0];
-      sensor = await updateAloesSensors(sensor, args[1], args[2]);
-      await this.$store.dispatch('device/publishToSensor', {
-        sensor,
-        userId: this.$props.userId,
-      });
-      return sensor;
-    },
-
-    async onUpdateSetting(...args) {
-      logger.publish(4, 'device', 'onUpdateSetting:req', args);
-      if (!args || !args[0].id) return null;
-      let sensor = args[0];
-      sensor = await updateAloesSensors(sensor, args[1], args[2]);
-      sensor = await this.$store.dispatch('device/updateSensor', { sensor });
-      return sensor;
-    },
-
-    onDeleteSensor(sensor) {
-      logger.publish(4, 'device', 'onDeleteSensor:req', sensor);
-      //  this.$store.dispatch("device/delSensor", sensor.id)
     },
 
     async loadDevices() {
@@ -361,6 +378,7 @@ export default {
           this.error = { message: 'you have no device registered' };
           return this.error;
         }
+        this.fullDevices = devices;
         logger.publish(4, 'device', 'loadDevices:res', this.devicesCacheExists);
         this.loading = false;
         this.success = { message: 'found devices' };
@@ -371,47 +389,236 @@ export default {
       }
     },
 
+    async loadSensorsByDevice(deviceId) {
+      try {
+        this.error = null;
+        this.success = null;
+        this.dismissCountDown = this.dismissSecs;
+        //  logger.publish(4, 'device', 'loadSensorsByDevice:req', this.sensorsCacheExists);
+        const sensors = await this.$store.dispatch('device/findSensorsByDevice', deviceId);
+        //  logger.publish(4, 'device', 'loadSensorsByDevice:res', sensors);
+        if (!sensors || sensors === null) {
+          this.loading = false;
+          return null;
+        }
+        this.loading = false;
+        return sensors;
+      } catch (error) {
+        this.loading = false;
+        return error;
+      }
+    },
+
+    onNodeSelected(node) {
+      if (node && node.id) {
+        logger.publish(4, 'device', 'onNodeSelected:req', node.data.id);
+      }
+    },
+
+    onNodeDeselected(node) {
+      if (node && node.id) {
+        logger.publish(4, 'device', 'onNodeDeselected:req', node.data.id);
+      }
+    },
+
+    onNodeClicked(node) {
+      // logger.publish(5, 'device', 'onNodeClicked:req', node.data);
+      if (node.data && node.data.group === 1) {
+        const device = { ...node.data };
+        let state = true;
+        if (device.show) state = false;
+        this.deviceTree.toggleDeviceSensors(node.data, state);
+
+        if (device.children) {
+          // device.children.forEach(sensor => {
+          //   delete sensor.group;
+          //   delete sensor.size;
+          // });
+          // this.$store.commit('device/setStateKV', { key: 'sensors', value: device.children });
+          delete device.children;
+        }
+        delete device.group;
+        delete device.size;
+        delete device.show;
+        this.device = device;
+        this.sensor = null;
+        //  this.$store.commit('device/setModel', device);
+      } else if (node.data && node.data.group === 2) {
+        const sensor = { ...node.data };
+        delete sensor.group;
+        delete sensor.size;
+        this.sensor = sensor;
+        this.$store.commit('device/cleanModel');
+      }
+    },
+
+    async onUpdateSensor(...args) {
+      logger.publish(4, 'device', 'onUpdateSensor:req', args);
+      if (!args || !args[0].id) return null;
+      let sensor = args[0];
+      sensor = await updateAloesSensors(sensor, args[1], args[2]);
+      await this.$store.dispatch('device/publishToSensor', {
+        sensor,
+        userId: this.$props.userId,
+      });
+
+      return sensor;
+    },
+
+    async onUpdateSetting(...args) {
+      logger.publish(4, 'device', 'onUpdateSetting:req', args);
+      if (!args || !args[0].id) return null;
+      let sensor = args[0];
+      sensor = await updateAloesSensors(sensor, args[1], args[2]);
+      // if (this.deviceTree && this.deviceTree !== null) {
+      //   this.deviceTree.onNodeUpdated(sensor);
+      // }
+      sensor = await this.$store.dispatch('device/updateSensor', { sensor });
+      return sensor;
+    },
+
+    async onDeleteSensor(sensor) {
+      logger.publish(4, 'device', 'onDeleteSensor:req', sensor);
+      return this.$store.dispatch('device/delSensor', sensor.id);
+    },
+
+    toggleSensors(state) {
+      if (this.deviceTree && this.deviceTree !== null) {
+        this.showSensors = state;
+        this.devices.forEach(device => this.deviceTree.toggleDeviceSensors(device, state));
+      }
+    },
+
+    toggleDescriptions(state) {
+      if (this.deviceTree && this.deviceTree !== null) {
+        this.showDescriptions = state;
+        this.deviceTree.toggleDescriptions(state);
+      }
+    },
+
+    updateCollection(collection, operation, instance) {
+      logger.publish(4, 'device', 'updateCollection:req', { collection, operation });
+
+      if (collection === 'devices' || collection === 'sensors') {
+        let updatedCollection;
+        let index;
+        switch (operation) {
+          case 'create':
+            updatedCollection = JSON.parse(JSON.stringify(this[collection]));
+            updatedCollection.push(instance);
+            this[collection] = updatedCollection;
+            break;
+          case 'update':
+            updatedCollection = JSON.parse(JSON.stringify(this[collection]));
+            index = updatedCollection.findIndex(s => s.id === instance.id);
+            logger.publish(4, 'device', `${collection}Updated`, index);
+            if (index !== -1) {
+              updatedCollection[index] = instance;
+              this[collection] = updatedCollection;
+            }
+            break;
+          case 'delete':
+            updatedCollection = JSON.parse(JSON.stringify(this[collection]));
+            index = updatedCollection.findIndex(s => s.id === instance.id);
+            logger.publish(4, 'device', `${collection}Deleted`, index);
+            if (index !== -1) {
+              updatedCollection.splice(index, 1);
+              this[collection] = updatedCollection;
+            }
+            break;
+          default:
+            throw new Error('Wrong operation');
+        }
+      }
+    },
+
     setListeners() {
       EventBus.$on('onDeviceDeleted', device => {
-        if (device && !this.loading) {
-          return setTimeout(this.loadDevices, 200);
+        if (device && device.id) {
+          if (this.deviceTree && this.deviceTree !== null) {
+            this.deviceTree.onNodeDeleted(device);
+          }
+          this.updateCollection('devices', 'delete', device);
+          if (device.id === this.device.id) {
+            this.$store.commit('device/cleanModel');
+          }
+          // if (!this.loading) {
+          //   return setTimeout(this.loadDevices, 200);
+          // }
         }
-        // const updatedDevices = JSON.parse(JSON.stringify(this.devices));
-        // const deviceDeleted = updatedDevices.find((s) => s.id === JSON.parse(device).id);
-        // const index = updatedDevices.indexOf(deviceDeleted);
-        // console.log("onDeviceDeleted", index);
-        // if (index !== -1) {
-        //   updatedDevices.splice(index, 1);
-        //   console.log("onDeviceDeleted", updatedDevices);
-        //   this.devices = updatedDevices;
-        // }
-        // this.$store.commit("device/cleanModel");
       });
 
       EventBus.$on('onDeviceCreated', device => {
-        if (device && !this.loading) {
-          return setTimeout(this.loadDevices, 200);
+        if (device && device.id) {
+          if (this.deviceTree && this.deviceTree !== null) {
+            this.deviceTree.onNodeCreated(device);
+          }
+          this.updateCollection('devices', 'create', device);
         }
-        // this.device = JSON.parse(device);
-        // const updatedDevices = JSON.parse(JSON.stringify(this.devices));
-        // updatedDevices.push(JSON.parse(device));
-        // this.devices = updatedDevices;
+        this.device = device;
       });
 
       EventBus.$on('onDeviceUpdated', device => {
-        if (device && !this.loading) {
-          return setTimeout(this.loadDevices, 200);
+        if (device && device.id) {
+          if (this.deviceTree && this.deviceTree !== null) {
+            this.deviceTree.onNodeUpdated(device);
+          }
+          this.updateCollection('devices', 'update', device);
         }
-        // const updatedDevices = JSON.parse(JSON.stringify(this.devices));
-        // const updatedDevice = updatedDevices.find((s) => s.id === JSON.parse(device).id);
-        // const index = updatedDevices.indexOf(updatedDevice);
-        // if (index !== -1) {
-        //   updatedDevices[index] = JSON.parse(device);
-        //   this.devices = updatedDevices;
-        // }
       });
 
-      //  await this.$store.dispatch("device/subscribeToDevicesUpdate", {userId: this.$props.userId});
+      EventBus.$on('onSensorDeleted', sensor => {
+        if (sensor && sensor.id) {
+          if (this.deviceTree && this.deviceTree !== null) {
+            this.deviceTree.onNodeDeleted(sensor);
+          }
+          if (sensor.deviceId === this.device.id) {
+            this.updateCollection('sensors', 'delete', sensor);
+          }
+        }
+      });
+
+      EventBus.$on('onSensorCreated', sensor => {
+        if (sensor && sensor.id) {
+          if (this.deviceTree && this.deviceTree !== null) {
+            if (sensor.isNewInstance) {
+              this.deviceTree.onNodeCreated(sensor);
+            } else {
+              this.deviceTree.onNodeUpdated(sensor);
+            }
+          }
+          if (sensor.deviceId === this.device.id) {
+            if (sensor.isNewInstance) {
+              this.updateCollection('sensors', 'create', sensor);
+            } else {
+              this.updateCollection('sensors', 'update', sensor);
+            }
+          }
+        }
+      });
+
+      EventBus.$on('onSensorUpdated', sensor => {
+        if (sensor && sensor.id) {
+          if (this.deviceTree && this.deviceTree !== null) {
+            this.deviceTree.onNodeUpdated(sensor);
+          }
+          if (sensor.deviceId === this.device.id) {
+            this.updateCollection('sensors', 'update', sensor);
+          }
+          // if (!this.loading) {
+          //   const cacheExists = await this.$store.cache.has(
+          //     'device/findSensorsByDevice',
+          //     sensor.deviceId,
+          //   );
+          //   if (cacheExists) {
+          //     await this.$store.cache.delete('device/findSensorsByDevice', sensor.deviceId);
+          //   }
+          //   // if (this.$props.deviceId === sensor.deviceId.toString()) {
+          //   //   await this.loadSensorsByDevice(sensor.deviceId);
+          //   // }
+          // }
+        }
+      });
     },
 
     removeListeners() {
@@ -419,6 +626,9 @@ export default {
       EventBus.$off('onDeviceCreated');
       EventBus.$off('onDeviceDeleted');
       EventBus.$off('onDeviceUpdated');
+      EventBus.$off('onSensorCreated');
+      EventBus.$off('onSensorDeleted');
+      EventBus.$off('onSensorUpdated');
     },
   },
 };

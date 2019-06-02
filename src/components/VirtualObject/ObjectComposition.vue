@@ -113,6 +113,9 @@ export default {
       }
       return 1;
     },
+    colors() {
+      return this.$store.state.style.palette;
+    },
     objectCompositionNodes() {
       const self = this;
       if (this.objectCompositionGraph) {
@@ -126,7 +129,7 @@ export default {
           .attr('class', 'object-cirle')
           .attr('r', d => d.data.size || 4.5)
           .attr('filter', 'url(#circle-shadow)')
-          .style('fill', d => d.data.colors[0])
+          .style('fill', this.nodeFill)
           .on('mouseenter', function() {
             select(this).attr('filter', 'url(#circle-shadow-selected)');
           })
@@ -172,7 +175,7 @@ export default {
           .data(self.objectCompositionGraph.nodes, d => d.data.id)
           .enter()
           .append('image')
-          .attr('xlink:href', d => `${this.$props.clientUrl}${d.data.icons[1]}`)
+          .attr('xlink:href', d => `${d.data.icons[1]}`)
           .attr('crossOrigin', 'anonymous')
           .attr('x', d => (-1 * d.data.size) / 2)
           .attr('y', d => (-1 * d.data.size) / 2)
@@ -227,6 +230,20 @@ export default {
       d.x = Math.max(maxNodeSize, Math.min(this.$props.width - (d.data.size || 16), d.x));
       d.y = Math.max(maxNodeSize, Math.min(this.$props.height - (d.data.size || 16), d.y));
       return 'translate(' + d.x + ',' + d.y + ')';
+    },
+
+    nodeFill(d) {
+      if (d.data) {
+        if (d.data.group === 0) return this.colors.blue;
+        if (d.data.group === 1) {
+          if (d.data.status) {
+            return this.colors.green;
+          }
+          return this.colors.yellow;
+        }
+        if (d.data.group === 2) return this.colors.lightblue;
+      }
+      return this.colors.lightgreen;
     },
 
     objectCompositionTicked() {

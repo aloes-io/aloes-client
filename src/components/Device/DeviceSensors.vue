@@ -49,7 +49,6 @@
 import { updateAloesSensors } from 'aloes-handlers';
 import bCard from 'bootstrap-vue/es/components/card/card';
 import bModal from 'bootstrap-vue/es/components/modal/modal';
-import { EventBus } from '@/services/PubSub';
 import logger from '@/services/logger';
 
 export default {
@@ -126,13 +125,10 @@ export default {
     //  if (!this.sensors || this.sensors === null) {
     await this.loadSensors(this.$props.deviceId);
     //  }
-    await this.setListeners();
     this.webComponentsLoaded = true;
   },
 
-  beforeDestroy() {
-    this.removeListeners();
-  },
+  beforeDestroy() {},
 
   methods: {
     async loadSensors(deviceId) {
@@ -142,7 +138,7 @@ export default {
         this.dismissCountDown = this.dismissSecs;
         //  logger.publish(4, 'device', 'loadSensors:req', this.sensorsCacheExists);
         const sensors = await this.$store.dispatch('device/findSensorsByDevice', deviceId);
-        logger.publish(4, 'device', 'loadSensors:res', sensors);
+        //  logger.publish(4, 'device', 'loadSensors:res', sensors);
         if (!sensors || sensors === null) {
           this.loading = false;
           return null;
@@ -153,48 +149,6 @@ export default {
         this.loading = false;
         return error;
       }
-    },
-
-    setListeners() {
-      EventBus.$on('onSensorDeleted', sensor => {
-        if (sensor && !this.loading) {
-          this.loadSensors(sensor.deviceId);
-        }
-      });
-
-      EventBus.$on('onSensorCreated', async sensor => {
-        if (sensor && !this.loading) {
-          await this.$store.cache.delete('device/findSensorsByDevice', sensor.deviceId);
-        }
-      });
-
-      EventBus.$on('onSensorUpdated', async sensor => {
-        if (sensor && !this.loading) {
-          const cacheExists = await this.$store.cache.has(
-            'device/findSensorsByDevice',
-            sensor.deviceId,
-          );
-          if (cacheExists) {
-            await this.$store.cache.delete('device/findSensorsByDevice', sensor.deviceId);
-          }
-          if (this.$props.deviceId === sensor.deviceId.toString()) {
-            await this.loadSensors(sensor.deviceId);
-          }
-        }
-      });
-
-      // await this.$store.dispatch("device/subscribeToSensorsUpdate", {
-      //   userId: this.$props.userId,
-      // });
-    },
-
-    removeListeners() {
-      EventBus.$off('onSensorCreated');
-      EventBus.$off('onSensorDeleted');
-      EventBus.$off('onSensorUpdated');
-      // if (this.sensors) {
-      //   this.$store.dispatch("device/unsubscribeFromSensorsUpdate", {userId: this.$props.userId});
-      // }
     },
 
     async onUpdateSensor(...args) {

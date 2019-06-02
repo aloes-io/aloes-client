@@ -99,3 +99,11 @@ Be sure to commit your changes on the right branch before setup and update: ( ma
 	$  git push
 ```
 
+# TODO 
+
+
+- Update / improve search engine
+- Add unit tests
+- Add docs
+- Manage teams to share devices and applications access
+

@@ -17,6 +17,7 @@ export default {
       coordinates: { lat: null, lng: null },
       verified: false,
       public: false,
+      userId: null,
     },
     viewedProfileAddress: {
       street: '',
@@ -39,6 +40,7 @@ export default {
       coordinates: { lat: null, lng: null },
       verified: false,
       public: true,
+      deviceId: null,
     },
   },
   mutations,

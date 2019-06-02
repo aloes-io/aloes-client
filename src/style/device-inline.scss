@@ -1,18 +1,18 @@
-@import "global";
+@import 'global';
 
 div.card.device-inline-view {
   margin-top: 2%;
   padding: 2%;
   border-radius: $card-border-radius;
-  background-color: white;
+  background-color: $light-grey;
   border: 1px solid transparent;
   box-shadow: $mini-card-shadow;
   -webkit-transition: box-shadow 150ms ease;
   transition: box-shadow 150ms ease;
   cursor: pointer;
   margin-left: 2%;
-  max-width: 96%;
-  max-height: 100px;
+  max-width: 98%;
+  max-height: 120px;
 }
 
 div.card.device-inline-view:hover {
@@ -25,7 +25,7 @@ div.card-body {
 
 .device-inline-row {
   margin-top: 0%;
-  margin-bottom: 4%;
+  margin-bottom: 1%;
 }
 
 .device-inline-name {
@@ -66,9 +66,10 @@ button.btn.device-inline-button {
   margin-top: 2%;
   height: $btn-height;
   font-size: 90%;
+  background-color: $btn-bg-color;
+  font-family: $btn-font;
   font-weight: $btn-font-weight;
-  color: white;
-  background-color: $primary;
+  color: $btn-color;
   position: relative;
   border-radius: $btn-border-radius;
   border: 1px solid transparent;
@@ -77,7 +78,15 @@ button.btn.device-inline-button {
   transition: box-shadow 150ms ease;
 }
 
-@media only screen and (max-width: 760px), (min-device-width: 768px) and (max-device-width: 1024px) {
+button.btn.device-inline-button:hover {
+  background-color: $btn-bg-light-color;
+  font-family: $btn-font;
+  font-weight: $btn-font-weight;
+  color: $btn-color;
+}
+
+@media only screen and (max-width: 760px),
+  (min-device-width: 768px) and (max-device-width: 1024px) {
   img.device-inline-icon {
     height: 60px;
   }

@@ -15,9 +15,9 @@ img.brand-logo {
 }
 
 p.brand-font {
-  font-family: 'LemonMilkbold';
+  font-family: $head-fonts;
   color: $warning;
-  max-height: $icon-height-small;
+  max-height: $icon-height;
 }
 
 .title {
@@ -27,9 +27,10 @@ p.brand-font {
 }
 
 .thumb-icon {
-  max-height: $icon-height-small;
+  max-height: $icon-height;
   margin-right: 3px;
   margin-left: 3px;
+  margin-bottom: 3px;
 }
 
 .navbar {
@@ -51,8 +52,6 @@ p.brand-font {
 .navbar.home {
   border-bottom: 1px solid transparent;
 }
-
-
 
 .navbar-nav .nav-link {
   font-size: 1.1rem;
@@ -99,7 +98,7 @@ button.btn.login:hover {
     flex-direction: row;
   }
   img.thumb-icon {
-    max-height: $icon-height-small;
+    max-height: $icon-height;
     margin-left: 0px;
   }
 }
@@ -120,7 +119,7 @@ button.btn.login:hover {
   }
 
   img.thumb-icon {
-    max-height: $icon-height-small;
+    max-height: $icon-height;
     margin-left: 0px;
   }
 }
@@ -143,7 +142,7 @@ button.btn.login:hover {
     float: right;
   }
   img.thumb-icon {
-    max-height: $icon-height-small;
+    max-height: $icon-height;
     margin-left: 0px;
   }
 }
@@ -166,7 +165,7 @@ button.btn.login:hover {
   }
 
   img.thumb-icon {
-    max-height: 20px;
+    max-height: $icon-height;
     margin-left: 0px;
   }
 }

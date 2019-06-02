@@ -4,18 +4,19 @@ const result = dotenv.config();
 if (result.error) {
   throw result.error;
 }
+
 module.exports = {
   apps: [
     {
-      name: 'aloes-client',
-      script: 'cp deploy/.env_local .env && vue-cli-service serve',
+      name: `${result.parsed.NODE_NAME}-${result.parsed.NODE_ENV}`,
+      script: 'server.js',
       interpreter: 'node',
       max_memory_restart: '1G',
       restart_delay: 500,
       wait_ready: true,
       listen_timeout: 3000,
       env: {
-        NODE_ENV: 'local',
+        NODE_ENV: `${result.parsed.NODE_ENV}`,
         APP_NAME: 'aloes-client',
       },
       env_staging: {
@@ -43,7 +44,7 @@ module.exports = {
       }@${result.parsed.VPS_HOST}:/home/${result.parsed.VPS_USER}/${
         result.parsed.NODE_NAME
       }/source/.env`,
-      'post-deploy': 'npm install && npm run deploy && exit 0',
+      'post-deploy': 'npm install && npm run deploy:stage',
     },
     production: {
       key: '~/.ssh/server1-aloes',

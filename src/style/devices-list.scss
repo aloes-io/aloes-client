@@ -1,4 +1,4 @@
-@import "global";
+@import 'global';
 
 .devices-list-view {
 	margin-top: 4%;
@@ -8,9 +8,10 @@
 
 button.btn {
 	margin-top: 2%;
-	background-color: $primary;
+	background-color: $btn-bg-color;
+	font-family: $btn-font;
 	font-weight: $btn-font-weight;
-	color: white;
+	color: $btn-color;
 	height: $btn-height;
 	padding: $btn-padding;
 	border-radius: $btn-border-radius;
@@ -21,7 +22,8 @@ button.btn {
 }
 
 button.btn:hover {
-	background-color: white;
-	border-color: white;
-	color: $primary;
+	background-color: $btn-bg-light-color;
+	font-family: $btn-font;
+	font-weight: $btn-font-weight;
+	color: $btn-color;
 }

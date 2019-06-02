@@ -1,4 +1,4 @@
-@import "global";
+@import 'global';
 
 .profile-form-view {
   padding-bottom: 2%;
@@ -16,34 +16,7 @@ form.profile-form {
   padding-left: 0rem;
 }
 
-input#first-name {
-  background-color: white;
-  height: $input-height-small;
-  padding: $input-padding;
-  border-radius: $input-border-radius;
-  border: 1px solid transparent;
-  box-shadow: $input-shadow;
-  -webkit-transition: box-shadow 150ms ease;
-  transition: box-shadow 150ms ease;
-}
-input#first-name.form-control:valid {
-  border-color: transparent;
-}
-
-input#first-name.form-control:invalid {
-  border-color: $lightwarning;
-}
-
-input#first-name.form-control:hover {
-  box-shadow: $input-shadow-selected;
-}
-
-input#first-name:disabled {
-  border-color: transparent;
-  box-shadow: none !important;
-}
-
-input#last-name {
+input {
   background-color: white;
   height: $input-height-small;
   padding: $input-padding;
@@ -54,22 +27,23 @@ input#last-name {
   transition: box-shadow 150ms ease;
 }
 
-input#last-name.form-control:valid {
+input.form-control:valid {
   border-color: transparent;
 }
 
-input#last-name.form-control:invalid {
+input.form-control:invalid {
   border-color: $grey;
 }
 
-input#last-name.form-control:hover {
+input.form-control:hover {
   box-shadow: $input-shadow-selected;
 }
 
-input#last-name:disabled {
+input:disabled {
   border-color: transparent;
   box-shadow: none !important;
 }
+
 
 button.btn#edit-mode {
   background-color: $primary;
@@ -89,19 +63,6 @@ button.btn#edit-mode:hover {
   border-color: $primary;
 }
 
-button.btn.profile-inline-button {
-  background-color: transparent;
-  border: 0px;
-  padding: 0.1rem 0.1rem;
-  margin-right: 1%;
-  box-shadow: none;
-  img {
-    max-height: $icon-height;
-  }
-}
-button.btn.profile-inline-button:hover {
-  box-shadow: $btn-shadow;
-}
 
 button.btn.profile-messenger {
   background-color: transparent;
@@ -116,6 +77,28 @@ button.btn.profile-messenger {
 
 button.btn.profile-messenger:hover {
   box-shadow: $btn-shadow;
+}
+
+button.btn.save-profile {
+  background-color: $btn-bg-color;
+  font-family: $btn-font;
+  font-weight: $btn-font-weight;
+  color: $btn-color;
+  height: $btn-height;
+  padding: $btn-padding;
+  font-weight: $btn-font-weight;
+  border-radius: $btn-border-radius;
+  border: 0px solid transparent;
+  box-shadow: $btn-shadow;
+  -webkit-transition: box-shadow 150ms ease;
+  transition: box-shadow 150ms ease;
+}
+
+button.btn:hover {
+  background-color: $btn-bg-light-color;
+  font-family: $btn-font;
+  font-weight: $btn-font-weight;
+  color: $btn-color;
 }
 
 .profile-status {

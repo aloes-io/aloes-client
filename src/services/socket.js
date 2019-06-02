@@ -30,9 +30,10 @@ socket.setToken = async token => {
       username: token.userId.toString(),
       password: token.id.toString(),
     };
-    if (socket.client && socket.client.connected) {
-      await socket.client.end();
-    }
+    // if (socket.client && socket.client._client.connected) {
+    //   socket.client = mqtt.connect(brokerUrl, options);
+    //   return socket;
+    // }
     return socket.initSocket(options);
   } catch (error) {
     logger.publish(3, 'socket', 'setToken:err', error);
@@ -55,14 +56,17 @@ socket.initSocket = options => {
   socket.client = mqtt.connect(brokerUrl, options);
 
   socket.client.on('connect', async state => {
-    logger.publish(3, 'socket', 'onConnect', state);
-    await PubSub.setListeners(socket.client, socket.token);
+    if (socket.client && socket.client._client.connected) {
+      await PubSub.setListeners(socket.client, socket.token);
+    }
     //  socket.client.publish(`${token.userId.toString()}/Authentication/POST`, "yooo");
+    return null;
   });
 
-  socket.client.on('disconnect', state => {
+  socket.client.on('disconnect', async state => {
     logger.publish(3, 'socket', 'onDisconnect', state);
-    PubSub.close(socket.client);
+    await PubSub.close(socket.client);
+    return null;
   });
 
   socket.client.on('message', async (topic, message) => {
