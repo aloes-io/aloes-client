@@ -93,7 +93,7 @@
         >
           <b-img
             v-if="$store.state.auth.account.avatarImgUrl"
-            :src="$store.state.auth.account.avatarImgUrl"
+            :src="`${serverUrl}${$store.state.auth.account.avatarImgUrl}`"
             class="thumb-icon"
           />
           <fa-icon v-else icon="user" size="lg" />
@@ -158,6 +158,9 @@ export default {
   },
 
   computed: {
+    serverUrl() {
+      return this.$store.state.serverUrl;
+    },
     accountType: {
       get() {
         if (this.$props.account) {

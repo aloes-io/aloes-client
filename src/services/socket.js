@@ -56,6 +56,7 @@ socket.initSocket = options => {
   socket.client = mqtt.connect(brokerUrl, options);
 
   socket.client.on('connect', async state => {
+    logger.publish(3, 'socket', 'onConnect', state);
     if (socket.client && socket.client._client.connected) {
       await PubSub.setListeners(socket.client, socket.token);
     }

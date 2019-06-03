@@ -1,26 +1,18 @@
 <template lang="html">
   <b-container fluid class="device-container">
-    <b-tabs content-class="mt-3" justified>
-      <b-tab title="Config" active>
-        <b-row class="devices-map" v-if="devices">
+    <b-tabs content-class="mt-3" justified @input="checkTabs">
+      <b-tab title="Devices" active>
+        <b-row v-if="devices && tabsIndex === 0" class="devices-map">
           <!-- switch between map and device tree views -->
           <b-col sm="12">
             <search-map :token="token" :user-id="userId" :devices="devices" />
           </b-col>
         </b-row>
-        <b-row class="about-header">
+        <b-row v-if="tabsIndex === 0" class="about-header">
           <b-col v-if="device" sm="8">
             <device-card v-if="device" :device="device" ref="deviceCard" />
             <device-editor ref="deviceEditor" :is-viewer="false" :edit-mode="true" />
             <br />
-            <device-sensors
-              v-if="sensors"
-              v-show="sensors.length > 0"
-              :user-id="userId"
-              :sensors="sensors"
-              :device-type="device.type"
-              :device-id="device.id"
-            />
           </b-col>
           <b-col sm="4">
             <devices-list v-if="devices" :token="token" :user-id="userId" :devices="devices" />
@@ -44,8 +36,30 @@
           </b-col>
         </b-row>
       </b-tab>
+      <b-tab title="Sensors">
+        <b-row v-if="tabsIndex === 1" class="about-header">
+          <b-col v-if="device" sm="8">
+            <device-sensors
+              v-if="sensors"
+              v-show="sensors.length > 0"
+              :user-id="userId"
+              :sensors="sensors"
+              :device-type="device.type"
+              :device-id="device.id"
+            />
+          </b-col>
+          <b-col sm="4">
+            <devices-list v-if="devices" :token="token" :user-id="userId" :devices="devices" />
+          </b-col>
+        </b-row>
+      </b-tab>
       <b-tab title="Tree">
-        <b-row v-if="fullDevices" v-show="fullDevices !== null" align-v="center" align-h="center">
+        <b-row
+          v-if="fullDevices && tabsIndex === 2"
+          v-show="fullDevices !== null"
+          align-v="center"
+          align-h="center"
+        >
           <b-col cols="12" sm="12" md="6" lg="7" xl="8" order-md="12" order-lg="12" order-xl="12">
             <device-tree
               ref="deviceTree"
@@ -166,6 +180,9 @@
       </b-tab>
       <b-tab title="Disabled" disabled><p>I'm a disabled tab!</p></b-tab>
     </b-tabs>
+    <b-modal ref="confirmPopup" size="sm" @ok="onYes" @cancel="onNo">
+      {{ confirm.message }}
+    </b-modal>
   </b-container>
 </template>
 
@@ -175,10 +192,10 @@ import bAlert from 'bootstrap-vue/es/components/alert/alert';
 import bButton from 'bootstrap-vue/es/components/button/button';
 import bFormInput from 'bootstrap-vue/es/components/form-input/form-input';
 import bFormGroup from 'bootstrap-vue/es/components/form-group/form-group';
+import bModal from 'bootstrap-vue/es/components/modal/modal';
 import bTabs from 'bootstrap-vue/es/components/tabs/tabs';
 import bTab from 'bootstrap-vue/es/components/tabs/tab';
 import has from 'lodash.has';
-//  import SensorSnap from 'sensor-snap';
 import DeviceSensors from '@/components/Device/DeviceSensors.vue';
 import { EventBus } from '@/services/PubSub';
 import logger from '@/services/logger';
@@ -191,6 +208,7 @@ export default {
     'b-button': bButton,
     'b-form-input': bFormInput,
     'b-form-group': bFormGroup,
+    'b-modal': bModal,
     'b-tabs': bTabs,
     'b-tab': bTab,
     'device-card': () => import('@/components/Device/DeviceCard.vue'),
@@ -200,7 +218,6 @@ export default {
     'device-sensors': DeviceSensors,
     'search-map': () => import('@/components/Search/SearchMap.vue'),
     'sensor-snap': () => import('sensor-snap'),
-    //  'sensor-snap': SensorSnap,
   },
 
   props: {
@@ -234,11 +251,15 @@ export default {
       viewer: false,
       editorMode: true,
       loading: false,
+      tabsIndex: 0,
       sensor: null,
       nodesRadius: 17,
       linksLength: 1,
       showSensors: true,
       showDescriptions: false,
+      confirm: {
+        message: `Are you sure you want to delete this sensor ?`,
+      },
     };
   },
 
@@ -290,6 +311,11 @@ export default {
     device: {
       get() {
         // if (this.$props.deviceId)
+        if (this.$store.state.device.instance.sensors) {
+          const device = this.$store.state.device.instance;
+          delete device.sensors;
+          return device;
+        }
         return this.$store.state.device.instance;
       },
       set(value) {
@@ -409,6 +435,10 @@ export default {
       }
     },
 
+    checkTabs(tabsIndex) {
+      this.tabsIndex = tabsIndex;
+    },
+
     onNodeSelected(node) {
       if (node && node.id) {
         logger.publish(4, 'device', 'onNodeSelected:req', node.data.id);
@@ -477,9 +507,24 @@ export default {
       return sensor;
     },
 
-    async onDeleteSensor(sensor) {
+    onDeleteSensor(sensor) {
       logger.publish(4, 'device', 'onDeleteSensor:req', sensor);
-      return this.$store.dispatch('device/delSensor', sensor.id);
+      if (sensor && sensor.id) {
+        this.sensor = sensor;
+        this.$refs.confirmPopup.show();
+      }
+    },
+
+    async onYes() {
+      await this.$store.dispatch('device/delSensor', {
+        deviceId: this.sensor.deviceId,
+        sensor: this.sensor,
+      });
+      return this.$refs.confirmPopup.hide();
+    },
+
+    onNo() {
+      this.$refs.confirmPopup.hide();
     },
 
     toggleSensors(state) {

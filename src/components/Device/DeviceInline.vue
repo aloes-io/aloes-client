@@ -3,8 +3,8 @@
     v-show="updatedDevice"
     v-if="updatedDevice !== null"
     class="device-inline-view"
-    @mouseover="highlightDevice(updatedDevice)"
-    @mouseleave="highlightDevice(null)"
+    @mouseover="highlightDevice(updatedDevice, true)"
+    @mouseleave="highlightDevice(updatedDevice, false)"
   >
     <b-row>
       <b-col cols="2" sm="4" md="4" lg="4" xl="3">
@@ -19,7 +19,10 @@
         <b-row class="device-inline-row">
           <b-col class="device-props" sm="12">
             <h6 class="device-inline-name">{{ updatedDevice.name }}</h6>
-            <p v-if="updatedDevice.fullAddress" class="device-inline-address">
+            <p
+              v-if="updatedDevice.fullAddress && updatedDevice.fullAddress !== null"
+              class="device-inline-address"
+            >
               {{ updatedDevice.fullAddress }}
             </p>
           </b-col>
@@ -110,35 +113,47 @@ export default {
 
   mounted() {
     this.updateBackground();
-    EventBus.$on('deviceSelected', device => {
-      this.updateBackground(device);
+    EventBus.$on(`deviceSelected-${this.updatedDevice.id}`, (device, state) => {
+      this.highlightBackground(device, state);
     });
   },
 
   beforeDestroy() {
-    EventBus.$off('deviceSelected');
+    EventBus.$off(`deviceSelected-${this.updatedDevice.id}`);
   },
 
   methods: {
-    updateBackground(device) {
+    updateBackground() {
+      if (!this.$el) return null;
+      if (this.updatedDevice.status) {
+        this.$el.style.background = this.$store.state.style.palette.lightgreen;
+      } else {
+        this.$el.style.background = this.$store.state.style.palette.lightyellow;
+      }
+    },
+
+    highlightBackground(device, state) {
       if (!this.$el) return null;
       if (device && device !== null && device.id.toString() === this.updatedDevice.id.toString()) {
-        if (this.updatedDevice.status) {
-          this.$el.style.background = this.$store.state.style.palette.green;
-        } else {
-          this.$el.style.background = this.$store.state.style.palette.yellow;
-        }
-      } else {
-        if (this.updatedDevice.status) {
-          this.$el.style.background = this.$store.state.style.palette.lightgreen;
-        } else {
-          this.$el.style.background = this.$store.state.style.palette.lightyellow;
+        if (state === true) {
+          if (device.status) {
+            this.$el.style.background = this.$store.state.style.palette.green;
+          } else {
+            this.$el.style.background = this.$store.state.style.palette.yellow;
+          }
+        } else if (state === false) {
+          if (device.status) {
+            this.$el.style.background = this.$store.state.style.palette.lightgreen;
+          } else {
+            this.$el.style.background = this.$store.state.style.palette.lightyellow;
+          }
         }
       }
     },
 
-    highlightDevice(device) {
-      EventBus.$emit('deviceSelected', device);
+    highlightDevice(device, state) {
+      EventBus.$emit(`deviceSelected-${device.id}`, device, state);
+      EventBus.$emit('deviceSelected', device, state);
     },
 
     async loadSensors() {

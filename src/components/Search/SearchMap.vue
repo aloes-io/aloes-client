@@ -14,8 +14,8 @@
         <l-marker
           v-if="device.deviceAddress && device.deviceAddress.coordinates"
           :lat-lng="[device.deviceAddress.coordinates.lat, device.deviceAddress.coordinates.lng]"
-          @mouseover="highlightDevice(device)"
-          @mouseleave="highlightDevice(null)"
+          @mouseover="highlightDevice(device, true)"
+          @mouseleave="highlightDevice(device, false)"
         >
           <l-icon
             ref="mapIcon"
@@ -130,6 +130,7 @@ export default {
       }
       //  this.map._onResize();
     });
+    this.setListeners();
   },
 
   beforeDestroy() {
@@ -171,15 +172,16 @@ export default {
       //  this.$refs.map.mapObject.invalidateSize();
     },
 
-    highlightDevice(device) {
-      if (device !== null) {
+    highlightDevice(device, state) {
+      if (!device || device === null) return null;
+      if (state === true) {
         this.currentCenter = L.latLng(
           device.deviceAddress.coordinates.lat,
           device.deviceAddress.coordinates.lng,
         );
-        EventBus.$emit('deviceSelected', device);
-      } else {
-        EventBus.$emit('deviceSelected', device);
+        EventBus.$emit(`deviceSelected-${device.id}`, device, state);
+      } else if (state === false) {
+        EventBus.$emit(`deviceSelected-${device.id}`, device, state);
       }
     },
 
@@ -191,6 +193,7 @@ export default {
       this.success = null;
       logger.publish(4, 'search', 'goToDevice:req', device.id);
       return this.$store.commit('device/setModel', device);
+      // if (this.$route.name !== "device")
       // return this.$router.push({
       //   name: "device",
       //   query: {

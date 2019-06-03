@@ -199,16 +199,18 @@ export async function signIn({ state, commit, dispatch }, { email, password, sav
   }
 }
 
-export async function externalSignIn({ state, commit }, save) {
+export async function externalSignIn({ state, commit }, save = true) {
   try {
     //  const accessToken = await loopback.get(`${state.authRoute}/${provider}`);
     const accessToken = await importTokenFromCookies();
     await commit('setAccessToken', accessToken);
-    // if (state.access_token !== null) {
-    //   loopback.setToken(state.access_token, save);
-    // } else {
-    //   return loopback.removeToken();
-    // }
+    if (save) {
+      // if (state.access_token !== null) {
+      //   loopback.setToken(state.access_token, save);
+      // } else {
+      //   return loopback.removeToken();
+      // }
+    }
     logger.publish(3, state.collectionName, 'dispatch:externalSignIn:res', accessToken);
     return accessToken;
   } catch (error) {

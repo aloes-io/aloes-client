@@ -433,10 +433,12 @@ export default {
       // delete this.device.size;
       // delete this.device.group;
       // delete this.device.show;
-      if (this.address) {
+      if (this.address && this.address.street !== null && this.address.city !== null) {
         this.device.fullAddress = `${this.address.street} ${this.address.postalCode} ${
           this.address.city
         }`;
+      } else {
+        this.device.fullAddress = null;
       }
       const device = await this.$store.dispatch('device/saveDevice', {
         device: this.device,

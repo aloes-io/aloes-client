@@ -226,13 +226,16 @@ export default {
       return null;
     },
     tooltip() {
-      return this.svg
-        .append('g')
-        .attr('class', 'tooltip-group')
-        .style('display', 'none')
-        .style('cursor', 'pointer')
-        .on('mouseleave', this.hideTooltip)
-        .on('click', this.hideTooltip);
+      if (this.graphNodes) {
+        return this.svg
+          .append('g')
+          .attr('class', 'tooltip-group')
+          .style('display', 'none')
+          .style('cursor', 'pointer')
+          .on('mouseleave', this.hideTooltip)
+          .on('click', this.hideTooltip);
+      }
+      return null;
     },
   },
 
@@ -336,6 +339,8 @@ export default {
             device.size = 0.4;
             device.group = 1;
             device.show = true;
+
+            // device.children = this.$props.sensors.filter(sensor => {sensor.deviceId.toString() === device.id.toString()})
             if (device.sensors) {
               device.sensors.forEach(sensor => {
                 sensor.size = 0.2;
