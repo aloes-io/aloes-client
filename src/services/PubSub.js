@@ -49,13 +49,13 @@ PubSub.unSubscribeWhere = async (client, options) => {
   try {
     if (options && client && Storage) {
       let name;
-      if (!options.collectionName || !options.method || !options.userId) {
+      if (!options.collection || !options.method || !options.userId) {
         throw new Error('Missing options');
       }
       if (options.modelId) {
-        name = `/${options.userId}/${options.collectionName}/${options.method}/${options.modelId}`;
+        name = `/${options.userId}/${options.collection}/${options.method}/${options.modelId}`;
       } else {
-        name = `/${options.userId}/${options.collectionName}/${options.method}`;
+        name = `/${options.userId}/${options.collection}/${options.method}`;
       }
       logger.publish(4, 'pubsub', 'unSubscribeWhere:req', name);
       const container = JSON.parse(Storage.getItem('subscription-container'));
@@ -64,8 +64,8 @@ PubSub.unSubscribeWhere = async (client, options) => {
         container.splice(index, 1);
         await client.unsubscribe(name);
         //  delete socket._callbacks[`$/${name}`];
-        //  EventBus.$off(`${options.method.toLowerCase()}${options.collectionName}`);
-        //  delete EventBus._events[`${options.method.toLowerCase()}${options.collectionName}`];
+        //  EventBus.$off(`${options.method.toLowerCase()}${options.collection}`);
+        //  delete EventBus._events[`${options.method.toLowerCase()}${options.collection}`];
         Storage.setItem('subscription-container', JSON.stringify(container));
         logger.publish(
           4,
@@ -99,38 +99,38 @@ PubSub.removeListeners = async client => {
   }
 };
 
-PubSub.subscribeToCollectionPresentation = async (client, collectionName, userId) =>
+PubSub.subscribeToCollectionPresentation = async (client, collection, userId) =>
   PubSub.subscribe(client, {
     userId,
-    collectionName,
+    collection,
     method: 'HEAD',
   });
 
-PubSub.subscribeToCollectionCreation = async (client, collectionName, userId) =>
+PubSub.subscribeToCollectionCreation = async (client, collection, userId) =>
   PubSub.subscribe(client, {
     userId,
-    collectionName,
+    collection,
     method: 'POST',
   });
 
-PubSub.subscribeToCollectionDeletion = async (client, collectionName, userId) =>
+PubSub.subscribeToCollectionDeletion = async (client, collection, userId) =>
   PubSub.subscribe(client, {
     userId,
-    collectionName,
+    collection,
     method: 'DELETE',
   });
 
-PubSub.subscribeToCollectionUpdate = async (client, collectionName, userId) =>
+PubSub.subscribeToCollectionUpdate = async (client, collection, userId) =>
   PubSub.subscribe(client, {
     userId,
-    collectionName,
+    collection,
     method: 'PUT',
   });
 
-PubSub.subscribeToInstanceUpdate = async (client, collectionName, userId, modelId) =>
+PubSub.subscribeToInstanceUpdate = async (client, collection, userId, modelId) =>
   PubSub.subscribe(client, {
     userId,
-    collectionName,
+    collection,
     modelId,
     method: 'PUT',
   });
@@ -181,14 +181,14 @@ PubSub.handler = async (topic, message) => {
     logger.publish(5, 'PubSub', 'handler:req', JSON.parse(message));
     const pattern = await aloesClientPatternDetector({ topic, packet: message });
     let method = pattern.params.method;
-    let collectionName = pattern.params.collectionName;
-    if (!method || !collectionName) throw new Error('Invalid protocol');
+    let collection = pattern.params.collection;
+    if (!method || !collection) throw new Error('Invalid protocol');
     method = method.toUpperCase();
-    collectionName = collectionName.toLowerCase();
+    collection = collection.toLowerCase();
     message = JSON.parse(message);
     switch (method) {
       case 'HEAD':
-        switch (collectionName) {
+        switch (collection) {
           case 'device':
             await onCollectionPresented('Device', message);
             break;
@@ -200,7 +200,7 @@ PubSub.handler = async (topic, message) => {
         }
         break;
       case 'POST':
-        switch (collectionName) {
+        switch (collection) {
           case 'device':
             await onCollectionCreated('Device', message);
             break;
@@ -215,7 +215,7 @@ PubSub.handler = async (topic, message) => {
         }
         break;
       case 'DELETE':
-        switch (collectionName) {
+        switch (collection) {
           case 'device':
             await onCollectionDeleted('Device', message);
             break;
@@ -227,7 +227,7 @@ PubSub.handler = async (topic, message) => {
         }
         break;
       case 'PUT':
-        switch (collectionName) {
+        switch (collection) {
           case 'device':
             await onCollectionUpdated('Device', message);
             break;
@@ -265,10 +265,10 @@ PubSub.publish = async (client, options) => {
   }
 };
 
-PubSub.publishToInstance = (client, collectionName, userId, modelId, data) =>
+PubSub.publishToInstance = (client, collection, userId, modelId, data) =>
   PubSub.publish(client, {
     userId,
-    collectionName,
+    collection,
     modelId,
     method: 'PUT',
     data,

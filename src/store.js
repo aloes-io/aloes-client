@@ -24,7 +24,7 @@ const profileStorage = new VuexPersistence({
     // device: state.device,
     //  devices: state.device.collection,
     //  sensors: state.device.sensorsCollection,
-    address: state.address,
+    //  address: state.address,
   }),
   asyncStorage: false,
 });

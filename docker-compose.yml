@@ -11,6 +11,7 @@ services:
       - "8080:80"
     expose:
       - "80"
+      - "8000"
     volumes:
       - ./docker-build:/app/build
     command: ["nginx", "-g", "daemon off;"]

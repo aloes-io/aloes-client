@@ -63,7 +63,7 @@ export async function subscribeToSensorsUpdate({ state }, { userId }) {
 export async function unsubscribeFromSensorsUpdate({ state }, { userId }) {
   await state.collection.forEach(sensor =>
     PubSub.unSubscribeWhere(socket.client, {
-      collectionName: 'Sensor',
+      collection: 'Sensor',
       userId,
       method: 'PUT',
       modelId: sensor.id,

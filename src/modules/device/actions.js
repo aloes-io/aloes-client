@@ -117,7 +117,7 @@ export async function subscribeToDevicesUpdate({ state }, { userId }) {
 export async function unsubscribeFromDevicesUpdate({ state }, { ownerId }) {
   await state.collection.map(device =>
     PubSub.unSubscribeWhere(socket.client, {
-      collectionName: 'Device',
+      collection: 'Device',
       userId: ownerId,
       method: 'PUT',
       modelId: device.id,
