@@ -2,16 +2,17 @@ version: '3.7'
 
 services:
   client:
+    container_name: aloes-client
+    hostname: aloes-client
     env_file: deploy/.env_docker
     build:
       context: .
       dockerfile: ${NODE_ENV}.dockerfile
     image: getlarge/${NODE_NAME}:0.5
+    restart: always
     ports:
-      - "8080:80"
+      - '8080:80'
     expose:
-      - "80"
-      - "8000"
-    volumes:
-      - ./docker-build:/app/build
-    command: ["nginx", "-g", "daemon off;"]
+      - '80'
+      - '8000'
+  
