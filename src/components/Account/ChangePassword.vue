@@ -61,7 +61,7 @@
       <b-alert v-if="success" vairant="success">
         {{ success.message }}
       </b-alert>
-      <b-button type="submit" variant="success">
+      <b-button v-show="editorMode" type="submit" variant="success">
         <fa-icon v-if="loading" icon="spinner" :transform="{ rotate: 42 }" size="lg" />
         <fa-icon v-else icon="check" size="lg" />
         Update password
@@ -71,21 +71,21 @@
 </template>
 
 <script type="text/javascript">
-import bAlert from 'bootstrap-vue/es/components/alert/alert';
-import bButton from 'bootstrap-vue/es/components/button/button';
-import bForm from 'bootstrap-vue/es/components/form/form';
-import bFormGroup from 'bootstrap-vue/es/components/form-group/form-group';
-import bFormInput from 'bootstrap-vue/es/components/form-input/form-input';
+import { BAlert } from 'bootstrap-vue';
+import { BButton } from 'bootstrap-vue';
+import { BForm } from 'bootstrap-vue';
+import { BFormInput } from 'bootstrap-vue';
+import { BFormGroup } from 'bootstrap-vue';
 
 export default {
   name: 'ChangePassword',
 
   components: {
-    'b-alert': bAlert,
-    'b-button': bButton,
-    'b-form': bForm,
-    'b-form-group': bFormGroup,
-    'b-form-input': bFormInput,
+    'b-alert': BAlert,
+    'b-button': BButton,
+    'b-form': BForm,
+    'b-form-group': BFormGroup,
+    'b-form-input': BFormInput,
   },
 
   props: {

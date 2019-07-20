@@ -36,15 +36,15 @@
 </template>
 
 <script type="text/javascript">
-import bAlert from 'bootstrap-vue/es/components/alert/alert';
-import bButton from 'bootstrap-vue/es/components/button/button';
+import { BAlert } from 'bootstrap-vue';
+import { BButton } from 'bootstrap-vue';
 
 export default {
   name: 'Alert',
 
   components: {
-    'b-alert': bAlert,
-    'b-button': bButton,
+    'b-alert': BAlert,
+    'b-button': BButton,
   },
 
   props: {

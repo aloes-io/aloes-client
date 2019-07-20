@@ -51,13 +51,13 @@
 </template>
 
 <script type="text/javascript">
-import bFormInput from 'bootstrap-vue/es/components/form-input/form-input';
+import { BFormInput } from 'bootstrap-vue';
 
 export default {
   name: 'SignupForm',
 
   components: {
-    'b-form-input': bFormInput,
+    'b-form-input': BFormInput,
   },
 
   data() {

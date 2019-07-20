@@ -6,6 +6,7 @@
           <sensor-snap
             :ref="`sensorSnap${sensor.id}`"
             :id="sensor.id.toString()"
+            :owner-id="sensor.ownerId.toString()"
             :device-id="sensor.deviceId.toString()"
             :dev-eui="sensor.devEui"
             :dev-addr="sensor.devAddr"
@@ -47,16 +48,16 @@
 
 <script>
 import { updateAloesSensors } from 'aloes-handlers';
-import bCard from 'bootstrap-vue/es/components/card/card';
-import bModal from 'bootstrap-vue/es/components/modal/modal';
+import { BCard } from 'bootstrap-vue';
+import { BModal } from 'bootstrap-vue';
 import logger from '@/services/logger';
 
 export default {
-  name: 'DeviceSensors',
+  name: 'SensorsList',
 
   components: {
-    'b-card': bCard,
-    'b-modal': bModal,
+    'b-card': BCard,
+    'b-modal': BModal,
     'sensor-snap': () => import('sensor-snap'),
   },
 
@@ -67,6 +68,11 @@ export default {
     },
     'device-id': {
       type: String,
+      required: true,
+      default: '',
+    },
+    sensors: {
+      type: Array,
       required: false,
       default: null,
     },
@@ -85,19 +91,8 @@ export default {
   },
 
   computed: {
-    sensors: {
-      get() {
-        return this.$store.state.device.sensors;
-      },
-      set(value) {
-        this.$store.commit('device/setStateKV', {
-          key: 'sensors',
-          value,
-        });
-      },
-    },
     sensorsCacheExists() {
-      return this.$store.cache.has('device/findSensorsByDevice', this.updatedDeviceId);
+      return this.$store.cache.has('sensor/findByDevice', this.updatedDeviceId);
     },
   },
 
@@ -117,13 +112,21 @@ export default {
       },
       immediate: true,
     },
+    // sensors: {
+    //   handler(value) {
+    //     if (value && value !== null) {
+
+    //     }
+    //   },
+    //   immediate: true,
+    // },
   },
 
   created() {},
 
   async mounted() {
     //  if (!this.sensors || this.sensors === null) {
-    await this.loadSensors(this.$props.deviceId);
+    //  await this.loadSensors(this.$props.deviceId);
     //  }
     this.webComponentsLoaded = true;
   },
@@ -137,7 +140,7 @@ export default {
         this.success = null;
         this.dismissCountDown = this.dismissSecs;
         //  logger.publish(4, 'device', 'loadSensors:req', this.sensorsCacheExists);
-        const sensors = await this.$store.dispatch('device/findSensorsByDevice', deviceId);
+        const sensors = await this.$store.dispatch('sensor/findByDevice', deviceId);
         //  logger.publish(4, 'device', 'loadSensors:res', sensors);
         if (!sensors || sensors === null) {
           this.loading = false;
@@ -156,7 +159,8 @@ export default {
       if (!args || !args[0].id) return null;
       let sensor = args[0];
       sensor = await updateAloesSensors(sensor, args[1], args[2]);
-      await this.$store.dispatch('device/publishToSensor', {
+      sensor.lastSignal = new Date();
+      await this.$store.dispatch('sensor/publish', {
         sensor,
         userId: this.$props.userId,
       });
@@ -167,8 +171,16 @@ export default {
       logger.publish(4, 'device', 'onUpdateSetting:req', args);
       if (!args || !args[0].id) return null;
       let sensor = args[0];
-      sensor = await updateAloesSensors(sensor, args[1], args[2]);
-      sensor = await this.$store.dispatch('device/updateSensor', { sensor });
+      sensor.resources[args[1].toString()] = args[2];
+      sensor.resource = args[1].toString();
+      sensor.value = args[2];
+      sensor.lastSignal = new Date();
+      //  console.log('onUpdateSetting', sensor);
+      //  const updatedSensor = await this.$store.dispatch('sensor/updateInstance', { sensor });
+      await this.$store.dispatch('sensor/publish', {
+        sensor,
+        userId: this.$props.userId,
+      });
       return sensor;
     },
 
@@ -181,8 +193,7 @@ export default {
     },
 
     async onYes() {
-      await this.$store.dispatch('device/delSensor', {
-        deviceId: this.sensor.deviceId,
+      await this.$store.dispatch('sensor/deleteInstance', {
         sensor: this.sensor,
       });
       return this.$refs.confirmPopup.hide();

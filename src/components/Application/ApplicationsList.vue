@@ -14,14 +14,14 @@
 </template>
 
 <script type="text/javascript">
-import bButton from 'bootstrap-vue/es/components/button/button';
+import { BButton } from 'bootstrap-vue';
 import ApplicationInline from '@/components/Application/ApplicationInline.vue';
 
 export default {
   name: 'ApplicationsList',
 
   components: {
-    'b-button': bButton,
+    'b-button': BButton,
     'application-inline': ApplicationInline,
   },
 

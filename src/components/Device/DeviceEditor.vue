@@ -19,14 +19,13 @@
               size="sm"
               class="device-name"
               autocomplete="username"
+              placeholder="Use unique names inside your network"
               required
-              @change="deviceName"
             />
           </b-form-group>
         </b-col>
 
         <b-col sm="12" md="6" lg="6" xl="6">
-          <!-- horizontal -->
           <b-form-group
             id="device-type-group"
             label-cols="4"
@@ -39,10 +38,29 @@
               id="device-type"
               ref="deviceType"
               v-model="type"
+              :select-size="1"
               :options="deviceTypes"
               size="sm"
               required
-              @change="deviceType"
+            />
+          </b-form-group>
+        </b-col>
+        <b-col cols="12" sm="12" md="12" lg="12" xl="12">
+          <b-form-group
+            id="device-description-group"
+            label-cols="2"
+            label="Description :"
+            label-for="device-description"
+            label-size="sm"
+            breakpoint="sm"
+          >
+            <b-form-input
+              id="device-description"
+              v-model="description"
+              type="text"
+              size="sm"
+              placeholder="What's the purpose of  this device ?"
+              class="device-description"
             />
           </b-form-group>
         </b-col>
@@ -71,32 +89,38 @@
             label-cols="4"
             label="API version :"
             label-for="device-protocol-version"
+            placeholder="Just add 1 if you don't know"
             breakpoint="sm"
             label-size="sm"
           >
             <b-form-input
               id="device-protocol-version"
               ref="deviceProtocolVersion"
-              v-model="protocolVersion"
+              v-model="transportProtocolVersion"
               type="text"
               size="sm"
-              @change="deviceProtocolVersion"
             />
           </b-form-group>
         </b-col>
       </b-row>
 
       <lorawan-form v-if="transportProtocol && transportProtocol.toLowerCase() === 'lorawan'" />
-      <mysensors-form v-if="transportProtocol && transportProtocol.toLowerCase() === 'mysensors'" />
-      <aloeslight-form
-        v-if="transportProtocol && transportProtocol.toLowerCase() === 'aloeslight'"
+      <mysensors-form
+        v-else-if="transportProtocol && transportProtocol.toLowerCase() === 'mysensors'"
       />
-      <aloesclient-form v-if="transportProtocol && transportProtocol.toLowerCase() === 'aloes'" />
+      <aloeslight-form
+        v-else-if="transportProtocol && transportProtocol.toLowerCase() === 'aloeslight'"
+      />
+      <aloesclient-form
+        v-else-if="transportProtocol && transportProtocol.toLowerCase() === 'aloes'"
+      />
+
       <address-form
         v-if="deviceIdExists"
         :is-viewer="false"
         :edit-mode="editorMode"
         :owner-id="device.id"
+        owner-type="Devices"
         class="address-form"
       />
     </b-card-body>
@@ -115,25 +139,25 @@
 
 <script type="text/javascript">
 import has from 'lodash.has';
-import bButton from 'bootstrap-vue/es/components/button/button';
-import bCard from 'bootstrap-vue/es/components/card/card';
-import bCardBody from 'bootstrap-vue/es/components/card/card-body';
-import bCardFooter from 'bootstrap-vue/es/components/card/card-footer';
-import bFormInput from 'bootstrap-vue/es/components/form-input/form-input';
-import bFormGroup from 'bootstrap-vue/es/components/form-group/form-group';
-import bFormSelect from 'bootstrap-vue/es/components/form-select/form-select';
+import { BButton } from 'bootstrap-vue';
+import { BCard } from 'bootstrap-vue';
+import { BCardBody } from 'bootstrap-vue';
+import { BCardFooter } from 'bootstrap-vue';
+import { BFormInput } from 'bootstrap-vue';
+import { BFormGroup } from 'bootstrap-vue';
+import { BFormSelect } from 'bootstrap-vue';
 
 export default {
   name: 'DeviceEditor',
 
   components: {
-    'b-button': bButton,
-    'b-card': bCard,
-    'b-card-body': bCardBody,
-    'b-card-footer': bCardFooter,
-    'b-form-input': bFormInput,
-    'b-form-group': bFormGroup,
-    'b-form-select': bFormSelect,
+    'b-button': BButton,
+    'b-card': BCard,
+    'b-card-body': BCardBody,
+    'b-card-footer': BCardFooter,
+    'b-form-input': BFormInput,
+    'b-form-group': BFormGroup,
+    'b-form-select': BFormSelect,
     'address-form': () => import('@/components/Address/AddressForm.vue'),
     'aloesclient-form': () => import('@/components/Device/AloesClientForm.vue'),
     'aloeslight-form': () => import('@/components/Device/AloesLightForm.vue'),
@@ -221,6 +245,13 @@ export default {
         return this.$store.state.device.instance;
       },
       set(value) {
+        if (value.sensors) {
+          this.$store.commit('sensor/setStateKV', {
+            key: 'deviceSensors',
+            value: value.sensors,
+          });
+          delete value.sensors;
+        }
         this.$store.commit('device/setModel', value);
       },
     },
@@ -230,6 +261,10 @@ export default {
         return this.$store.state.device.instance.name;
       },
       set(value) {
+        if (value && value !== null) {
+          value.trim().toLowerCase();
+          value = value.replace(/\s+/g, '-');
+        }
         this.$store.commit('device/setModelKV', {
           key: 'name',
           value,
@@ -263,13 +298,13 @@ export default {
         });
       },
     },
-    protocolVersion: {
+    transportProtocolVersion: {
       get() {
-        return this.$store.state.device.instance.protocolVersion;
+        return this.$store.state.device.instance.transportProtocolVersion;
       },
       set(value) {
         this.$store.commit('device/setModelKV', {
-          key: 'protocolVersion',
+          key: 'transportProtocolVersion',
           value,
         });
       },
@@ -341,7 +376,7 @@ export default {
     transportProtocol() {
       this.updateDeviceForm();
     },
-    protocolVersion() {
+    transportProtocolVersion() {
       this.updateDeviceForm();
     },
   },
@@ -351,15 +386,15 @@ export default {
   },
 
   methods: {
-    deviceName() {
-      if (this.name && this.name !== null && this.name.length && this.name.length > 2) return true;
+    isDeviceNameValid() {
+      if (this.name && this.name !== null && this.name.length && this.name.length >= 5) return true;
       return false;
     },
-    deviceType() {
-      if (this.type && this.type !== null && this.type.length && this.type.length > 3) return true;
+    isDeviceTypeValid() {
+      if (this.type && this.type !== null && this.type.length && this.type.length >= 3) return true;
       return false;
     },
-    deviceProtocolName() {
+    isDeviceProtocolNameValid() {
       if (
         this.transportProtocol &&
         this.transportProtocol !== null &&
@@ -369,53 +404,20 @@ export default {
         return true;
       return false;
     },
-    deviceProtocolVersion() {
-      if (
-        this.protocolVersion &&
-        this.protocolVersion !== null &&
-        this.protocolVersion.length &&
-        this.protocolVersion.length > 0
-      )
-        return true;
+    isDeviceProtocolVersionValid() {
+      if (this.transportProtocolVersion && this.transportProtocolVersion !== null) return true;
       return false;
     },
     updateDeviceForm() {
       if (this.deviceIdExists) this.complete = true;
       else {
         this.complete =
-          this.deviceName() &&
-          this.deviceProtocolName() &&
-          this.deviceProtocolVersion() &&
-          this.deviceType();
+          this.isDeviceNameValid() &&
+          this.isDeviceProtocolNameValid() &&
+          this.isDeviceProtocolVersionValid() &&
+          this.isDeviceTypeValid();
       }
-
-      // if (this.deviceName()) {
-      //   if (!this.deviceAPUrl()) {
-      //     this.$refs.deviceAPUrl.focus();
-      //   } else if (!this.deviceDevEui()) {
-      //     this.$refs.deviceDevEui.focus();
-      //   }
-      //   //  else if (!this.deviceProtocol()) {
-      //   //   this.$refs.deviceProtocol.focus();
-      //   // }
-      // } else if (this.deviceAPUrl()) {
-      //   if (!this.deviceDevEui()) {
-      //     this.$refs.deviceDevEui.focus();
-      //   } else if (!this.deviceName()) {
-      //     this.$refs.deviceName.focus();
-      //   }
-      //   //  else if (!this.deviceProtocol()) {
-      //   //   this.$refs.deviceProtocol.focus();
-      //   // }
-      // } else if (this.deviceProtocol()) {
-      //   if (!this.deviceDevEui()) {
-      //     this.$refs.deviceDevEui.focus();
-      //   } else if (!this.deviceName()) {
-      //     this.$refs.deviceName.focus();
-      //   } else if (!this.deviceAPUrl()) {
-      //     this.$refs.cardExpiry.focus();
-      //   }
-      // }
+      //  console.log('updateDeviceForm : protocolVersion', this.isDeviceProtocolVersionValid());
     },
 
     async saveDevice(evt) {
@@ -430,9 +432,6 @@ export default {
       if (this.device.children) {
         delete this.device.children;
       }
-      // delete this.device.size;
-      // delete this.device.group;
-      // delete this.device.show;
       if (this.address && this.address.street !== null && this.address.city !== null) {
         this.device.fullAddress = `${this.address.street} ${this.address.postalCode} ${
           this.address.city
@@ -440,7 +439,7 @@ export default {
       } else {
         this.device.fullAddress = null;
       }
-      const device = await this.$store.dispatch('device/saveDevice', {
+      const device = await this.$store.dispatch('device/saveInstance', {
         device: this.device,
       });
       if (!device.id) {
@@ -469,7 +468,7 @@ export default {
       this.success = null;
       this.dismissCountDown = this.dismissSec;
       await this.$store
-        .dispatch('device/delDevice', {
+        .dispatch('device/deleteInstance', {
           device: this.device,
         })
         .then(res => res)

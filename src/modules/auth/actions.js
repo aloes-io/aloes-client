@@ -67,6 +67,8 @@ function evaluateRoute(state, to, from, next) {
         (to.name === 'account' ||
           to.name === 'device' ||
           to.name === 'application' ||
+          to.name === 'team' ||
+          to.name === 'profile' ||
           to.name === 'search') &&
         to.query['access-token'] &&
         to.query['user-id'] &&
@@ -75,45 +77,6 @@ function evaluateRoute(state, to, from, next) {
       ) {
         logger.publish(4, 'Router', 'evaluateRoute:res', '1a');
         next();
-      } else if (to.matched.some(record => record.meta.requiresPaid)) {
-        logger.publish(4, 'Router', 'evaluateRoute:res', '1b');
-        if (
-          (to.name === 'messenger' || to.name === 'team' || to.name === 'profile') &&
-          state.access_token
-        ) {
-          logger.publish(4, 'Router', 'evaluateRoute:res', '1b1');
-          if (state.account.subscribed === 'paid') {
-            logger.publish(4, 'Router', 'evaluateRoute:res', '1b1a');
-            next();
-          } else if (state.account.subscribed === 'free' || state.account.subscribed === 'new') {
-            logger.publish(4, 'Router', 'evaluateRoute:res', '1b1b');
-            next({
-              name: 'register',
-              query: {
-                token: state.access_token.id,
-                userId: state.access_token.userId,
-                subscribeType: state.account.subscribed,
-                switchSubscribeType: 'paid',
-              },
-            });
-          } else {
-            logger.publish(4, 'Router', 'evaluateRoute:res', '1b1c');
-            next({
-              name: 'home',
-              params: {
-                sessionError,
-              },
-            });
-          }
-        } else {
-          logger.publish(4, 'Router', 'evaluateRoute:res', '1b2');
-          next({
-            name: 'home',
-            params: {
-              sessionError,
-            },
-          });
-        }
       } else if (!state.access_token && !loopback.token && !getCookie('access_token')) {
         logger.publish(4, 'Router', 'evaluateRoute:res', '1c');
         next({

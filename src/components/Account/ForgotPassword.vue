@@ -21,17 +21,17 @@
 </template>
 
 <script type="text/javascript">
-import bForm from 'bootstrap-vue/es/components/form/form';
-import bFormGroup from 'bootstrap-vue/es/components/form-group/form-group';
-import bFormInput from 'bootstrap-vue/es/components/form-input/form-input';
+import { BForm } from 'bootstrap-vue';
+import { BFormInput } from 'bootstrap-vue';
+import { BFormGroup } from 'bootstrap-vue';
 
 export default {
   name: 'ForgotPassword',
 
   components: {
-    'b-form': bForm,
-    'b-form-group': bFormGroup,
-    'b-form-input': bFormInput,
+    'b-form': BForm,
+    'b-form-group': BFormGroup,
+    'b-form-input': BFormInput,
   },
 
   data() {

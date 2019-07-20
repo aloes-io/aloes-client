@@ -2,11 +2,15 @@ r<template lang="html">
   <div class="contact-form-view">
     <h5 class="title">CONTACT</h5>
     <br />
-    <p>
-      Suspendisse viverra venenatis odio. Donec libero massa, iaculis vel velit a, maximus interdum
-      urna. Fusce pharetra eu metus a vestibulum. Fusce pellentesque lorem vel risus lobortis
-      facilisis et non tortor.
-    </p>
+    <b-row align-h="center">
+      <b-col sm="12" md="10" lg="8" xl="6">
+        <p>
+          If you need more information about Aloes or want to get in touch, you can use this good
+          old form!
+        </p>
+      </b-col>
+    </b-row>
+
     <br />
     <b-row align-h="center">
       <b-col sm="12" md="10" lg="8" xl="6">
@@ -15,7 +19,7 @@ r<template lang="html">
             <b-col cols="12" sm="6">
               <b-form-group
                 id="first-name-contact-group"
-                label="Prénom *"
+                label="First name *"
                 label-size="sm"
                 label-for="first-name-contact"
               >
@@ -32,7 +36,7 @@ r<template lang="html">
             <b-col cols="12" sm="6">
               <b-form-group
                 id="last-name-contact-group"
-                label="Nom *"
+                label="Last name *"
                 label-size="sm"
                 label-for="last-name-contact"
               >
@@ -65,7 +69,7 @@ r<template lang="html">
           </b-form-group>
           <b-form-group
             id="contact-object-group"
-            label="Objet *"
+            label="Subject *"
             label-size="sm"
             label-for="contact-object"
           >
@@ -94,7 +98,7 @@ r<template lang="html">
             />
           </b-form-group>
           <b-button type="submit" size="sm" class="send-contact-form">
-            Envoyer
+            Send
           </b-button>
         </b-form>
       </b-col>
@@ -109,23 +113,23 @@ r<template lang="html">
 </template>
 
 <script type="text/javascript">
-import bAlert from 'bootstrap-vue/es/components/alert/alert';
-import bButton from 'bootstrap-vue/es/components/button/button';
-import bForm from 'bootstrap-vue/es/components/form/form';
-import bFormInput from 'bootstrap-vue/es/components/form-input/form-input';
-import bFormGroup from 'bootstrap-vue/es/components/form-group/form-group';
-import bFormTextarea from 'bootstrap-vue/es/components/form-textarea/form-textarea';
+import { BAlert } from 'bootstrap-vue';
+import { BButton } from 'bootstrap-vue';
+import { BForm } from 'bootstrap-vue';
+import { BFormInput } from 'bootstrap-vue';
+import { BFormGroup } from 'bootstrap-vue';
+import { BFormTextarea } from 'bootstrap-vue';
 
 export default {
   name: 'ContactForm',
 
   components: {
-    'b-alert': bAlert,
-    'b-button': bButton,
-    'b-form': bForm,
-    'b-form-input': bFormInput,
-    'b-form-group': bFormGroup,
-    'b-form-textarea': bFormTextarea,
+    'b-alert': BAlert,
+    'b-button': BButton,
+    'b-form': BForm,
+    'b-form-input': BFormInput,
+    'b-form-group': BFormGroup,
+    'b-form-textarea': BFormTextarea,
   },
 
   data() {
@@ -219,13 +223,13 @@ export default {
       try {
         const result = await this.$store.dispatch('sendContactForm');
         if (result) {
-          this.success = { message: 'Message envoyé, merci.' };
+          this.success = { message: 'Message sent, thanks.' };
           return this.success;
         }
-        this.error = { message: "Désolé votre message n'a pu être envoyé." };
+        this.error = { message: "Sorry your message couldn't be sent." };
         return this.error;
       } catch (error) {
-        this.error = { message: "Désolé votre message n'a pu être envoyé." };
+        this.error = { message: "Sorry your message couldn't be sent." };
         return this.error;
       }
     },

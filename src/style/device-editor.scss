@@ -24,7 +24,7 @@ div.card.device-editor {
   }
 
   input.form-control {
-    margin-bottom: 4%;
+    margin-bottom: 5px;
     width: 100%;
     background-color: white;
     padding: $input-padding;
@@ -52,8 +52,8 @@ div.card.device-editor {
     box-shadow: none !important;
   }
 
-  select.form-control {
-    margin-bottom: 4%;
+  select.custom-select {
+    margin-bottom: 1%;
     background-color: white;
     padding: $input-padding;
     border-radius: $input-border-radius;
@@ -63,22 +63,23 @@ div.card.device-editor {
     transition: box-shadow 150ms ease;
   }
 
-  select.form-control:valid {
+  select.custom-select:valid {
     border-color: $lightsuccess;
   }
 
-  select.form-control:invalid {
+  select.custom-select:invalid {
     border-color: $grey;
   }
 
-  select.form-control:hover {
+  select.custom-select:hover {
     box-shadow: $input-shadow-selected;
   }
 
-  select.form-control:disabled {
+  select.custom-select:disabled {
     border-color: transparent;
     box-shadow: none !important;
   }
+  
   .card-footer {
     padding: 10px 10px;
     height: 60px;
@@ -88,7 +89,7 @@ div.card.device-editor {
     width: 46%;
     margin-left: 2%;
     margin-right: 2%;
-    margin-bottom: 4%;
+    margin-bottom: 2%;
     background-color: $btn-bg-color;
     font-family: $btn-font;
     font-weight: $btn-font-weight;

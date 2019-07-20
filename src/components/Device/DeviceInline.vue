@@ -49,7 +49,7 @@
 </template>
 
 <script type="text/javascript">
-import bCard from 'bootstrap-vue/es/components/card/card';
+import { BCard } from 'bootstrap-vue';
 import { EventBus } from '@/services/PubSub';
 import logger from '@/services/logger';
 
@@ -57,7 +57,7 @@ export default {
   name: 'DeviceInline',
 
   components: {
-    'b-card': bCard,
+    'b-card': BCard,
   },
 
   props: {
@@ -98,8 +98,10 @@ export default {
     },
     device: {
       handler(device) {
-        this.updatedDevice = device;
-        this.updateBackground(device);
+        if (device && device !== null) {
+          this.updatedDevice = device;
+          this.updateBackground(device);
+        }
       },
       immediate: true,
     },
@@ -134,7 +136,7 @@ export default {
 
     highlightBackground(device, state) {
       if (!this.$el) return null;
-      if (device && device !== null && device.id.toString() === this.updatedDevice.id.toString()) {
+      if (device && device.id && device.id.toString() === this.updatedDevice.id.toString()) {
         if (state === true) {
           if (device.status) {
             this.$el.style.background = this.$store.state.style.palette.green;
@@ -152,19 +154,10 @@ export default {
     },
 
     highlightDevice(device, state) {
-      EventBus.$emit(`deviceSelected-${device.id}`, device, state);
-      EventBus.$emit('deviceSelected', device, state);
-    },
-
-    async loadSensors() {
-      this.error = null;
-      this.success = null;
-      this.dismissCountDown = this.dismissSecs;
-      return this.$store.cache.dispatch(
-        //  return this.$store.dispatch(
-        'device/findSensorsByDevice',
-        this.updatedDevice.id,
-      );
+      if (device && device.id) {
+        EventBus.$emit(`deviceSelected-${device.id}`, device, state);
+        EventBus.$emit('deviceSelected', device, state);
+      }
     },
 
     async goToDevice(evt) {
@@ -174,7 +167,7 @@ export default {
       this.success = null;
       logger.publish(4, 'device', 'goToDevice:req', this.updatedDevice.id);
       await this.$store.commit('device/setModel', this.updatedDevice);
-      return this.loadSensors();
+      return;
     },
   },
 };

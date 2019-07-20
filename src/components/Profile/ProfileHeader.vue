@@ -13,7 +13,7 @@
 </template>
 
 <script type="text/javascript">
-import bCard from 'bootstrap-vue/es/components/card/card';
+import { BCard } from 'bootstrap-vue';
 import ProfileForm from '@/components/Profile/ProfileForm.vue';
 import ProfileImg from '@/components/Profile/ProfileImg.vue';
 
@@ -21,7 +21,7 @@ export default {
   name: 'ProfileHeader',
 
   components: {
-    'b-card': bCard,
+    'b-card': BCard,
     'profile-form': ProfileForm,
     'profile-img': ProfileImg,
   },

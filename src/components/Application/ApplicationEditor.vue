@@ -209,16 +209,16 @@
 
 <script type="text/javascript">
 import has from 'lodash.has';
-import bButton from 'bootstrap-vue/es/components/button/button';
-import bCard from 'bootstrap-vue/es/components/card/card';
-import bCardBody from 'bootstrap-vue/es/components/card/card-body';
-import bCardFooter from 'bootstrap-vue/es/components/card/card-footer';
-import bFormInput from 'bootstrap-vue/es/components/form-input/form-input';
-import bFormGroup from 'bootstrap-vue/es/components/form-group/form-group';
-import bFormSelect from 'bootstrap-vue/es/components/form-select/form-select';
-import bImg from 'bootstrap-vue/es/components/image/img';
-import BInputGroup from 'bootstrap-vue/es/components/input-group/input-group';
-import BInputGroupAppend from 'bootstrap-vue/es/components/input-group/input-group-append';
+import { BButton } from 'bootstrap-vue';
+import { BCard } from 'bootstrap-vue';
+import { BCardBody } from 'bootstrap-vue';
+import { BCardFooter } from 'bootstrap-vue';
+import { BFormInput } from 'bootstrap-vue';
+import { BFormGroup } from 'bootstrap-vue';
+import { BFormSelect } from 'bootstrap-vue';
+import { BImg } from 'bootstrap-vue';
+import { BInputGroup } from 'bootstrap-vue';
+import { BInputGroupAppend } from 'bootstrap-vue';
 // import ApplicationValidators from '@/components/Application/ApplicationValidators.vue';
 // import FileImportContainer from '@/views/containers/FileImportContainer.vue';
 import builder from '@/services/builder';
@@ -227,14 +227,14 @@ export default {
   name: 'ApplicationEditor',
 
   components: {
-    'b-button': bButton,
-    'b-card': bCard,
-    'b-card-body': bCardBody,
-    'b-card-footer': bCardFooter,
-    'b-form-input': bFormInput,
-    'b-form-group': bFormGroup,
-    'b-form-select': bFormSelect,
-    'b-img': bImg,
+    'b-button': BButton,
+    'b-card': BCard,
+    'b-card-body': BCardBody,
+    'b-card-footer': BCardFooter,
+    'b-form-input': BFormInput,
+    'b-form-group': BFormGroup,
+    'b-form-select': BFormSelect,
+    'b-img': BImg,
     'b-input-group': BInputGroup,
     'b-input-group-append': BInputGroupAppend,
     //  'application-validators': ApplicationValidators,

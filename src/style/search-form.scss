@@ -1,4 +1,4 @@
-@import "global";
+@import 'global';
 
 .search-form {
   margin-top: 2%;
@@ -49,8 +49,10 @@ button.btn#search-custom {
   margin-right: 4%;
   margin-left: 4%;
   font-weight: $btn-font-weight;
-  color: white;
-  background-color: $primary;
+  background-color: $btn-bg-color;
+  font-family: $btn-font;
+  font-weight: $btn-font-weight;
+  color: $btn-color;
   border-radius: $btn-round-border-radius;
   border: 1px solid transparent;
   box-shadow: $btn-shadow;
@@ -62,9 +64,10 @@ button.btn#search-custom {
 }
 
 button.btn#search-custom:hover {
-  color: $primary;
-  background-color: white;
-  border-color: $primary;
+  background-color: $btn-bg-light-color;
+  font-family: $btn-font;
+  font-weight: $btn-font-weight;
+  color: $btn-color;
 }
 
 button.btn#search-geolocation {
@@ -75,8 +78,10 @@ button.btn#search-geolocation {
   width: $btn-round-radius-lg;
   padding: 0px;
   font-weight: $btn-font-weight;
-  color: white;
-  background-color: $primary;
+  background-color: $btn-bg-color;
+  font-family: $btn-font;
+  font-weight: $btn-font-weight;
+  color: $btn-color;
   border-radius: $btn-round-border-radius;
   border: 1px solid transparent;
   box-shadow: $btn-shadow;
@@ -88,7 +93,8 @@ button.btn#search-geolocation {
 }
 
 button.btn#search-geolocation:hover {
-  color: $primary;
-  background-color: white;
-  border-color: $primary;
+  background-color: $btn-bg-light-color;
+  font-family: $btn-font;
+  font-weight: $btn-font-weight;
+  color: $btn-color;
 }

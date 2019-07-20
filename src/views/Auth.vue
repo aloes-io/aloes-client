@@ -34,7 +34,7 @@
 </template>
 
 <script type="text/javascript">
-import bButton from 'bootstrap-vue/es/components/button/button';
+import { BButton } from 'bootstrap-vue';
 import HeaderContainer from '@/views/containers/HeaderContainer.vue';
 import FooterContainer from '@/views/containers/FooterContainer.vue';
 
@@ -53,7 +53,7 @@ export default {
   },
 
   components: {
-    'b-button': bButton,
+    'b-button': BButton,
     'footer-container': FooterContainer,
     'header-container': HeaderContainer,
   },

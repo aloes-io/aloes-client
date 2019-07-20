@@ -31,7 +31,7 @@
 </template>
 
 <script type="text/javascript">
-import bAlert from 'bootstrap-vue/es/components/alert/alert';
+import { BAlert } from 'bootstrap-vue';
 import ProfileHeader from '@/components/Profile/ProfileHeader.vue';
 //  import ProfileDescription from '@/components/Profile/ProfileDescription.vue';
 import logger from '@/services/logger';
@@ -40,7 +40,7 @@ export default {
   name: 'ProfileContainer',
 
   components: {
-    'b-alert': bAlert,
+    'b-alert': BAlert,
     'profile-header': ProfileHeader,
     // 'profile-description': ProfileDescription,
   },

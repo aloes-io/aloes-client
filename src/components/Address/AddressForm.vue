@@ -1,7 +1,7 @@
 <template lang="html">
   <div class="address-form-view">
     <b-row v-if="!viewer || editorMode" :class="complete" class="address-editor">
-      <b-col cols="12" sm="7" md="7" lg="7" xl="7">
+      <b-col cols="12" sm="8" md="8" lg="8" xl="8">
         <b-form-group
           id="street-group"
           label-cols="3"
@@ -22,10 +22,10 @@
           />
         </b-form-group>
       </b-col>
-      <b-col cols="6" sm="5" md="5" lg="5" xl="5">
+      <b-col cols="6" sm="4" md="4" lg="4" xl="4">
         <b-form-group
           id="city-group"
-          label-cols="3"
+          label-cols="2"
           label="City :"
           label-for="city"
           label-size="sm"
@@ -46,7 +46,7 @@
       <b-col cols="6" sm="5" md="5" lg="5" xl="5">
         <b-form-group
           id="zip-code-group"
-          label-cols="4"
+          label-cols="5"
           label="Zipcode :"
           label-for="zip-code"
           label-size="sm"
@@ -64,7 +64,7 @@
           />
         </b-form-group>
       </b-col>
-      <b-col cols="6" sm="4" md="4" lg="3" xl="3">
+      <b-col cols="6" sm="4" md="3" lg="3" xl="2">
         <label class="container">
           <small class="label-title">
             public ?
@@ -109,19 +109,19 @@
 </template>
 
 <script type="text/javascript">
-import bButton from 'bootstrap-vue/es/components/button/button';
-import bFormGroup from 'bootstrap-vue/es/components/form-group/form-group';
-import bFormInput from 'bootstrap-vue/es/components/form-input/form-input';
-import bModal from 'bootstrap-vue/es/components/modal/modal';
+import { BModal } from 'bootstrap-vue';
+import { BButton } from 'bootstrap-vue';
+import { BFormGroup } from 'bootstrap-vue';
+import { BFormInput } from 'bootstrap-vue';
 
 export default {
   name: 'AddressForm',
 
   components: {
-    'b-button': bButton,
-    'b-form-group': bFormGroup,
-    'b-form-input': bFormInput,
-    'b-modal': bModal,
+    'b-button': BButton,
+    'b-form-group': BFormGroup,
+    'b-form-input': BFormInput,
+    'b-modal': BModal,
   },
 
   props: {
@@ -137,6 +137,11 @@ export default {
       type: [Object, Number, String],
       required: true,
     },
+    'owner-type': {
+      type: String,
+      required: true,
+      default: 'users',
+    },
   },
 
   data() {
@@ -145,21 +150,17 @@ export default {
       editorMode: false,
       verify: null,
       complete: false,
-      validate: { message: 'vérifier' },
+      validate: { message: 'Check' },
     };
   },
 
   computed: {
     address: {
       get() {
-        if (this.$route.name === 'device') {
+        if (this.$props.ownerType === 'Devices') {
           return this.$store.state.address.deviceAddress;
-          //  return JSON.parse(this.$store.state.address.deviceAddress);
-        } else if (this.$route.name === 'account') {
-          return this.$store.state.address.profileAddress.street;
-        } else if (this.$route.name === 'profile') {
-          return this.$store.state.address.profileAddress.street;
-          //  return this.$store.state.address.viewedProfileAddress.street;
+        } else if (this.$props.ownerType === 'users') {
+          return this.$store.state.address.profileAddress;
         }
         return null;
       },
@@ -173,7 +174,7 @@ export default {
       },
       set(value) {
         this.$store.commit('address/setModelKV', {
-          route: this.$route.name,
+          ownerType: this.$props.ownerType,
           key: 'street',
           value,
         });
@@ -188,7 +189,7 @@ export default {
       },
       set(value) {
         this.$store.commit('address/setModelKV', {
-          route: this.$route.name,
+          ownerType: this.$props.ownerType,
           key: 'postalCode',
           value,
         });
@@ -203,7 +204,7 @@ export default {
       },
       set(value) {
         this.$store.commit('address/setModelKV', {
-          route: this.$route.name,
+          ownerType: this.$props.ownerType,
           key: 'city',
           value,
         });
@@ -218,7 +219,7 @@ export default {
       },
       set(value) {
         this.$store.commit('address/setModelKV', {
-          route: this.$route.name,
+          ownerType: this.$props.ownerType,
           key: 'public',
           value,
         });
@@ -233,7 +234,7 @@ export default {
       },
       set(value) {
         this.$store.commit('address/setModelKV', {
-          route: this.$route.name,
+          ownerType: this.$props.ownerType,
           key: 'verified',
           value,
         });
@@ -300,32 +301,15 @@ export default {
 
     updateAddressForm() {
       this.complete = this.validStreet && this.validPostalCode && this.validCity;
-      this.fullAddress = `${this.street} ${this.postalCode} ${this.city}`;
-      // if (this.street) {
-      //   if (!this.postalCode) {
-      //     this.$refs.postalCode.focus();
-      //   } else if (!this.city) {
-      //     this.$refs.city.focus();
-      //   }
-      // } else if (this.postalCode) {
-      //   if (!this.street) {
-      //     this.$refs.street.focus();
-      //   } else if (!this.city) {
-      //     this.$refs.city.focus();
-      //   }
-      // } else if (this.city) {
-      //   if (!this.postalCode) {
-      //     this.$refs.postalCode.focus();
-      //   } else if (!this.street) {
-      //     this.$refs.street.focus();
-      //   }
-      // }
+      if (this.complete) {
+        this.fullAddress = `${this.street} ${this.postalCode} ${this.city}`;
+      }
     },
 
     async getCollectionAddress() {
       return this.$store
         .dispatch('address/findAddress', {
-          route: this.$route.name,
+          ownerType: this.$props.ownerType,
           ownerId: this.$props.ownerId,
           viewer: this.viewer,
         })
@@ -336,7 +320,7 @@ export default {
     async saveCollectionAddress() {
       return this.$store
         .dispatch('address/updateAddress', {
-          route: this.$route.name,
+          ownerType: this.$route.ownerType,
           ownerId: this.$props.ownerId,
         })
         .then(res => res)
@@ -347,7 +331,7 @@ export default {
       // if (evt) evt.preventDefault();
       // if (evt) evt.stopPropagation();
       await this.$store
-        .dispatch('address/verifyAddress', this.$route.name)
+        .dispatch('address/verifyAddress', this.$props.ownerType)
         .then(res => {
           if (res.message) {
             this.verifiedAddress = false;

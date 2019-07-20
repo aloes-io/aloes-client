@@ -3,14 +3,12 @@ import socket from '@/services/socket';
 import PubSub from '@/services/PubSub';
 import logger from '@/services/logger';
 
-const userResources = 'users';
+//  const userResources = 'users';
 
-export async function findApplicationsByAccount({ state, commit }, userId) {
-  // return loopback
-  //   .get(`/${userResources}/${userId}/${state.resources.toLowerCase()}`)
+export async function findApplicationsByAccount({ state, commit }, ownerId) {
   return loopback
     .find(`/${state.resources}`, {
-      where: { userId },
+      where: { ownerId },
       limit: 20,
     })
     .then(apps => {
@@ -63,7 +61,7 @@ export async function unsubscribeFromApplicationsUpdate({ state }, { userId }) {
   await state.collection.forEach(app =>
     PubSub.unSubscribeWhere(socket.client, {
       collectionName: 'Application',
-      userId: userId,
+      userId,
       method: 'PUT',
       modelId: app.id,
     }),
@@ -79,7 +77,7 @@ export async function saveApplication({ dispatch }, { application }) {
 
 export async function createApplication({ state, commit }, { application }) {
   return loopback
-    .post(`/Accounts/${application.userId}/${state.resources.toLowerCase()}`, application)
+    .post(`/${state.resources}`, application)
     .then(res => {
       logger.publish(4, state.collectionName, 'dispatch:createApplication:res', res);
       commit('setModel', res);
@@ -90,14 +88,11 @@ export async function createApplication({ state, commit }, { application }) {
 }
 
 export async function updateApplication({ state, commit }, { application }) {
+  const applicationId = application.id;
+  delete application.id;
   return (
     loopback
-      .put(
-        `/${userResources}/${application.userId}/${state.resources.toLowerCase()}/${
-          application.id
-        }`,
-        application,
-      )
+      .put(`/${state.resources}/${applicationId}`, application)
       //  .put(`/${state.resources}/${application.id}`, application)
       .then(res => {
         logger.publish(3, state.collectionName, 'dispatch:updateApplication:res', res);
@@ -111,9 +106,7 @@ export async function updateApplication({ state, commit }, { application }) {
 
 export async function delApplication({ state, commit }, { application }) {
   try {
-    const deletedApplication = await loopback.delete(
-      `/${userResources}/${application.userId}/${state.resources.toLowerCase()}/${application.id}`,
-    );
+    const deletedApplication = await loopback.delete(`/${state.resources}/${application.id}`);
     await commit('setModelKV', {
       key: 'success',
       value: { message: 'application removed' },

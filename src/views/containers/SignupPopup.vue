@@ -17,14 +17,14 @@
 </template>
 
 <script type="text/javascript">
-import bModal from 'bootstrap-vue/es/components/modal/modal';
+import { BModal } from 'bootstrap-vue';
 import Signup from '@/components/Account/Signup.vue';
 
 export default {
   name: 'signupPopup',
 
   components: {
-    'b-modal': bModal,
+    'b-modal': BModal,
     'sign-up': Signup,
   },
 

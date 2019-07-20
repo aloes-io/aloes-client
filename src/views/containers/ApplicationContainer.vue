@@ -48,9 +48,9 @@
 
 <script type="text/javascript">
 import has from 'lodash.has';
-import bAlert from 'bootstrap-vue/es/components/alert/alert';
-import bTabs from 'bootstrap-vue/es/components/tabs/tabs';
-import bTab from 'bootstrap-vue/es/components/tabs/tab';
+import { BAlert } from 'bootstrap-vue';
+import { BTab } from 'bootstrap-vue';
+import { BTabs } from 'bootstrap-vue';
 import ApplicationEditor from '@/components/Application/ApplicationEditor.vue';
 import { EventBus } from '@/services/PubSub';
 import logger from '@/services/logger';
@@ -59,9 +59,9 @@ export default {
   name: 'ApplicationContainer',
 
   components: {
-    'b-alert': bAlert,
-    'b-tabs': bTabs,
-    'b-tab': bTab,
+    'b-alert': BAlert,
+    'b-tabs': BTabs,
+    'b-tab': BTab,
     'application-editor': ApplicationEditor,
     'application-card': () => import('@/components/Application/ApplicationCard.vue'),
     //  'application-editor': () => import('@/components/Application/ApplicationEditor.vue'),

@@ -51,7 +51,7 @@ const router = new Router({
     {
       path: '/profile',
       name: 'profile',
-      meta: { requiresAuth: true, requiresPaid: true },
+      meta: { requiresAuth: true },
       props: route => ({
         profileType: route.query.profileType,
         profileId: route.query.profileId,
@@ -102,7 +102,7 @@ const router = new Router({
     {
       path: '/team',
       name: 'team',
-      meta: { requiresAuth: true, requiresPaid: true },
+      meta: { requiresAuth: true },
       props: true,
       component: () => import(/* webpackChunkName: "team" */ './views/Team.vue'),
     },

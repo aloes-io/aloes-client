@@ -19,14 +19,14 @@
 </template>
 
 <script type="text/javascript">
-import bAlert from 'bootstrap-vue/es/components/alert/alert';
+import { BAlert } from 'bootstrap-vue';
 import DeviceInline from '@/components/Device/DeviceInline.vue';
 
 export default {
   name: 'SearchResult',
 
   components: {
-    'b-alert': bAlert,
+    'b-alert': BAlert,
     'device-inline': DeviceInline,
   },
 

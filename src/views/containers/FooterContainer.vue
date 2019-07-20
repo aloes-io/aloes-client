@@ -15,17 +15,17 @@
 </template>
 
 <script type="text/javascript">
-import bNavbar from 'bootstrap-vue/es/components/navbar/navbar';
-import bNavbarNav from 'bootstrap-vue/es/components/navbar/navbar-nav';
-import bNavItem from 'bootstrap-vue/es/components/nav/nav-item';
+import { BNavbar } from 'bootstrap-vue';
+import { BNavbarNav } from 'bootstrap-vue';
+import { BNavItem } from 'bootstrap-vue';
 
 export default {
   name: 'FooterContainer',
 
   components: {
-    'b-navbar': bNavbar,
-    'b-navbar-nav': bNavbarNav,
-    'b-nav-item': bNavItem,
+    'b-navbar': BNavbar,
+    'b-navbar-nav': BNavbarNav,
+    'b-nav-item': BNavItem,
   },
 
   computed: {

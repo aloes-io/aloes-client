@@ -71,20 +71,20 @@
 </template>
 
 <script type="text/javascript">
-import bButton from 'bootstrap-vue/es/components/button/button';
-import bFormInput from 'bootstrap-vue/es/components/form-input/form-input';
-import bFormSelect from 'bootstrap-vue/es/components/form-select/form-select';
-import BInputGroup from 'bootstrap-vue/es/components/input-group/input-group';
-import BInputGroupAppend from 'bootstrap-vue/es/components/input-group/input-group-append';
-import BInputGroupPrepend from 'bootstrap-vue/es/components/input-group/input-group-prepend';
+import { BButton } from 'bootstrap-vue';
+import { BFormInput } from 'bootstrap-vue';
+import { BFormSelect } from 'bootstrap-vue';
+import { BInputGroup } from 'bootstrap-vue';
+import { BInputGroupAppend } from 'bootstrap-vue';
+import { BInputGroupPrepend } from 'bootstrap-vue';
 
 export default {
   name: 'ApplicationValidators',
 
   components: {
-    'b-button': bButton,
-    'b-form-input': bFormInput,
-    'b-form-select': bFormSelect,
+    'b-button': BButton,
+    'b-form-input': BFormInput,
+    'b-form-select': BFormSelect,
     'b-input-group': BInputGroup,
     'b-input-group-append': BInputGroupAppend,
     'b-input-group-prepend': BInputGroupPrepend,

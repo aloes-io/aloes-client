@@ -99,6 +99,13 @@ PubSub.removeListeners = async client => {
   }
 };
 
+PubSub.subscribeToCollectionPresentation = async (client, collectionName, userId) =>
+  PubSub.subscribe(client, {
+    userId,
+    collectionName,
+    method: 'HEAD',
+  });
+
 PubSub.subscribeToCollectionCreation = async (client, collectionName, userId) =>
   PubSub.subscribe(client, {
     userId,
@@ -133,6 +140,7 @@ PubSub.setListeners = async (client, token) => {
     logger.publish(4, 'PubSub', 'setListeners', token);
     if (client && client !== null && token && token !== null) {
       //  await PubSub.subscribeToCollectionCreation(client, 'Notification', token.userId);
+      await PubSub.subscribeToCollectionPresentation(client, 'Sensor', token.userId);
       await PubSub.subscribeToCollectionCreation(client, 'Device', token.userId);
       await PubSub.subscribeToCollectionCreation(client, 'Sensor', token.userId);
       await PubSub.subscribeToCollectionDeletion(client, 'Device', token.userId);
@@ -146,6 +154,11 @@ PubSub.setListeners = async (client, token) => {
     logger.publish(2, 'pubsub', 'setListeners:err', error);
     return error;
   }
+};
+
+const onCollectionPresented = (collectionName, instance) => {
+  logger.publish(4, 'PubSub', `on${collectionName}Presented`, instance.name);
+  EventBus.$emit(`on${collectionName}Presented`, instance);
 };
 
 const onCollectionCreated = (collectionName, instance) => {
@@ -174,6 +187,18 @@ PubSub.handler = async (topic, message) => {
     collectionName = collectionName.toLowerCase();
     message = JSON.parse(message);
     switch (method) {
+      case 'HEAD':
+        switch (collectionName) {
+          case 'device':
+            await onCollectionPresented('Device', message);
+            break;
+          case 'sensor':
+            await onCollectionPresented('Sensor', message);
+            break;
+          default:
+            throw new Error('Invalid collection name');
+        }
+        break;
       case 'POST':
         switch (collectionName) {
           case 'device':

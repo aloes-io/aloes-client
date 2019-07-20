@@ -10,7 +10,7 @@ const baseOptions = {
   protocolVersion: 4,
   reconnectPeriod: 5000,
   connectTimeout: 30 * 1000,
-  clean: true,
+  clean: false,
   clientId: null,
   username: null,
   password: null,
@@ -55,7 +55,7 @@ socket.initSocket = options => {
   logger.publish(3, 'socket', 'initSocket', options);
   socket.client = mqtt.connect(brokerUrl, options);
 
-  socket.client.on('connect', async state => {
+  socket.client.once('connect', async state => {
     logger.publish(3, 'socket', 'onConnect', state);
     if (socket.client && socket.client._client.connected) {
       await PubSub.setListeners(socket.client, socket.token);
@@ -64,7 +64,13 @@ socket.initSocket = options => {
     return null;
   });
 
-  socket.client.on('disconnect', async state => {
+  socket.client.once('disconnect', async state => {
+    logger.publish(3, 'socket', 'onDisconnect', state);
+    await PubSub.close(socket.client);
+    return null;
+  });
+
+  socket.client.once('offline', async state => {
     logger.publish(3, 'socket', 'onDisconnect', state);
     await PubSub.close(socket.client);
     return null;

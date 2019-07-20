@@ -22,15 +22,15 @@
 </template>
 
 <script type="text/javascript">
-import bButton from 'bootstrap-vue/es/components/button/button';
-import bModal from 'bootstrap-vue/es/components/modal/modal';
+import { BButton } from 'bootstrap-vue';
+import { BModal } from 'bootstrap-vue';
 
 export default {
   name: 'TeamPopup',
 
   components: {
-    'b-button': bButton,
-    'b-modal': bModal,
+    'b-button': BButton,
+    'b-modal': BModal,
   },
 
   props: {

@@ -3,9 +3,9 @@
   "group": 1,
   "icons": ["/icons/aloes/virtual-object.png", "/icons/aloes/virtual-object-white.png"],
   "size": 120,
-  "colors": ["#ffc85f"],
+  "colors": ["#77d1bf"],
   "title": "Compose custom objects",
-  "description": "Innovation, philosophy, team work, web ",
+  "status": true,
   "children": [
     {
       "id": "21",

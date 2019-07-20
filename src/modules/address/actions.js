@@ -3,43 +3,36 @@ import logger from '@/services/logger';
 
 const userResources = 'users';
 
-export async function findAddress({ state, commit }, { route, ownerId, viewer }) {
-  if (route === 'device') {
-    return loopback
-      .get(`/Devices/${ownerId}/deviceAddress`)
-      .then(address => {
-        commit('setDeviceAddress', address);
-        logger.publish(3, state.collectionName, 'dispatch:findAddress:res', address);
-        return address;
-      })
-      .catch(err => err);
-  } else if (route === 'account' || route === 'profile') {
-    return (
-      loopback
-        .get(`/${userResources}/${ownerId}/profileAddress`)
-        //  .get(`/${userResources}/${ownerId}/address`)
-        .then(address => {
-          logger.publish(3, state.collectionName, 'dispatch:findAddress:res', address);
-          commit('setProfileAddress', { viewer, address });
-          return address;
-        })
-        .catch(err => err)
-    );
+export async function findAddress({ state, commit }, { ownerType, ownerId, viewer }) {
+  try {
+    if (ownerType === 'Devices') {
+      const address = await loopback.get(`/${ownerType}/${ownerId}/address`);
+      commit('setDeviceAddress', address);
+      logger.publish(3, state.collectionName, 'dispatch:findAddress:res', address);
+      return address;
+    } else if (ownerType === 'users') {
+      const address = await loopback.get(`/${ownerType}/${ownerId}/address`);
+      logger.publish(3, state.collectionName, 'dispatch:findAddress:res', address);
+      commit('setProfileAddress', { viewer, address });
+      return address;
+    }
+    throw new Error('Wrong ownerType');
+  } catch (error) {
+    return error;
   }
-  return null;
 }
 
-export async function verifyAddress({ state, commit }, route) {
+export async function verifyAddress({ state, commit }, ownerType) {
   try {
     let newAddress;
-    if (route === 'device') {
+    if (ownerType === 'Devices') {
       newAddress = {
         street: state.deviceAddress.street,
         postalCode: state.deviceAddress.postalCode,
         city: state.deviceAddress.city,
         public: state.deviceAddress.public,
       };
-    } else if (route === 'account' || route === 'profile') {
+    } else if (ownerType === 'users') {
       newAddress = {
         street: state.profileAddress.street,
         postalCode: state.profileAddress.postalCode,
@@ -47,51 +40,47 @@ export async function verifyAddress({ state, commit }, route) {
         public: state.profileAddress.public,
       };
     } else {
-      throw new Error('Wrong route');
+      throw new Error('Wrong ownerType');
     }
     const address = await loopback
       .post(`/${userResources}/verify-address`, { address: newAddress })
-      .then(res => res.updatedAddress)
-      .catch(err => err);
+      .then(res => res.updatedAddress);
 
     if (address.message) {
       return address;
     }
     logger.publish(4, state.collectionName, 'dispatch:verifyAddress:res', address);
-    if (route === 'device') {
+    if (ownerType === 'Devices') {
       await commit('setDeviceAddress', address);
     } else {
       await commit('setProfileAddress', { viewer: false, address });
     }
-    await commit('setModelKV', { route, key: 'verified', value: true });
+    await commit('setModelKV', { ownerType, key: 'verified', value: true });
     return address;
   } catch (error) {
     return error;
   }
 }
 
-export async function updateAddress({ state, commit }, { route, ownerId }) {
-  // todo update device or profile address
-  if (route === 'device') {
-    state.deviceAddress.deviceId = ownerId;
-    return loopback
-      .put(`/Devices/${ownerId}/deviceAddress`, state.deviceAddress)
-      .then(address => {
-        commit('setDeviceAddress', address);
-        logger.publish(3, state.collectionName, 'dispatch:updateAddress:res', address);
-        return address;
-      })
-      .catch(err => err);
-  } else if (route === 'account' || route === 'profile') {
-    state.profileAddress.userId = ownerId;
-    return loopback
-      .put(`/${userResources}/${ownerId}/profileAddress`, state.profileAddress)
-      .then(address => {
-        commit('setProfileAddress', { viewer: false, address });
-        logger.publish(3, state.collectionName, 'dispatch:updateAddress:res', address);
-        return address;
-      })
-      .catch(err => err);
+export async function updateAddress({ state, commit }, { ownerType, ownerId }) {
+  try {
+    if (ownerType === 'Devices') {
+      state.deviceAddress.ownerId = ownerId;
+      delete state.deviceAddress.id;
+      const address = await loopback.put(`/${ownerType}/${ownerId}/address`, state.deviceAddress);
+      commit('setDeviceAddress', address);
+      logger.publish(3, state.collectionName, 'dispatch:updateDeviceAddress:res', address);
+      return address;
+    } else if (ownerType === 'users') {
+      state.profileAddress.ownerId = ownerId;
+      delete state.profileAddress.id;
+      const address = await loopback.put(`/${ownerType}/${ownerId}/address`, state.profileAddress);
+      commit('setProfileAddress', { viewer: false, address });
+      logger.publish(3, state.collectionName, 'dispatch:updateProfileAddress:res', address);
+      return address;
+    }
+    throw new Error('Wrong ownerType');
+  } catch (error) {
+    return error;
   }
-  return null;
 }

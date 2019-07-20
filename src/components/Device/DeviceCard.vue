@@ -92,24 +92,24 @@
 </template>
 
 <script type="text/javascript">
-import bButton from 'bootstrap-vue/es/components/button/button';
-import bCard from 'bootstrap-vue/es/components/card/card';
-import bCardBody from 'bootstrap-vue/es/components/card/card-body';
-import bCardHeader from 'bootstrap-vue/es/components/card/card-header';
-import bCardFooter from 'bootstrap-vue/es/components/card/card-footer';
-import bModal from 'bootstrap-vue/es/components/modal/modal';
+import { BButton } from 'bootstrap-vue';
+import { BCard } from 'bootstrap-vue';
+import { BCardBody } from 'bootstrap-vue';
+import { BCardFooter } from 'bootstrap-vue';
+import { BCardHeader } from 'bootstrap-vue';
+import { BModal } from 'bootstrap-vue';
 import qrcode from 'qrcode-generator';
 
 export default {
   name: 'DeviceCard',
 
   components: {
-    'b-button': bButton,
-    'b-card': bCard,
-    'b-card-body': bCardBody,
-    'b-card-footer': bCardFooter,
-    'b-card-header': bCardHeader,
-    'b-modal': bModal,
+    'b-button': BButton,
+    'b-card': BCard,
+    'b-card-body': BCardBody,
+    'b-card-footer': BCardFooter,
+    'b-card-header': BCardHeader,
+    'b-modal': BModal,
   },
 
   props: {

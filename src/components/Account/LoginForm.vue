@@ -31,15 +31,15 @@
 </template>
 
 <script type="text/javascript">
-import bForm from 'bootstrap-vue/es/components/form/form';
-import bFormInput from 'bootstrap-vue/es/components/form-input/form-input';
+import { BForm } from 'bootstrap-vue';
+import { BFormInput } from 'bootstrap-vue';
 
 export default {
   name: 'LoginForm',
 
   components: {
-    'b-form': bForm,
-    'b-form-input': bFormInput,
+    'b-form': BForm,
+    'b-form-input': BFormInput,
   },
 
   // props: {

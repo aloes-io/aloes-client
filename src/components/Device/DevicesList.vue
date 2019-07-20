@@ -1,33 +1,35 @@
 <template lang="html">
   <div class="devices-list-view">
-    <b-form-select v-model="devicesFilter" class="mb-3" @input="updateDevicesFilter">
-      <option :value="null">Select a filter</option>
-      <optgroup label="Type">
-        <option
-          v-for="(elem, index) in deviceTypes"
-          :key="index"
-          :value="{ key: 'type', value: elem.value }"
-        >
-          {{ elem.text }}
-        </option>
-      </optgroup>
-      <optgroup label="Transport">
-        <option
-          v-for="(elem, index) in transportProtocolNames"
-          :key="index"
-          :value="{ key: 'transportProtocol', value: elem.value }"
-        >
-          {{ elem.text }}
-        </option>
-      </optgroup>
-    </b-form-select>
-    <device-inline
-      v-for="device in filteredDevices"
-      :key="device.id"
-      :account="$store.state.auth.account"
-      :token="token"
-      :device="device"
-    />
+    <div class="devices-list">
+      <b-form-select v-model="devicesFilter" class="mb-3" @input="updateDevicesFilter">
+        <option :value="null">Select a filter</option>
+        <optgroup label="Type">
+          <option
+            v-for="(elem, index) in deviceTypes"
+            :key="index"
+            :value="{ key: 'type', value: elem.value }"
+          >
+            {{ elem.text }}
+          </option>
+        </optgroup>
+        <optgroup label="Transport">
+          <option
+            v-for="(elem, index) in transportProtocolNames"
+            :key="index"
+            :value="{ key: 'transportProtocol', value: elem.value }"
+          >
+            {{ elem.text }}
+          </option>
+        </optgroup>
+      </b-form-select>
+      <device-inline
+        v-for="device in filteredDevices"
+        :key="device.id"
+        :account="$store.state.auth.account"
+        :token="token"
+        :device="device"
+      />
+    </div>
     <b-button class="add-device" @click="newDevice">
       <fa-icon icon="plus" size="lg" />
     </b-button>
@@ -35,17 +37,18 @@
 </template>
 
 <script type="text/javascript">
-import bButton from 'bootstrap-vue/es/components/button/button';
-import DeviceInline from '@/components/Device/DeviceInline.vue';
-import bFormSelect from 'bootstrap-vue/es/components/form-select/form-select';
+import { BButton } from 'bootstrap-vue';
+import { BFormSelect } from 'bootstrap-vue';
+//  import DeviceInline from '@/components/Device/DeviceInline.vue';
 
 export default {
   name: 'DevicesList',
 
   components: {
-    'b-button': bButton,
-    'b-form-select': bFormSelect,
-    'device-inline': DeviceInline,
+    'b-button': BButton,
+    'b-form-select': BFormSelect,
+    //  'device-inline': DeviceInline,
+    'device-inline': () => import('@/components/Device/DeviceInline.vue'),
   },
 
   props: {

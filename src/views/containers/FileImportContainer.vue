@@ -23,7 +23,7 @@
 </template>
 
 <script type="text/javascript">
-import bModal from 'bootstrap-vue/es/components/modal/modal';
+import { BModal } from 'bootstrap-vue';
 import FileImport from '@/components/Files/FileImport.vue';
 
 export default {
@@ -31,7 +31,7 @@ export default {
 
   components: {
     'file-import': FileImport,
-    'b-modal': bModal,
+    'b-modal': BModal,
   },
 
   props: {
@@ -53,7 +53,9 @@ export default {
   },
 
   data() {
-    return {};
+    return {
+      imgType: 'Avatar',
+    };
   },
 
   computed: {

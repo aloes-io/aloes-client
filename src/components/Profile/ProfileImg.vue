@@ -36,7 +36,7 @@
         @mouseleave="displayAvatarButton = false"
         @click.prevent.stop="$refs.avatarImport.showModal()"
       >
-        <fa-icon icon="image" size="md" />
+        <fa-icon icon="image" size="lg" />
       </b-button>
     </b-card>
     <file-import-container
@@ -59,18 +59,18 @@
 </template>
 
 <script type="text/javascript">
-import bButton from 'bootstrap-vue/es/components/button/button';
-import bCard from 'bootstrap-vue/es/components/card/card';
-import bImg from 'bootstrap-vue/es/components/image/img';
+import { BButton } from 'bootstrap-vue';
+import { BCard } from 'bootstrap-vue';
+import { BImg } from 'bootstrap-vue';
 import FileImportContainer from '@/views/containers/FileImportContainer.vue';
 
 export default {
   name: 'ProfileImg',
 
   components: {
-    'b-button': bButton,
-    'b-card': bCard,
-    'b-img': bImg,
+    'b-button': BButton,
+    'b-card': BCard,
+    'b-img': BImg,
     'file-import-container': FileImportContainer,
   },
 
@@ -110,6 +110,7 @@ export default {
         if (this.viewer) {
           return `${this.serverUrl}${this.$store.state.auth.viewed.headerImgUrl}`;
         }
+        //  return `${this.$store.state.auth.account.headerImgUrl}`;
         return `${this.serverUrl}${this.$store.state.auth.account.headerImgUrl}`;
       },
       set(value) {
@@ -122,8 +123,9 @@ export default {
     avatarImgUrl: {
       get() {
         if (this.viewer) {
-          return `${this.serverUrl}${this.$store.state.viewed.avatarImgUrl}`;
+          return `${this.serverUrl}${this.$store.state.auth.viewed.avatarImgUrl}`;
         }
+        //  return `${this.$store.state.auth.account.avatarImgUrl}`;
         return `${this.serverUrl}${this.$store.state.auth.account.avatarImgUrl}`;
       },
       set(value) {

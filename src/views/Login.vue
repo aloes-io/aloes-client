@@ -11,7 +11,7 @@
 </template>
 
 <script type="text/javascript">
-import bCard from 'bootstrap-vue/es/components/card/card';
+import { BCard } from 'bootstrap-vue';
 import FooterContainer from '@/views/containers/FooterContainer.vue';
 import LoginMaster from '@/components/Account/LoginMaster.vue';
 
@@ -19,7 +19,7 @@ export default {
   name: 'Login',
 
   components: {
-    'b-card': bCard,
+    'b-card': BCard,
     'footer-container': FooterContainer,
     'login-master': LoginMaster,
   },

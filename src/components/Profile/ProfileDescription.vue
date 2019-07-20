@@ -45,17 +45,17 @@
 </template>
 
 <script type="text/javascript">
-import bButton from 'bootstrap-vue/es/components/button/button';
-import bCard from 'bootstrap-vue/es/components/card/card';
-import bFormSelect from 'bootstrap-vue/es/components/form-select/form-select';
+import { BButton } from 'bootstrap-vue';
+import { BCard } from 'bootstrap-vue';
+import { BFormSelect } from 'bootstrap-vue';
 
 export default {
   name: 'ProfileDescription',
 
   components: {
-    'b-button': bButton,
-    'b-card': bCard,
-    'b-form-select': bFormSelect,
+    'b-button': BButton,
+    'b-card': BCard,
+    'b-form-select': BFormSelect,
   },
 
   props: {

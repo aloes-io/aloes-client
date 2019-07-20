@@ -12,7 +12,12 @@
       <l-tile-layer :url="url" :attribution="attribution" />
       <div v-for="device in devices" :key="device.id">
         <l-marker
-          v-if="device.deviceAddress && device.deviceAddress.coordinates"
+          v-if="
+            device.deviceAddress &&
+              device.deviceAddress.coordinates &&
+              device.deviceAddress.coordinates.lat &&
+              device.deviceAddress.coordinates.lng
+          "
           :lat-lng="[device.deviceAddress.coordinates.lat, device.deviceAddress.coordinates.lng]"
           @mouseover="highlightDevice(device, true)"
           @mouseleave="highlightDevice(device, false)"
@@ -44,7 +49,7 @@
 <script type="text/javascript">
 import 'leaflet/dist/leaflet.css';
 //  import bButton from "bootstrap-vue/es/components/button/button";
-import { L, LMap, LTileLayer, LIcon, LMarker, LPopup } from 'vue2-leaflet';
+import { LMap, LTileLayer, LIcon, LMarker, LPopup } from 'vue2-leaflet';
 import { EventBus } from '@/services/PubSub';
 import logger from '@/services/logger';
 
@@ -107,7 +112,7 @@ export default {
     },
     searchLocation: {
       get() {
-        return this.$store.state.search.model.location;
+        return this.$store.state.search.model.location || { lat: 48.86392, lng: 2.323738 };
       },
     },
     dynamicSize() {
@@ -156,6 +161,13 @@ export default {
       });
     },
 
+    getDeviceCoordinates(device) {
+      if (device && device.deviceAddress && device.deviceAddress.coordinates) {
+        return [device.deviceAddress.coordinates.lat, device.deviceAddress.coordinates.lng];
+      }
+      return null;
+    },
+
     zoomUpdate(zoom) {
       this.currentZoom = zoom;
     },
@@ -175,10 +187,17 @@ export default {
     highlightDevice(device, state) {
       if (!device || device === null) return null;
       if (state === true) {
-        this.currentCenter = L.latLng(
-          device.deviceAddress.coordinates.lat,
-          device.deviceAddress.coordinates.lng,
-        );
+        if (device.deviceAddress && device.deviceAddress.coordinates) {
+          // this.currentCenter = L.latLng(
+          //   device.deviceAddress.coordinates.lat,
+          //   device.deviceAddress.coordinates.lng,
+          // );
+          this.currentCenter = [
+            device.deviceAddress.coordinates.lat,
+            device.deviceAddress.coordinates.lng,
+          ];
+        }
+
         EventBus.$emit(`deviceSelected-${device.id}`, device, state);
       } else if (state === false) {
         EventBus.$emit(`deviceSelected-${device.id}`, device, state);

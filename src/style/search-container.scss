@@ -1,4 +1,4 @@
-@import "global";
+@import 'global';
 
 .search-container-view {
   min-height: 80vh;
@@ -40,8 +40,10 @@
 }
 
 button.btn.search-options-button {
-  color: white;
-  background-color: $primary;
+  background-color: $btn-bg-color;
+  font-family: $btn-font;
+  font-weight: $btn-font-weight;
+  color: $btn-color;
   height: $btn-round-radius;
   width: $btn-round-radius;
   padding: 0px;
@@ -57,9 +59,10 @@ button.btn.search-options-button {
 }
 
 button.btn:hover {
-  color: $primary;
-  border-color: $primary;
-  background-color: white;
+  background-color: $btn-bg-light-color;
+  font-family: $btn-font;
+  font-weight: $btn-font-weight;
+  color: $btn-color;
 }
 
 /* Smartphones (portrait and landscape) ----------- */

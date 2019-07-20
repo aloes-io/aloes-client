@@ -1,7 +1,13 @@
 // Uploading audio and image files
 
 export function setUploadedFile(state, { resourceType, role, file }) {
-  state[resourceType][role].file = file;
+  if (resourceType && resourceType !== null) {
+    if (role && role !== null) {
+      state[resourceType][role].file = file;
+    } else {
+      state[resourceType].file = file;
+    }
+  }
   //  console.log("setUploadedFile : ", state.fileModel[resourceType][role].file)
 }
 
@@ -20,6 +26,9 @@ export function setUploadedFileUrl(state, { resourceType, role, url }) {
       state[resourceType][role].url = `${state.serverUrl}${url}`;
       //  console.log(`setUploadedFileUrl (Images) : ${state[resourceType][role].url}`);
       break;
+    case 'Binaries':
+      state.Binaries.url = url;
+      break;
     default:
       null;
     //console.log("setUploadedFileUrl error : unknown resourceType");
@@ -27,11 +36,23 @@ export function setUploadedFileUrl(state, { resourceType, role, url }) {
 }
 
 export function setUploadedFileName(state, { resourceType, role, name }) {
-  state[resourceType][role].name = name;
+  if (resourceType && resourceType !== null) {
+    if (role && role !== null) {
+      state[resourceType][role].name = name;
+    } else {
+      state[resourceType].name = name;
+    }
+  }
   //  console.log("setUploadedFileName : ", state.fileModel[resourceType][role].name)
 }
 
 export function setUploadStatus(state, { resourceType, role, status }) {
-  state[resourceType][role].status = status;
+  if (resourceType && resourceType !== null) {
+    if (role && role !== null) {
+      state[resourceType][role].status = status;
+    } else {
+      state[resourceType].status = status;
+    }
+  }
   //  console.log('setUploadStatus : ', state[resourceType][role].status);
 }

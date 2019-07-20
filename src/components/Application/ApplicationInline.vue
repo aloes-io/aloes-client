@@ -52,7 +52,7 @@
 </template>
 
 <script type="text/javascript">
-import bCard from 'bootstrap-vue/es/components/card/card';
+import { BCard } from 'bootstrap-vue';
 import { EventBus } from '@/services/PubSub';
 import logger from '@/services/logger';
 
@@ -60,7 +60,7 @@ export default {
   name: 'ApplicationInline',
 
   components: {
-    'b-card': bCard,
+    'b-card': BCard,
   },
 
   props: {

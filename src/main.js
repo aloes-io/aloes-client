@@ -45,7 +45,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
-//	import moment from 'moment';
+//  import moment from 'moment';
 import App from '@/App.vue';
 import router from '@/router';
 import store from '@/store';
@@ -54,7 +54,7 @@ Vue.config.productionTip = false;
 
 Vue.use(Layout);
 Vue.use(VueCroppie);
-//	Object.defineProperty(Vue.prototype, '$moment', {value: moment});
+//  Object.defineProperty(Vue.prototype, '$moment', {value: moment});
 
 library.add(
   faBinoculars,

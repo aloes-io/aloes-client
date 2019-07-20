@@ -1,8 +1,7 @@
 {
-  "id": "1",
   "name": "Aloes",
-  "accountId": "5c24e1514a603a651d1ddfd5",
-  "size": 1.2,
+  "id": "1",
+  "size": 0.6,
   "group": 0,
   "colors": ["#29abe2"],
   "icons": ["/icons/aloes/iot.png", "/icons/aloes/iot-white.png"],
@@ -12,6 +11,7 @@
       "name": "Device 1",
       "type": "Gateway",
       "devEui": "1456278",
+      "ownerId": "1",
       "apiKey": "okdF2wUbnInCbUJpr4013S4Agn96wC30d4iD3wbU8oFIc1eLP5qyW3GeU9bMFG1T",
       "description": "",
       "status": true,
@@ -22,10 +22,9 @@
       "messageProtocolVersion": "2.3",
       "accessPointUrl": "http://192.168.244.1",
       "qrCode": "http://192.168.244.1/wifi?server=192.168.1.73&port=1883&client=1456278&user=5c27737cdfdadd61451c0f77&password=okdF2wUbnInCbUJpr4013S4Agn96wC30d4iD3wbU8oFIc1eLP5qyW3GeU9bMFG1T",
-      "accountId": "5c24e1514a603a651d1ddfd5",
       "group": 1,
-      "size": 0.8,
-      "icons": ["/icons/aloes/gateway.png", "/icons/aloes/gateway-white.png"],
+      "size": 0.4,
+      "icons": ["/icons/aloes/node.png", "/icons/aloes/node-white.png"],
       "colors": ["#29abe2"],
       "children": [
         {
@@ -36,7 +35,7 @@
             "/icons/aloes/analog.png",
             "/icons/aloes/analog-white.png"
           ],
-          "size": 0.6,
+          "size": 0.2,
           "colors": {
             "5600": "#000",
             "5601": "#5ae2e2",
@@ -51,6 +50,7 @@
           "type": 3202,
           "devEui": "1456278",
           "deviceId": "2",
+          "ownerId": "1",
           "resource": 5600,
           "resources": {
             "5600": 125,
@@ -82,7 +82,7 @@
             "/icons/aloes/barometer.png",
             "/icons/aloes/barometer-white.png"
           ],
-          "size": 0.6,
+          "size": 0.2,
           "colors": {
             "5601": "#5ae2e2",
             "5602": "#ff3535",
@@ -96,6 +96,7 @@
           "type": 3315,
           "devEui": "1456278",
           "deviceId": "2",
+          "ownerId": "1",
           "resource": 5700,
           "resources": {
             "5700": 1015,
@@ -126,7 +127,7 @@
             "/icons/aloes/location.png",
             "/icons/aloes/location-white.png"
           ],
-          "size": 0.6,
+          "size": 0.2,
           "resources": {
             "5514": "#000",
             "5515": "#000",
@@ -139,6 +140,7 @@
           "type": 3336,
           "devEui": "1456278",
           "deviceId": "2",
+          "ownerId": "1",
           "resource": 5515,
           "resources": {
             "5514": "45.60011",
@@ -171,7 +173,7 @@
             "/icons/aloes/switch-off.png",
             "/icons/aloes/switch-off-white.png"
           ],
-          "size": 0.6,
+          "size": 0.2,
           "colors": {
             "5500": "#000",
             "5501": "#000",
@@ -183,6 +185,7 @@
           "type": 3342,
           "devEui": "1456278",
           "deviceId": "2",
+          "ownerId": "1",
           "resource": 5500,
           "resources": {
             "5500": 1,
@@ -211,7 +214,7 @@
             "/icons/aloes/temperature.png",
             "/icons/aloes/temperature-white.png"
           ],
-          "size": 0.6,
+          "size": 0.2,
           "colors": {
             "5601": "#5ae2e2",
             "5602": "#ff3535",
@@ -225,6 +228,7 @@
           "type": 3303,
           "devEui": "1456278",
           "deviceId": "2",
+          "ownerId": "1",
           "resource": 5700,
           "resources": {
             "5700": 22,
@@ -255,7 +259,7 @@
             "/icons/aloes/level-control.png",
             "/icons/aloes/level-control-white.png"
           ],
-          "size": 0.6,
+          "size": 0.2,
           "colors": {
             "5750": "#000",
             "5850": "#77d1bf",
@@ -267,6 +271,7 @@
           "type": 3306,
           "devEui": "1456278",
           "deviceId": "2",
+          "ownerId": "1",
           "resource": 5851,
           "resources": {
             "5701": "%",
@@ -294,7 +299,7 @@
             "/icons/aloes/dither.png",
             "/icons/aloes/dither-white.png"
           ],
-          "size": 0.6,
+          "size": 0.2,
           "colors": {
             "5750": "#000",
             "5910": "#000",
@@ -305,6 +310,7 @@
           "type": 3349,
           "devEui": "1456278",
           "deviceId": "2",
+          "ownerId": "1",
           "resource": 5910,
           "resources": {
             "5910": [],
@@ -323,32 +329,9 @@
           "inPrefix": "-in",
           "nativeType": 3449,
           "nativeResource": 5910
-        }
-      ]
-    },
-    {
-      "id": "3",
-      "name": "Device 2",
-      "type": "Node",
-      "devEui": "88365722",
-      "apiKey": "okdF2wUbnInCbUJpr4013S4Agn96wC30d4iD3wbU8oFIc1eLP5qyW3GeU9bMFG1T",
-      "description": "",
-      "status": true,
-      "frameCounter": 22,
-      "lastSignal": "2019-01-08T15:28:03.168Z",
-      "transportProtocol": "aloesLight",
-      "messageProtocol": "aloesLight",
-      "messageProtocolVersion": "1",
-      "accessPointUrl": "http://192.168.1.118/app/ui",
-      "qrCode": "http://192.168.1.118/app/ui/",
-      "accountId": "5c24e1514a603a651d1ddfd5",
-      "group": 1,
-      "size": 0.8,
-      "icons": ["/icons/aloes/node.png", "/icons/aloes/node-white.png"],
-      "colors": ["#29abe2"],
-      "children": [
+        },
         {
-          "id": "31",
+          "id": "28",
           "group": 2,
           "icons": [
             "/icons/aloes/time.svg",
@@ -358,7 +341,7 @@
             "/icons/aloes/agenda.png",
             "/icons/aloes/agenda-white.png"
           ],
-          "size": 0.6,
+          "size": 0.2,
           "colors": {
             "5506": "#434B77",
             "5507": "#434B77",
@@ -367,7 +350,8 @@
           "name": "Time",
           "type": 3333,
           "devEui": "1456278",
-          "deviceId": "3",
+          "deviceId": "2",
+          "ownerId": "1",
           "resource": 5506,
           "resources": {
             "5506": 1548724188,
@@ -387,14 +371,14 @@
           "nativeResource": 5506
         },
         {
-          "id": "32",
+          "id": "29",
           "group": 2,
           "icons": [
             "/icons/aloes/text.svg",
             "/icons/aloes/text.png",
             "/icons/aloes/text-white.png"
           ],
-          "size": 0.6,
+          "size": 0.2,
           "colors": {
             "5527": "#000",
             "5528": "#cc3333",
@@ -410,10 +394,11 @@
           "name": "Text Display",
           "type": 3341,
           "devEui": "1456278",
-          "deviceId": "3",
+          "deviceId": "2",
+          "ownerId": "1",
           "resource": 5527,
           "resources": {
-            "5527": "some_bad_a**_text",
+            "5527": "some_bad_ass_text",
             "5528": 0,
             "5529": 0,
             "5530": null,
@@ -424,7 +409,7 @@
             "5750": "app_name",
             "5850": 1
           },
-          "value": "some_bad_a**_text",
+          "value": "some_bad_ass_text",
           "frameCounter": 0,
           "transportProtocol": "aloesLight",
           "messageProtocol": "aloesLight",
@@ -435,16 +420,39 @@
           "inPrefix": "-in",
           "nativeType": 3341,
           "nativeResource": 5527
-        },
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "name": "Device 2",
+      "type": "Node",
+      "devEui": "1456278",
+      "ownerId": "1",
+      "apiKey": "okdF2wUbnInCbUJpr4013S4Agn96wC30d4iD3wbU8oFIc1eLP5qyW3GeU9bMFG1T",
+      "description": "",
+      "status": true,
+      "frameCounter": 22,
+      "lastSignal": "2019-01-08T15:28:03.168Z",
+      "transportProtocol": "aloeslight",
+      "messageProtocol": "aloeslight",
+      "messageProtocolVersion": "1",
+      "accessPointUrl": "http://192.168.244.1",
+      "qrCode": "http://192.168.244.1/wifi?server=192.168.1.73&port=1883&client=1456278&user=5c27737cdfdadd61451c0f77&password=okdF2wUbnInCbUJpr4013S4Agn96wC30d4iD3wbU8oFIc1eLP5qyW3GeU9bMFG1T",
+      "group": 1,
+      "size": 0.4,
+      "icons": ["/icons/aloes/node.png", "/icons/aloes/node-white.png"],
+      "colors": ["#29abe2"],
+      "children": [
         {
-          "id": "33",
+          "id": "30",
           "group": 2,
           "icons": [
             "/icons/aloes/loudness.svg",
             "/icons/aloes/loudness.png",
             "/icons/aloes/loudness-white.png"
           ],
-          "size": 0.6,
+          "size": 0.2,
           "colors": {
             "5601": "#5ae2e2",
             "5602": "#ff3535",
@@ -459,7 +467,8 @@
           "name": "Loudness",
           "type": 3339,
           "devEui": "1456278",
-          "deviceId": "3",
+          "deviceId": "2",
+          "ownerId": "1",
           "resource": 5522,
           "resources": {
             "5522": [],
@@ -479,6 +488,52 @@
           "inPrefix": "-in",
           "nativeType": 3339,
           "nativeResource": 5522
+        },
+        {
+          "id": "31",
+          "group": 2,
+          "icons": [
+            "/icons/aloes/timer.svg",
+            "/icons/aloes/timer.png",
+            "/icons/aloes/timer-white.png"
+          ],
+          "size": 0.2,
+          "colors": {
+            "5601": "#5ae2e2",
+            "5602": "#ff3535",
+            "5603": "#5ae2e2",
+            "5604": "#ff3535",
+            "5605": "#000",
+            "5700": "#000",
+            "5701": "#000",
+            "5750": "#000",
+            "5821": "#434b77"
+          },
+          "name": "Timer",
+          "type": 3340,
+          "devEui": "1456278",
+          "deviceId": "2",
+          "ownerId": "1",
+          "resource": 5538,
+          "resources": {
+            "5521": 3500,
+            "5523": null,
+            "5526": 0,
+            "5538": 100,
+            "5850": false,
+            "5750": "app_name"
+          },
+          "value": [],
+          "frameCounter": 0,
+          "transportProtocol": "aloesLight",
+          "messageProtocol": "aloesLight",
+          "messageProtocolVersion": "1.0",
+          "nativeSensorId": "4",
+          "nativeNodeId": null,
+          "outPrefix": "-out",
+          "inPrefix": "-in",
+          "nativeType": 3340,
+          "nativeResource": 5538
         }
       ]
     }
