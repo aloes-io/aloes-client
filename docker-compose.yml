@@ -5,6 +5,8 @@ services:
     container_name: aloes-client
     hostname: aloes-client
     env_file: deploy/.env_docker
+    environment:
+      - PATH=/app/node_modules/.bin:$PATH
     build:
       context: .
       dockerfile: ${NODE_ENV}.dockerfile
