@@ -5,8 +5,6 @@ services:
     container_name: aloes-client
     hostname: aloes-client
     env_file: deploy/.env_docker
-    environment:
-      - PATH=/app/node_modules/.bin:$PATH
     build:
       context: .
       dockerfile: ${NODE_ENV}.dockerfile
@@ -15,6 +13,7 @@ services:
         - VUE_APP_DOMAIN=localhost
         - VUE_APP_SERVER_URL=http://localhost:8000
         - VUE_APP_BROKER_URL=ws://ed-X510URR:8000
+        - VUE_APP_ROOT_API=/api
         - VUE_APP_CLIENT_URL=http://localhost:8080
         - VUE_APP_LOGGER_LEVEL=3
         - GIT_REPO_SSH_URL=git@framagit.org:aloes/aloes-client.git
