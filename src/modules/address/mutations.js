@@ -20,8 +20,8 @@ export function setDeviceAddress(state, address) {
   logger.publish(4, state.collectionName, 'commit:setDeviceAddress:res', state.deviceAddress);
 }
 
-export function setModelKV(state, { route, key, value }) {
-  if (route === 'device') {
+export function setModelKV(state, { ownerType, key, value }) {
+  if (ownerType === 'Devices') {
     state.deviceAddress[key] = value;
     logger.publish(
       4,
@@ -29,21 +29,13 @@ export function setModelKV(state, { route, key, value }) {
       'commit:setDeviceAddressKV:res',
       state.deviceAddress[key],
     );
-  } else if (route === 'account') {
+  } else if (ownerType === 'users') {
     state.profileAddress[key] = value;
     logger.publish(
       4,
       state.collectionName,
       'commit:setProfileAddressKV:res',
       state.profileAddress[key],
-    );
-  } else if (route === 'profile') {
-    state.viewedProfileAddress[key] = value;
-    logger.publish(
-      4,
-      state.collectionName,
-      'commit:setProfileAddressKV:res',
-      state.viewedProfileAddress[key],
     );
   }
 }

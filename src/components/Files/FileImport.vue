@@ -80,9 +80,9 @@
 </template>
 
 <script type="text/javascript">
-import bAlert from 'bootstrap-vue/es/components/alert/alert';
-import bButton from 'bootstrap-vue/es/components/button/button';
-import bForm from 'bootstrap-vue/es/components/form/form';
+import { BAlert } from 'bootstrap-vue';
+import { BButton } from 'bootstrap-vue';
+import { BForm } from 'bootstrap-vue';
 import notification from '@/views/mixins/notification';
 import logger from '@/services/logger';
 
@@ -90,9 +90,9 @@ export default {
   name: 'FileImport',
 
   components: {
-    'b-alert': bAlert,
-    'b-button': bButton,
-    'b-form': bForm,
+    'b-alert': BAlert,
+    'b-button': BButton,
+    'b-form': BForm,
   },
 
   mixins: [notification],

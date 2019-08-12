@@ -67,6 +67,7 @@ Edit your config in .env_sample and save it as `.env`.
 
 ## Deploying project
 
+### With PM2 
 You can serve the project with a distant server by filling `deploy` folder with files corresponding to an environment ( eg: .env_production ), and then launching this app with pm2 via `ecosystem.config.json` 
 
 Remember to update `ecosystem.config.json` to match your enviroment.
@@ -99,10 +100,29 @@ Be sure to commit your changes on the right branch before setup and update: ( ma
 	$  git push
 ```
 
+### With Docker 
+You can serve the project with a distant server by filling `deploy` folder with files corresponding to an environment ( eg: .env_docker ), and then launching this app with docker via `docker-compose up` 
+
+Remember to update `*.dockerfile` to match your enviroment.
+
+
+Creating environment :
+
+```bash
+	$  docker-compose build
+```
+
+Starting container :
+
+```bash
+	$  docker-compose up
+```
+
+
 # TODO 
 
-
 - Update / improve search engine
+- Add a grid to compose views with sensor snaps ( sensors selector, add group container, draggable snaps, list of grids )
 - Add unit tests
 - Add docs
 - Manage teams to share devices and applications access

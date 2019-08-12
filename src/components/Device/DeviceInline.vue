@@ -3,8 +3,8 @@
     v-show="updatedDevice"
     v-if="updatedDevice !== null"
     class="device-inline-view"
-    @mouseover="highlightDevice(updatedDevice)"
-    @mouseleave="highlightDevice(null)"
+    @mouseover="highlightDevice(updatedDevice, true)"
+    @mouseleave="highlightDevice(updatedDevice, false)"
   >
     <b-row>
       <b-col cols="2" sm="4" md="4" lg="4" xl="3">
@@ -19,7 +19,10 @@
         <b-row class="device-inline-row">
           <b-col class="device-props" sm="12">
             <h6 class="device-inline-name">{{ updatedDevice.name }}</h6>
-            <p v-if="updatedDevice.fullAddress" class="device-inline-address">
+            <p
+              v-if="updatedDevice.fullAddress && updatedDevice.fullAddress !== null"
+              class="device-inline-address"
+            >
               {{ updatedDevice.fullAddress }}
             </p>
           </b-col>
@@ -46,7 +49,7 @@
 </template>
 
 <script type="text/javascript">
-import bCard from 'bootstrap-vue/es/components/card/card';
+import { BCard } from 'bootstrap-vue';
 import { EventBus } from '@/services/PubSub';
 import logger from '@/services/logger';
 
@@ -54,7 +57,7 @@ export default {
   name: 'DeviceInline',
 
   components: {
-    'b-card': bCard,
+    'b-card': BCard,
   },
 
   props: {
@@ -95,8 +98,10 @@ export default {
     },
     device: {
       handler(device) {
-        this.updatedDevice = device;
-        this.updateBackground(device);
+        if (device && device !== null) {
+          this.updatedDevice = device;
+          this.updateBackground(device);
+        }
       },
       immediate: true,
     },
@@ -110,46 +115,49 @@ export default {
 
   mounted() {
     this.updateBackground();
-    EventBus.$on('deviceSelected', device => {
-      this.updateBackground(device);
+    EventBus.$on(`deviceSelected-${this.updatedDevice.id}`, (device, state) => {
+      this.highlightBackground(device, state);
     });
   },
 
   beforeDestroy() {
-    EventBus.$off('deviceSelected');
+    EventBus.$off(`deviceSelected-${this.updatedDevice.id}`);
   },
 
   methods: {
-    updateBackground(device) {
+    updateBackground() {
       if (!this.$el) return null;
-      if (device && device !== null && device.id.toString() === this.updatedDevice.id.toString()) {
-        if (this.updatedDevice.status) {
-          this.$el.style.background = this.$store.state.style.palette.green;
-        } else {
-          this.$el.style.background = this.$store.state.style.palette.yellow;
-        }
+      if (this.updatedDevice.status) {
+        this.$el.style.background = this.$store.state.style.palette.lightgreen;
       } else {
-        if (this.updatedDevice.status) {
-          this.$el.style.background = this.$store.state.style.palette.lightgreen;
-        } else {
-          this.$el.style.background = this.$store.state.style.palette.lightyellow;
+        this.$el.style.background = this.$store.state.style.palette.lightyellow;
+      }
+    },
+
+    highlightBackground(device, state) {
+      if (!this.$el) return null;
+      if (device && device.id && device.id.toString() === this.updatedDevice.id.toString()) {
+        if (state === true) {
+          if (device.status) {
+            this.$el.style.background = this.$store.state.style.palette.green;
+          } else {
+            this.$el.style.background = this.$store.state.style.palette.yellow;
+          }
+        } else if (state === false) {
+          if (device.status) {
+            this.$el.style.background = this.$store.state.style.palette.lightgreen;
+          } else {
+            this.$el.style.background = this.$store.state.style.palette.lightyellow;
+          }
         }
       }
     },
 
-    highlightDevice(device) {
-      EventBus.$emit('deviceSelected', device);
-    },
-
-    async loadSensors() {
-      this.error = null;
-      this.success = null;
-      this.dismissCountDown = this.dismissSecs;
-      return this.$store.cache.dispatch(
-        //  return this.$store.dispatch(
-        'device/findSensorsByDevice',
-        this.updatedDevice.id,
-      );
+    highlightDevice(device, state) {
+      if (device && device.id) {
+        EventBus.$emit(`deviceSelected-${device.id}`, device, state);
+        EventBus.$emit('deviceSelected', device, state);
+      }
     },
 
     async goToDevice(evt) {
@@ -159,7 +167,7 @@ export default {
       this.success = null;
       logger.publish(4, 'device', 'goToDevice:req', this.updatedDevice.id);
       await this.$store.commit('device/setModel', this.updatedDevice);
-      return this.loadSensors();
+      return;
     },
   },
 };

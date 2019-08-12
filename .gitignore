@@ -2,6 +2,7 @@
 node_modules
 /dist
 /build
+/docker-build
 
 # local env files
 .env.local

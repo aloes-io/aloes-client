@@ -109,9 +109,10 @@
       :is-viewer="viewer"
       :edit-mode="editorMode"
       :owner-id="updatedAccount.id"
+      owner-type="users"
       class="address-form"
     />
-    <b-button class="save-profile" @click="saveProfile">
+    <b-button v-show="editorMode" class="save-profile" @click="saveProfile">
       <fa-icon icon="check" size="lg" />
       UPDATE PROFILE
     </b-button>
@@ -128,12 +129,11 @@
 </template>
 
 <script type="text/javascript">
-import bButton from 'bootstrap-vue/es/components/button/button';
-import bForm from 'bootstrap-vue/es/components/form/form';
-import bFormInput from 'bootstrap-vue/es/components/form-input/form-input';
+import { BButton } from 'bootstrap-vue';
+import { BForm } from 'bootstrap-vue';
+import { BFormInput } from 'bootstrap-vue';
 import AddressForm from '@/components/Address/AddressForm.vue';
 import ChangePassword from '@/components/Account/ChangePassword.vue';
-
 import { EventBus } from '@/services/PubSub';
 import logger from '@/services/logger';
 
@@ -141,9 +141,9 @@ export default {
   name: 'ProfileForm',
 
   components: {
-    'b-button': bButton,
-    'b-form': bForm,
-    'b-form-input': bFormInput,
+    'b-button': BButton,
+    'b-form': BForm,
+    'b-form-input': BFormInput,
     'address-form': AddressForm,
     'change-password': ChangePassword,
     'team-popup': () => import('@/views/containers/TeamPopup.vue'),

@@ -49,15 +49,15 @@
 
 <script type="text/javascript">
 import has from 'lodash.has';
-import bFormInput from 'bootstrap-vue/es/components/form-input/form-input';
-import bFormGroup from 'bootstrap-vue/es/components/form-group/form-group';
+import { BFormInput } from 'bootstrap-vue';
+import { BFormGroup } from 'bootstrap-vue';
 
 export default {
   name: 'AloesLightForm',
 
   components: {
-    'b-form-input': bFormInput,
-    'b-form-group': bFormGroup,
+    'b-form-input': BFormInput,
+    'b-form-group': BFormGroup,
   },
 
   props: {

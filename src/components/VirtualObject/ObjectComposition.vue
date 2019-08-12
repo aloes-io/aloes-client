@@ -7,6 +7,8 @@
     xmlns="http://www.w3.org/2000/svg"
     xmlns:xlink="http://www.w3.org/1999/xlink"
   >
+    <!--   :width="width"
+    :height="height" -->
     <defs>
       <filter id="circle-shadow-selected" y="-10" x="-10" height="40" width="150">
         <feOffset in="SourceAlpha" dx="1" dy="1" result="offset1" />
@@ -302,7 +304,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss">
-@import '../../style/home.scss';
-</style>

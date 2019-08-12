@@ -196,18 +196,18 @@
 
 <script type="text/javascript">
 import has from 'lodash.has';
-import bFormInput from 'bootstrap-vue/es/components/form-input/form-input';
-import bFormGroup from 'bootstrap-vue/es/components/form-group/form-group';
-import bFormSelect from 'bootstrap-vue/es/components/form-select/form-select';
+import { BFormInput } from 'bootstrap-vue';
+import { BFormGroup } from 'bootstrap-vue';
+import { BFormSelect } from 'bootstrap-vue';
 import builder from '@/services/builder';
 
 export default {
   name: 'LoraWanForm',
 
   components: {
-    'b-form-input': bFormInput,
-    'b-form-group': bFormGroup,
-    'b-form-select': bFormSelect,
+    'b-form-input': BFormInput,
+    'b-form-group': BFormGroup,
+    'b-form-select': BFormSelect,
   },
 
   props: {

@@ -18,6 +18,14 @@ export default {
       url: [],
       status: 0,
     },
+    Binaries: {
+      Firmware: {
+        name: '',
+        file: [],
+        url: [],
+        status: 0,
+      },
+    },
     Document: {
       attachment: {
         name: '',

@@ -12,10 +12,15 @@
       <l-tile-layer :url="url" :attribution="attribution" />
       <div v-for="device in devices" :key="device.id">
         <l-marker
-          v-if="device.deviceAddress && device.deviceAddress.coordinates"
-          :lat-lng="[device.deviceAddress.coordinates.lat, device.deviceAddress.coordinates.lng]"
-          @mouseover="highlightDevice(device)"
-          @mouseleave="highlightDevice(null)"
+          v-if="
+            device.address &&
+              device.address.coordinates &&
+              device.address.coordinates.lat &&
+              device.address.coordinates.lng
+          "
+          :lat-lng="[device.address.coordinates.lat, device.address.coordinates.lng]"
+          @mouseover="highlightDevice(device, true)"
+          @mouseleave="highlightDevice(device, false)"
         >
           <l-icon
             ref="mapIcon"
@@ -44,7 +49,7 @@
 <script type="text/javascript">
 import 'leaflet/dist/leaflet.css';
 //  import bButton from "bootstrap-vue/es/components/button/button";
-import { L, LMap, LTileLayer, LIcon, LMarker, LPopup } from 'vue2-leaflet';
+import { LMap, LTileLayer, LIcon, LMarker, LPopup } from 'vue2-leaflet';
 import { EventBus } from '@/services/PubSub';
 import logger from '@/services/logger';
 
@@ -107,7 +112,7 @@ export default {
     },
     searchLocation: {
       get() {
-        return this.$store.state.search.model.location;
+        return this.$store.state.search.model.location || { lat: 48.86392, lng: 2.323738 };
       },
     },
     dynamicSize() {
@@ -130,6 +135,7 @@ export default {
       }
       //  this.map._onResize();
     });
+    this.setListeners();
   },
 
   beforeDestroy() {
@@ -140,19 +146,21 @@ export default {
     setListeners() {
       EventBus.$on('deviceSelected', device => {
         if (device && device !== null) {
-          const hasAddress = Object.getOwnPropertyNames(device).find(
-            key => key === 'deviceAddress',
-          );
-          if (hasAddress && device.deviceAddress.coordinates) {
-            this.currentCenter = [
-              device.deviceAddress.coordinates.lat,
-              device.deviceAddress.coordinates.lng,
-            ];
+          const hasAddress = Object.getOwnPropertyNames(device).find(key => key === 'address');
+          if (hasAddress && device.address.coordinates) {
+            this.currentCenter = [device.address.coordinates.lat, device.address.coordinates.lng];
             return this.currentCenter;
           }
         }
         return null;
       });
+    },
+
+    getDeviceCoordinates(device) {
+      if (device && device.address && device.address.coordinates) {
+        return [device.address.coordinates.lat, device.address.coordinates.lng];
+      }
+      return null;
     },
 
     zoomUpdate(zoom) {
@@ -171,15 +179,20 @@ export default {
       //  this.$refs.map.mapObject.invalidateSize();
     },
 
-    highlightDevice(device) {
-      if (device !== null) {
-        this.currentCenter = L.latLng(
-          device.deviceAddress.coordinates.lat,
-          device.deviceAddress.coordinates.lng,
-        );
-        EventBus.$emit('deviceSelected', device);
-      } else {
-        EventBus.$emit('deviceSelected', device);
+    highlightDevice(device, state) {
+      if (!device || device === null) return null;
+      if (state === true) {
+        if (device.address && device.address.coordinates) {
+          // this.currentCenter = L.latLng(
+          //   device.deviceAddress.coordinates.lat,
+          //   device.deviceAddress.coordinates.lng,
+          // );
+          this.currentCenter = [device.address.coordinates.lat, device.address.coordinates.lng];
+        }
+
+        EventBus.$emit(`deviceSelected-${device.id}`, device, state);
+      } else if (state === false) {
+        EventBus.$emit(`deviceSelected-${device.id}`, device, state);
       }
     },
 
@@ -191,6 +204,7 @@ export default {
       this.success = null;
       logger.publish(4, 'search', 'goToDevice:req', device.id);
       return this.$store.commit('device/setModel', device);
+      // if (this.$route.name !== "device")
       // return this.$router.push({
       //   name: "device",
       //   query: {

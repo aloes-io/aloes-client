@@ -1,10 +1,11 @@
-import Vue from 'vue';
 import { aloesClientPatternDetector, aloesClientEncoder } from 'aloes-handlers';
+import debounce from 'lodash.debounce';
+import Vue from 'vue';
 import logger from './logger';
 
 export const EventBus = new Vue();
 
-const Storage = window.localStorage;
+const Storage = window.sessionStorage;
 const PubSub = {};
 
 const pushContainer = subscriptionName => {
@@ -18,7 +19,7 @@ const pushContainer = subscriptionName => {
   }
   const index = container.indexOf(subscriptionName);
   //  if (container.find((name) => name === subscriptionName)) return true;
-  if (index !== -1) {
+  if (index > -1) {
     return true;
   }
   container.push(subscriptionName);
@@ -35,7 +36,12 @@ PubSub.subscribe = async (client, options) => {
       const packet = aloesClientEncoder(options);
       if (!packet || !packet.topic || packet.topic === null) throw new Error('No topic encoded');
       //  logger.publish(4, 'pubsub', 'subscribe:res', packet.topic);
-      await client.subscribe(packet.topic, { qos: 1 });
+      // let container = JSON.parse(Storage.getItem('subscription-container'));
+      // const index = container.indexOf(packet.topic);
+      // if (index > -1) {
+      //   return null;
+      // }
+      await client.subscribe(packet.topic, { qos: 0 });
       return pushContainer(packet.topic);
     }
     throw new Error('Error: Option must be an object type');
@@ -49,23 +55,23 @@ PubSub.unSubscribeWhere = async (client, options) => {
   try {
     if (options && client && Storage) {
       let name;
-      if (!options.collectionName || !options.method || !options.userId) {
+      if (!options.collection || !options.method || !options.userId) {
         throw new Error('Missing options');
       }
       if (options.modelId) {
-        name = `/${options.userId}/${options.collectionName}/${options.method}/${options.modelId}`;
+        name = `/${options.userId}/${options.collection}/${options.method}/${options.modelId}`;
       } else {
-        name = `/${options.userId}/${options.collectionName}/${options.method}`;
+        name = `/${options.userId}/${options.collection}/${options.method}`;
       }
-      logger.publish(4, 'pubsub', 'unSubscribeWhere:req', name);
+      logger.publish(5, 'pubsub', 'unSubscribeWhere:req', name);
       const container = JSON.parse(Storage.getItem('subscription-container'));
       const index = container.indexOf(name);
       if (index !== -1) {
         container.splice(index, 1);
         await client.unsubscribe(name);
         //  delete socket._callbacks[`$/${name}`];
-        //  EventBus.$off(`${options.method.toLowerCase()}${options.collectionName}`);
-        //  delete EventBus._events[`${options.method.toLowerCase()}${options.collectionName}`];
+        //  EventBus.$off(`${options.method.toLowerCase()}${options.collection}`);
+        //  delete EventBus._events[`${options.method.toLowerCase()}${options.collection}`];
         Storage.setItem('subscription-container', JSON.stringify(container));
         logger.publish(
           4,
@@ -77,7 +83,7 @@ PubSub.unSubscribeWhere = async (client, options) => {
       }
       return null;
     }
-    throw new Error('unSubscribeWhere:err Invalid Params');
+    throw new Error('Invalid Params');
   } catch (error) {
     logger.publish(2, 'pubsub', 'unSubscribeWhere:err', error);
     return error;
@@ -99,31 +105,38 @@ PubSub.removeListeners = async client => {
   }
 };
 
-PubSub.subscribeToCollectionCreation = async (client, collectionName, userId) =>
+PubSub.subscribeToCollectionPresentation = async (client, collection, userId) =>
   PubSub.subscribe(client, {
     userId,
-    collectionName,
+    collection,
+    method: 'HEAD',
+  });
+
+PubSub.subscribeToCollectionCreation = async (client, collection, userId) =>
+  PubSub.subscribe(client, {
+    userId,
+    collection,
     method: 'POST',
   });
 
-PubSub.subscribeToCollectionDeletion = async (client, collectionName, userId) =>
+PubSub.subscribeToCollectionDeletion = async (client, collection, userId) =>
   PubSub.subscribe(client, {
     userId,
-    collectionName,
+    collection,
     method: 'DELETE',
   });
 
-PubSub.subscribeToCollectionUpdate = async (client, collectionName, userId) =>
+PubSub.subscribeToCollectionUpdate = async (client, collection, userId) =>
   PubSub.subscribe(client, {
     userId,
-    collectionName,
+    collection,
     method: 'PUT',
   });
 
-PubSub.subscribeToInstanceUpdate = async (client, collectionName, userId, modelId) =>
+PubSub.subscribeToInstanceUpdate = async (client, collection, userId, modelId) =>
   PubSub.subscribe(client, {
     userId,
-    collectionName,
+    collection,
     modelId,
     method: 'PUT',
   });
@@ -133,6 +146,8 @@ PubSub.setListeners = async (client, token) => {
     logger.publish(4, 'PubSub', 'setListeners', token);
     if (client && client !== null && token && token !== null) {
       //  await PubSub.subscribeToCollectionCreation(client, 'Notification', token.userId);
+      await PubSub.subscribeToCollectionPresentation(client, 'Sensor', token.userId);
+      await PubSub.subscribeToCollectionPresentation(client, 'Scheduler', token.userId);
       await PubSub.subscribeToCollectionCreation(client, 'Device', token.userId);
       await PubSub.subscribeToCollectionCreation(client, 'Sensor', token.userId);
       await PubSub.subscribeToCollectionDeletion(client, 'Device', token.userId);
@@ -148,66 +163,94 @@ PubSub.setListeners = async (client, token) => {
   }
 };
 
+const onCollectionPresented = (collectionName, instance) => {
+  logger.publish(4, 'PubSub', `on${collectionName}Presented`, instance.name);
+  EventBus.$emit(`on${collectionName}Presented`, instance);
+};
+
+PubSub.onCollectionPresented = debounce(onCollectionPresented, 250);
+
 const onCollectionCreated = (collectionName, instance) => {
   logger.publish(4, 'PubSub', `on${collectionName}Created`, instance.name);
   EventBus.$emit(`on${collectionName}Created`, instance);
 };
+
+PubSub.onCollectionCreated = debounce(onCollectionCreated, 250);
 
 const onCollectionDeleted = (collectionName, instance) => {
   logger.publish(4, 'PubSub', `on${collectionName}Deleted`, instance.name);
   EventBus.$emit(`on${collectionName}Deleted`, instance);
 };
 
+PubSub.onCollectionDeleted = debounce(onCollectionDeleted, 250);
+
 const onCollectionUpdated = (collectionName, instance) => {
   logger.publish(4, 'PubSub', `on${collectionName}Updated`, instance.name);
   EventBus.$emit(`on${collectionName}Updated`, instance);
 };
 
-PubSub.handler = async (topic, message) => {
+PubSub.onCollectionUpdated = debounce(onCollectionUpdated, 250);
+
+const handler = async (topic, message) => {
   try {
     logger.publish(5, 'PubSub', 'handler:req', JSON.parse(message));
     const pattern = await aloesClientPatternDetector({ topic, packet: message });
     let method = pattern.params.method;
-    let collectionName = pattern.params.collectionName;
-    if (!method || !collectionName) throw new Error('Invalid protocol');
+    let collection = pattern.params.collection;
+    if (!method || !collection) throw new Error('Invalid protocol');
     method = method.toUpperCase();
-    collectionName = collectionName.toLowerCase();
+    collection = collection.toLowerCase();
     message = JSON.parse(message);
     switch (method) {
-      case 'POST':
-        switch (collectionName) {
+      case 'HEAD':
+        switch (collection) {
           case 'device':
-            await onCollectionCreated('Device', message);
+            await PubSub.onCollectionPresented('Device', message);
             break;
           case 'sensor':
-            await onCollectionCreated('Sensor', message);
+            await PubSub.onCollectionPresented('Sensor', message);
+            break;
+          case 'scheduler':
+            await PubSub.onCollectionPresented('Scheduler', message);
+            break;
+          default:
+            throw new Error('Invalid collection name');
+        }
+        break;
+      case 'POST':
+        switch (collection) {
+          case 'device':
+            await PubSub.onCollectionCreated('Device', message);
+            break;
+          case 'sensor':
+            await PubSub.onCollectionCreated('Sensor', message);
             break;
           case 'notification':
-            await onCollectionCreated('Notification', message);
+            await PubSub.onCollectionCreated('Notification', message);
             break;
           default:
             throw new Error('Invalid collection name');
         }
         break;
       case 'DELETE':
-        switch (collectionName) {
+        switch (collection) {
           case 'device':
-            await onCollectionDeleted('Device', message);
+            await PubSub.onCollectionDeleted('Device', message);
             break;
           case 'sensor':
-            await onCollectionDeleted('Sensor', message);
+            await PubSub.onCollectionDeleted('Sensor', message);
             break;
           default:
             throw new Error('Invalid collection name');
         }
         break;
       case 'PUT':
-        switch (collectionName) {
+        switch (collection) {
           case 'device':
-            await onCollectionUpdated('Device', message);
+            await PubSub.onCollectionUpdated('Device', message);
             break;
           case 'sensor':
-            await onCollectionUpdated('Sensor', message);
+            await PubSub.onCollectionUpdated('Sensor', message);
             break;
           default:
             throw new Error('Invalid collection name');
@@ -222,6 +265,8 @@ PubSub.handler = async (topic, message) => {
     return error;
   }
 };
+
+PubSub.handler = debounce(handler, 300);
 
 PubSub.publish = async (client, options) => {
   try {
@@ -240,10 +285,10 @@ PubSub.publish = async (client, options) => {
   }
 };
 
-PubSub.publishToInstance = (client, collectionName, userId, modelId, data) =>
+PubSub.publishToInstance = (client, collection, userId, modelId, data) =>
   PubSub.publish(client, {
     userId,
-    collectionName,
+    collection,
     modelId,
     method: 'PUT',
     data,

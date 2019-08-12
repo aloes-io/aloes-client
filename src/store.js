@@ -7,6 +7,7 @@ import auth from '@/modules/auth';
 import address from '@/modules/address';
 import team from '@/modules/team';
 import device from '@/modules/device';
+import sensor from '@/modules/sensor';
 import application from '@/modules/application';
 import files from '@/modules/files';
 import search from '@/modules/search';
@@ -20,22 +21,22 @@ const profileStorage = new VuexPersistence({
   storage: window.localStorage,
   reducer: state => ({
     account: state.auth.account,
-    device: state.device.instance,
+    // device: state.device,
     //  devices: state.device.collection,
     //  sensors: state.device.sensorsCollection,
-    address: state.address,
+    //  address: state.address,
   }),
   asyncStorage: false,
 });
 
-const vuexSession = new VuexPersistence({
-  key: 'aloes-client-token',
-  storage: window.sessionStorage,
-  reducer: state => ({
-    access_token: state.auth.access_token,
-  }),
-  asyncStorage: false,
-});
+// const vuexSession = new VuexPersistence({
+//   key: 'aloes-client-token',
+//   storage: window.sessionStorage,
+//   reducer: state => ({
+//     access_token: state.auth.access_token,
+//   }),
+//   asyncStorage: false,
+// });
 
 export default new Vuex.Store({
   state: {
@@ -44,7 +45,7 @@ export default new Vuex.Store({
     restApiRoot: `${process.env.VUE_APP_ROOT_API}`,
     clientUrl: `${process.env.VUE_APP_CLIENT_URL}`,
     fileUploadUrl: `${process.env.VUE_APP_SERVER_URL}${process.env.VUE_APP_ROOT_API}/files`,
-    repoUrl: 'https://framagit.org/aloes',
+    repoUrl: 'https://github.com/aloes-io',
     style: {
       color: {
         primary: '#000000',
@@ -66,53 +67,49 @@ export default new Vuex.Store({
         text: `'JosefinSlab-SemiBold', serif`,
       },
       pictures: {
-        logo: `${process.env.VUE_APP_CLIENT_URL}/icons/aloesicon2.png`,
-        logoFont: `${process.env.VUE_APP_CLIENT_URL}/icons/aloesfont1.png`,
-        background: `${process.env.VUE_APP_CLIENT_URL}/images/bg1.png`,
-        notFound: `${process.env.VUE_APP_CLIENT_URL}/images/404.jpg`,
-        circlePlus: `${process.env.VUE_APP_CLIENT_URL}/icons/circle-plus.png`,
-        circleMinus: `${process.env.VUE_APP_CLIENT_URL}/icons/circle-minus.png`,
-        circleCross: `${process.env.VUE_APP_CLIENT_URL}/icons/circle-cross.png`,
-        mapMarker: `${process.env.VUE_APP_CLIENT_URL}/icons/map-marker.png`,
-        mapMarkerAlt: `${process.env.VUE_APP_CLIENT_URL}/icons/map-marker-alt.png`,
-        mapMarkerWhite: `${process.env.VUE_APP_CLIENT_URL}/icons/map-marker-white.png`,
-        imgPlaceholder: `${process.env.VUE_APP_CLIENT_URL}/icons/image-placeholder.png`,
-        signOut: `${process.env.VUE_APP_CLIENT_URL}/icons/sign-out.png`,
-        search: `${process.env.VUE_APP_CLIENT_URL}/icons/search.png`,
-        sliders: `${process.env.VUE_APP_CLIENT_URL}/icons/sliders.png`,
-        pencilSquare: `${process.env.VUE_APP_CLIENT_URL}/icons/icon-modifier.png`,
-        message: `${process.env.VUE_APP_CLIENT_URL}/icons/message.png`,
-        messageAlt: `${process.env.VUE_APP_CLIENT_URL}/icons/message-alt.png`,
-        user: `${process.env.VUE_APP_CLIENT_URL}/icons/user.png`,
-        device: `${process.env.VUE_APP_CLIENT_URL}/icons/aloes/iot.png`,
-        deviceOn: `${process.env.VUE_APP_CLIENT_URL}/icons/device-on.png`,
-        deviceOff: `${process.env.VUE_APP_CLIENT_URL}/icons/device-off.png`,
-        // deviceOff: `${
-        //   process.env.VUE_APP_CLIENT_URL
-        // }/icons/aloes/iot-white.png`,
-        node: `${process.env.VUE_APP_CLIENT_URL}/icons/aloes/node.png`,
-        nodeOff: `${process.env.VUE_APP_CLIENT_URL}/icons/aloes/node-white.png`,
-        virtualObject: `${process.env.VUE_APP_CLIENT_URL}/icons/aloes/virtual-object.png`,
-        virtualObjectOff: `${process.env.VUE_APP_CLIENT_URL}/icons/aloes/virtual-object-white.png`,
-        virtualObjectAlt: `${process.env.VUE_APP_CLIENT_URL}/icons/aloes/virtual-object-alt.png`,
-        virtualObjectAltOff: `${
-          process.env.VUE_APP_CLIENT_URL
-        }/icons/aloes/virtual-object-alt-white.png`,
-        teamAlt: `${process.env.VUE_APP_CLIENT_URL}/icons/team-alt.png`,
-        team: `${process.env.VUE_APP_CLIENT_URL}/icons/team-on.png`,
-        teamOff: `${process.env.VUE_APP_CLIENT_URL}/icons/team-off.png`,
-        notification: `${process.env.VUE_APP_CLIENT_URL}/icons/notification.png`,
-        premium: `${process.env.VUE_APP_CLIENT_URL}/icons/premium.png`,
-        checkGreen: `${process.env.VUE_APP_CLIENT_URL}/icons/check-green.png`,
-        statusOn: `${process.env.VUE_APP_CLIENT_URL}/icons/status-on.png`,
-        statusOnAlt: `${process.env.VUE_APP_CLIENT_URL}/icons/status-on-alt.png`,
-        statusOff: `${process.env.VUE_APP_CLIENT_URL}/icons/status-off.png`,
-        statusOffAlt: `${process.env.VUE_APP_CLIENT_URL}/icons/status-off-alt.png`,
+        logo: `/icons/aloes-icon.png`,
+        logoFont: `/icons/aloesfont1.png`,
+        background: `/images/bg1.png`,
+        notFound: `/images/404.jpg`,
+        circlePlus: `/icons/circle-plus.png`,
+        circleMinus: `/icons/circle-minus.png`,
+        circleCross: `/icons/circle-cross.png`,
+        mapMarker: `/icons/map-marker.png`,
+        mapMarkerAlt: `/icons/map-marker-alt.png`,
+        mapMarkerWhite: `/icons/map-marker-white.png`,
+        imgPlaceholder: `/icons/image-placeholder.png`,
+        signOut: `/icons/sign-out.png`,
+        search: `/icons/search.png`,
+        sliders: `/icons/sliders.png`,
+        pencilSquare: `/icons/icon-modifier.png`,
+        message: `/icons/message.png`,
+        messageAlt: `/icons/message-alt.png`,
+        user: `/icons/user.png`,
+        device: `/icons/aloes/iot.png`,
+        deviceOn: `/icons/device-on.png`,
+        deviceOff: `/icons/device-off.png`,
+        node: `/icons/aloes/node.png`,
+        nodeOff: `/icons/aloes/node-white.png`,
+        virtualObject: `/icons/aloes/virtual-object.png`,
+        virtualObjectOff: `/icons/aloes/virtual-object-white.png`,
+        virtualObjectAlt: `/icons/aloes/virtual-object-alt.png`,
+        virtualObjectAltOff: `/icons/aloes/virtual-object-alt-white.png`,
+        teamAlt: `/icons/team-alt.png`,
+        team: `/icons/team-on.png`,
+        teamOff: `/icons/team-off.png`,
+        notification: `/icons/notification.png`,
+        premium: `/icons/premium.png`,
+        checkGreen: `/icons/check-green.png`,
+        statusOn: `/icons/status-on.png`,
+        statusOnAlt: `/icons/status-on-alt.png`,
+        statusOff: `/icons/status-off.png`,
+        statusOffAlt: `/icons/status-off-alt.png`,
       },
       videos: {
-        createDeviceWebm: `${process.env.VUE_APP_CLIENT_URL}/videos/create-device.webm`,
-        createDeviceMp4: `${process.env.VUE_APP_CLIENT_URL}/videos/create-device.mp4`,
-        createDeviceOgv: `${process.env.VUE_APP_CLIENT_URL}/videos/create-device.ogg`,
+        createDeviceWebm: `/videos/create-device.webm`,
+        createDeviceMp4: `/videos/create-device.mp4`,
+        createDeviceOgv: `/videos/create-device.ogg`,
+        scriptScenarioMp4: `/videos/script-scenario.mp4`,
       },
     },
     deviceTypes: [
@@ -122,15 +119,27 @@ export default new Vuex.Store({
       { text: 'Bot', value: 'bot' },
       { text: 'Browser', value: 'browser' },
       { text: 'Camera', value: 'camera' },
+      { text: 'Clock', value: 'clock' },
+      { text: 'Coffee machine', value: 'coffee-machine' },
+      { text: 'Door', value: 'door' },
+      { text: 'Vents', value: 'fan' },
       { text: 'Gateway', value: 'gateway' },
       { text: 'Light controller', value: 'light-output' },
+      { text: 'Measurement', value: 'measurement' },
       { text: 'Midi recorder', value: 'midi-input' },
       { text: 'Midi player', value: 'midi-output' },
+      { text: 'Micro computer', value: 'mcu' },
       { text: 'Node', value: 'node' },
       { text: 'Phone', value: 'phone' },
-      { text: 'Rfid', value: 'rfid' },
+      { text: 'Pump', value: 'pump' },
+      { text: 'Scanner', value: 'scanner' },
+      { text: 'Screen', value: 'screen' },
       { text: 'Switch input', value: 'switch-input' },
       { text: 'Switch output', value: 'switch-output' },
+      { text: 'Timer', value: 'timer' },
+      { text: 'Geolocator', value: 'tracker' },
+      { text: 'Vehicle', value: 'vehicle' },
+      { text: 'Weather station', value: 'weather station' },
     ],
     transportProtocolNames: [
       { text: 'name', value: null, disabled: true },
@@ -188,7 +197,7 @@ export default new Vuex.Store({
   plugins: [
     profileStorage.plugin,
     //  deviceStorage.plugin,
-    vuexSession.plugin,
+    //  vuexSession.plugin,
     vuexCache({ timeout: 2000 }),
   ],
   modules: {
@@ -196,6 +205,7 @@ export default new Vuex.Store({
     auth, // auth namespaced
     address,
     device,
+    sensor,
     application,
     team,
     files,

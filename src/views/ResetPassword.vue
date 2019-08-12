@@ -48,20 +48,20 @@
 </template>
 
 <script type="text/javascript">
-import bAlert from 'bootstrap-vue/es/components/alert/alert';
-import bButton from 'bootstrap-vue/es/components/button/button';
-import bCard from 'bootstrap-vue/es/components/card/card';
-import bForm from 'bootstrap-vue/es/components/form/form';
+import { BAlert } from 'bootstrap-vue';
+import { BButton } from 'bootstrap-vue';
+import { BCard } from 'bootstrap-vue';
+import { BForm } from 'bootstrap-vue';
 import FooterContainer from '@/views/containers/FooterContainer.vue';
 
 export default {
   name: 'ResetPassword',
 
   components: {
-    'b-alert': bAlert,
-    'b-button': bButton,
-    'b-card': bCard,
-    'b-form': bForm,
+    'b-alert': BAlert,
+    'b-button': BButton,
+    'b-card': BCard,
+    'b-form': BForm,
     'footer-container': FooterContainer,
   },
 

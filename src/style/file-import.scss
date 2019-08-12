@@ -4,10 +4,11 @@
 }
 
 button.btn {
-  background-color: $primary;
-  color: white;
-  height: 50px;
+  background-color: $btn-bg-color;
+  font-family: $btn-font;
   font-weight: $btn-font-weight;
+  color: $btn-color;
+  height: $btn-height;
   padding: $btn-padding;
   border-radius: $btn-border-radius;
   border: 1px solid transparent;
@@ -17,15 +18,15 @@ button.btn {
 }
 
 button.btn:hover {
-  background-color: white;
-  color: $primary;
-  border-color: $primary;
+  background-color: $btn-bg-light-color;
+  font-family: $btn-font;
+  font-weight: $btn-font-weight;
+  color: $btn-color;
 }
 
 button.btn:disabled {
-  background-color: $secondary;
-  color: $primary;
-  border-color: $secondary;
+  background-color: $btn-bg-light-color;
+  color: $btn-color;
 }
 
 button.btn.header-button {
@@ -57,15 +58,16 @@ input.input-file:hover {
 }
 
 label.add-file {
-  font-size: 90%;
+/*  font-size: 90%;
   height: 50px;
-  width: 100%;
+  width: 100%;*/
   text-align: center;
+  background-color: $btn-bg-color;
+  font-family: $btn-font;
   font-weight: $btn-font-weight;
-  padding: 0.8rem 0.5rem;
+  color: $btn-color;
+  padding: $btn-padding;
   border-radius: $btn-border-radius;
-  background-color: $primary;
-  color: white;
   i {
     color: $white;
     fill: $white;
@@ -76,12 +78,13 @@ label.add-file {
 
 label.add-file:hover {
   cursor: pointer;
-  background-color: white;
-  border-color: $primary;
-  color: $primary;
+  background-color: $btn-bg-light-color;
+  font-family: $btn-font;
+  font-weight: $btn-font-weight;
+  color: $btn-color;
   i {
-    color: black;
-    fill: black;
+    color: $white;
+    fill: $white;
     opacity: 0.8;
   }
 }

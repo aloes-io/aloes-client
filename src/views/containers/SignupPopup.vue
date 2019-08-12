@@ -8,6 +8,7 @@
     modal-class="header-popup-modal"
     body-class="header-popup-body"
     class="header-popup-view"
+    hide-backdrop
     @shown="onModalShown"
     @hidden="onModalHidden"
   >
@@ -17,14 +18,14 @@
 </template>
 
 <script type="text/javascript">
-import bModal from 'bootstrap-vue/es/components/modal/modal';
+import { BModal } from 'bootstrap-vue';
 import Signup from '@/components/Account/Signup.vue';
 
 export default {
   name: 'signupPopup',
 
   components: {
-    'b-modal': bModal,
+    'b-modal': BModal,
     'sign-up': Signup,
   },
 

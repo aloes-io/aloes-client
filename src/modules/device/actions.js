@@ -3,46 +3,27 @@ import socket from '@/services/socket';
 import PubSub from '@/services/PubSub';
 import logger from '@/services/logger';
 
-const userResources = 'users';
-
-export async function findDevicesByAccount({ state, commit }, ownerId) {
+export async function findByAccount({ state, commit }, ownerId) {
   try {
     const devices = await loopback.find(`/${state.resources}`, {
       where: { ownerId },
-      include: ['sensors', 'deviceAddress'],
-      //  include: 'sensors',
-      limit: 40,
+      include: ['sensors', 'address'],
+      limit: 100,
     });
-    const collection = devices;
-    delete collection.sensors;
+
+    let collection = JSON.parse(JSON.stringify(devices));
+    collection = collection.map(device => {
+      if (device.sensors) {
+        delete device.sensors;
+      }
+      return device;
+    });
     //  logger.publish(3, state.collectionName, 'dispatch:findDevicesByAccount:res', collection);
     commit('setStateKV', { key: 'collection', value: collection });
-    const sensors = devices.map(device => {
-      if (device.sensors) {
-        return device.sensors;
-      }
-      return;
-    });
-    commit('setStateKV', { key: 'sensorsCollection', value: sensors });
     return devices;
   } catch (error) {
     return error;
   }
-}
-
-export async function findDeviceById({ state, commit }, id) {
-  return loopback
-    .get(`/${state.resources}/${id}`)
-    .then(device => {
-      if (device.id) {
-        //  logger.publish(2, state.collectionName, 'dispatch:findDeviceById:res', device);
-        commit('setModel', device);
-        return device;
-      }
-      const error = new Error('No device found');
-      return error;
-    })
-    .catch(err => err);
 }
 
 export async function findDeviceKV({ state, commit }, { key, value }) {
@@ -51,167 +32,66 @@ export async function findDeviceKV({ state, commit }, { key, value }) {
     const devices = await loopback.find(`/${state.resources}`, {
       where: { [key]: value },
       include: 'sensors',
-      limit: 40,
+      limit: 100,
     });
-    //  commit('setCollection', devices);
-    // devices.forEach((device) => {
-    //   commit("setSensors", device.sensors);
-    // });
     return devices;
   } catch (error) {
-    await commit('setModelKV', { key: 'error', value: error });
+    await commit('setStateKV', { key: 'error', value: error });
     logger.publish(2, state.collectionName, 'dispatch:findDeviceKV:err', error);
     return error;
   }
 }
 
-export async function subscribeToDevicesUpdate({ state }, { userId }) {
-  await state.collection.forEach(device => {
-    return PubSub.subscribeToInstanceUpdate(socket.client, 'Device', userId, device.id);
-  });
-}
-
-export async function unsubscribeFromDevicesUpdate({ state }, { ownerId }) {
-  await state.collection.forEach(device =>
-    PubSub.unSubscribeWhere(socket.client, {
-      collectionName: 'Device',
-      userId: ownerId,
-      method: 'PUT',
-      modelId: device.id,
-    }),
-  );
-}
-
-export async function saveDevice({ dispatch }, { device }) {
+export async function saveInstance({ dispatch }, { device }) {
   if (device.id) {
-    return dispatch('updateDevice', { device });
+    return dispatch('updateInstance', { device });
   }
-  return dispatch('createDevice', { device });
+  return dispatch('createInstance', { device });
 }
 
-export async function createDevice({ state, commit }, { device }) {
-  return (
-    loopback
-      //.post(`/${userResources}/${device.ownerId}/${state.resources.toLowerCase()}`, device)
-      .post(`/${state.resources}`, device)
-      .then(res => {
-        logger.publish(4, state.collectionName, 'dispatch:createDevice:res', res);
-        commit('setModel', res);
-        return res;
-      })
-      .catch(err => err)
-  );
-
-  //  return result;
-}
-
-export async function updateDevice({ state, commit }, { device }) {
-  return (
-    loopback
-      //  .put(`/${userResources}/${device.ownerId}/${state.resources.toLowerCase()}/${device.id}`, device)
-      .put(`/${state.resources}/${device.id}`, device)
-      .then(res => {
-        //  logger.publish(3, state.collectionName, 'dispatch:updateDevice:res', res);
-        commit('setModel', res);
-        return res;
-      })
-      .catch(err => err)
-  );
-  //  return result;
-}
-
-export async function delDevice({ state, commit }, { device }) {
+export async function createInstance({ state, commit }, { device }) {
   try {
-    const deletedDevice = await loopback.delete(
-      `/${userResources}/${device.ownerId}/${state.resources.toLowerCase()}/${device.id}`,
-    );
-    //  const deletedDevice = await loopback.delete(`/${state.resources}/${device.id}`);
-    await commit('setModelKV', {
+    const createdDevice = await loopback.post(`/${state.resources}`, device);
+    //.post(`/${userResources}/${device.ownerId}/${state.resources.toLowerCase()}`, device)
+    await commit('setModel', createdDevice);
+    await commit('setStateKV', {
+      key: 'success',
+      value: { message: 'device created' },
+    });
+    return createdDevice;
+  } catch (error) {
+    await commit('setStateKV', { key: 'error', value: error });
+    return error;
+  }
+}
+
+export async function updateInstance({ state, commit }, { device }) {
+  try {
+    const deviceId = device.id;
+    delete device.id;
+    const updatedDevice = await loopback.put(`/${state.resources}/${deviceId}`, device);
+    await commit('setModel', updatedDevice);
+    await commit('setStateKV', {
+      key: 'success',
+      value: { message: 'device updated' },
+    });
+    return updatedDevice;
+  } catch (error) {
+    await commit('setStateKV', { key: 'error', value: error });
+    return error;
+  }
+}
+
+export async function deleteInstance({ state, commit }, { device }) {
+  try {
+    const deletedDevice = await loopback.delete(`/${state.resources}/${device.id}`);
+    await commit('setStateKV', {
       key: 'success',
       value: { message: 'device removed' },
     });
     return deletedDevice;
   } catch (error) {
-    await commit('setModelKV', { key: 'error', value: error });
-    logger.publish(4, state.collectionName, 'dispatch:delDevice:err', error);
-    return error;
-  }
-}
-
-export async function findSensorsByDevice({ state, commit }, deviceId) {
-  return loopback
-    .get(`/${state.resources}/${deviceId}/sensors`)
-    .then(sensors => {
-      commit('setStateKV', { key: 'sensors', value: sensors });
-      //  logger.publish(3, state.collectionName, "dispatch:findSensorsByDevice:res", sensors);
-      return sensors;
-    })
-    .catch(err => err);
-}
-
-export async function subscribeToSensorsUpdate({ state }, { userId }) {
-  try {
-    await state.sensors.forEach(sensor => {
-      return PubSub.subscribeToInstanceUpdate(socket.client, 'Sensor', userId, sensor.id);
-    });
-  } catch (error) {
-    return error;
-  }
-}
-
-export async function unsubscribeFromSensorsUpdate({ state }, { userId }) {
-  await state.sensors.forEach(sensor =>
-    PubSub.unSubscribeWhere(socket.client, {
-      collectionName: 'Sensor',
-      userId,
-      method: 'PUT',
-      modelId: sensor.id,
-    }),
-  );
-}
-
-export async function publishToSensor({ state }, { sensor, userId }) {
-  return PubSub.publishToInstance(socket.client, state.outputTopic, userId, sensor.id, sensor);
-}
-
-export async function updateSensor({ state, commit }, { sensor }) {
-  try {
-    const updatedSensor = await loopback.put(
-      `/${state.resources}/${sensor.deviceId}/sensors/${sensor.id}`,
-      sensor,
-    );
-    //  logger.publish(3, state.collectionName, 'dispatch:updateSensor:res', updatedSensor);
-    // todo : create a cache with this structure :
-    // devices = { deviceId: {instance} }
-    // sensors = { sensorId: {instance} }
-    //  const sensors = JSON.parse(JSON.stringify(state.sensors));
-    //  commit('setStateKV', {key: 'sensors', value: sensors});
-
-    await commit('setModelKV', {
-      key: 'success',
-      value: { message: 'sensor updated' },
-    });
-    return updatedSensor;
-  } catch (error) {
-    await commit('setModelKV', { key: 'error', value: error });
-    logger.publish(4, state.collectionName, 'dispatch:updateSensor:err', error);
-    return error;
-  }
-}
-
-export async function delSensor({ state, commit }, { deviceId, sensor }) {
-  try {
-    const deletedSensor = await loopback.delete(
-      `/${state.collectionName}/${deviceId}/sensors/${sensor.id}`,
-    );
-    await commit('setModelKV', {
-      key: 'success',
-      value: { message: 'sensor removed' },
-    });
-    return deletedSensor;
-  } catch (error) {
-    await commit('setModelKV', { key: 'error', value: error });
-    logger.publish(4, state.collectionName, 'dispatch:delSensor:err', error);
+    await commit('setStateKV', { key: 'error', value: error });
     return error;
   }
 }
@@ -226,4 +106,21 @@ export async function refreshToken({ state, commit }, device) {
     })
     .catch(err => err);
   //  return result;
+}
+
+export async function subscribeToDevicesUpdate({ state }, { userId }) {
+  await state.collection.forEach(device =>
+    PubSub.subscribeToInstanceUpdate(socket.client, 'Device', userId, device.id),
+  );
+}
+
+export async function unsubscribeFromDevicesUpdate({ state }, { ownerId }) {
+  await state.collection.map(device =>
+    PubSub.unSubscribeWhere(socket.client, {
+      collection: 'Device',
+      userId: ownerId,
+      method: 'PUT',
+      modelId: device.id,
+    }),
+  );
 }

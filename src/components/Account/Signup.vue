@@ -43,10 +43,10 @@
 </template>
 
 <script type="text/javascript">
-import bAlert from 'bootstrap-vue/es/components/alert/alert';
-import bButton from 'bootstrap-vue/es/components/button/button';
-import bCard from 'bootstrap-vue/es/components/card/card';
-import bForm from 'bootstrap-vue/es/components/form/form';
+import { BAlert } from 'bootstrap-vue';
+import { BButton } from 'bootstrap-vue';
+import { BForm } from 'bootstrap-vue';
+import { BCard } from 'bootstrap-vue';
 //  import Captcha from '@/components/Account/Captcha.vue';
 import SignupForm from '@/components/Account/SignupForm.vue';
 import notification from '@/views/mixins/notification';
@@ -55,10 +55,10 @@ export default {
   name: 'Signup',
 
   components: {
-    'b-alert': bAlert,
-    'b-button': bButton,
-    'b-card': bCard,
-    'b-form': bForm,
+    'b-alert': BAlert,
+    'b-button': BButton,
+    'b-card': BCard,
+    'b-form': BForm,
     'signup-form': SignupForm,
     //  captcha: Captcha,
   },

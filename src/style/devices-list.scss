@@ -2,28 +2,56 @@
 
 .devices-list-view {
 	margin-top: 4%;
-	max-height: 100vh;
-	overflow-y: scroll;
-}
+	.devices-list {
+		max-height: 90vh;
+		overflow-y: scroll;
+	}
+	select.custom-select {
+		background-color: white;
+		padding: $input-padding;
+		border-radius: $input-border-radius;
+		border: 1px solid transparent;
+		box-shadow: $input-shadow;
+		-webkit-transition: box-shadow 150ms ease;
+		transition: box-shadow 150ms ease;
+	}
 
-button.btn {
-	margin-top: 2%;
-	background-color: $btn-bg-color;
-	font-family: $btn-font;
-	font-weight: $btn-font-weight;
-	color: $btn-color;
-	height: $btn-height;
-	padding: $btn-padding;
-	border-radius: $btn-border-radius;
-	border: 1px solid transparent;
-	box-shadow: $btn-shadow;
-	-webkit-transition: box-shadow 150ms ease;
-	transition: box-shadow 150ms ease;
-}
+	select.custom-select:hover {
+		box-shadow: $input-shadow-selected;
+	}
 
-button.btn:hover {
-	background-color: $btn-bg-light-color;
-	font-family: $btn-font;
-	font-weight: $btn-font-weight;
-	color: $btn-color;
+	select.custom-select:disabled {
+		border-color: transparent;
+		box-shadow: none !important;
+	}
+
+	select.custom-select:valid {
+		border-color: $lightsuccess;
+	}
+
+	select.custom-select:invalid {
+		border-color: $grey;
+	}
+
+	button.btn {
+		margin-top: 2%;
+		background-color: $btn-bg-color;
+		font-family: $btn-font;
+		font-weight: $btn-font-weight;
+		color: $btn-color;
+		height: $btn-height;
+		padding: $btn-padding;
+		border-radius: $btn-border-radius;
+		border: 1px solid transparent;
+		box-shadow: $btn-shadow;
+		-webkit-transition: box-shadow 150ms ease;
+		transition: box-shadow 150ms ease;
+	}
+
+	button.btn:hover {
+		background-color: $btn-bg-light-color;
+		font-family: $btn-font;
+		font-weight: $btn-font-weight;
+		color: $btn-color;
+	}
 }

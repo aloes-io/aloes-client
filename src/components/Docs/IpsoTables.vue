@@ -47,17 +47,17 @@ import { omaObjects, omaResources, omaViews } from 'oma-json';
 import { keys } from 'd3-collection';
 import { hierarchy } from 'd3-hierarchy';
 import { select } from 'd3-selection';
-import bDropdown from 'bootstrap-vue/es/components/dropdown/dropdown';
-import bDropdownDivider from 'bootstrap-vue/es/components/dropdown/dropdown-divider';
-import bDropdownItemButton from 'bootstrap-vue/es/components/dropdown/dropdown-item-button';
+import { BDropdown } from 'bootstrap-vue';
+import { BDropdownDivider } from 'bootstrap-vue';
+import { BDropdownItemButton } from 'bootstrap-vue';
 
 export default {
   name: 'IpsoTables',
 
   components: {
-    'b-dropdown': bDropdown,
-    'b-dropdown-divider': bDropdownDivider,
-    'b-dropdown-item-button': bDropdownItemButton,
+    'b-dropdown': BDropdown,
+    'b-dropdown-divider': BDropdownDivider,
+    'b-dropdown-item-button': BDropdownItemButton,
   },
 
   data() {

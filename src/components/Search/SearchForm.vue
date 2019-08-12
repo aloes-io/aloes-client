@@ -26,18 +26,18 @@
 </template>
 
 <script type="text/javascript">
-import bButton from 'bootstrap-vue/es/components/button/button';
-import bForm from 'bootstrap-vue/es/components/form/form';
-import bFormInput from 'bootstrap-vue/es/components/form-input/form-input';
+import { BButton } from 'bootstrap-vue';
+import { BForm } from 'bootstrap-vue';
+import { BFormInput } from 'bootstrap-vue';
 import logger from '@/services/logger';
 
 export default {
   name: 'SearchForm',
 
   components: {
-    'b-button': bButton,
-    'b-form': bForm,
-    'b-form-input': bFormInput,
+    'b-button': BButton,
+    'b-form': BForm,
+    'b-form-input': BFormInput,
   },
 
   props: {

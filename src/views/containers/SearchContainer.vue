@@ -20,7 +20,7 @@
 </template>
 
 <script type="text/javascript">
-import bCard from 'bootstrap-vue/es/components/card/card';
+import { BCard } from 'bootstrap-vue';
 import SearchForm from '@/components/Search/SearchForm.vue';
 import SearchMap from '@/components/Search/SearchMap.vue';
 import SearchResult from '@/components/Search/SearchResult.vue';
@@ -29,7 +29,7 @@ export default {
   name: 'SearchContainer',
 
   components: {
-    'b-card': bCard,
+    'b-card': BCard,
     'search-form': SearchForm,
     'search-map': SearchMap,
     'search-result': SearchResult,

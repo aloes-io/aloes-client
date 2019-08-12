@@ -10,6 +10,7 @@ input.form-control {
   border-radius: $input-border-radius;
   border: 1px solid transparent;
   box-shadow: $input-shadow;
+  margin-bottom: 1%;
   -webkit-transition: box-shadow 150ms ease;
   transition: box-shadow 150ms ease;
 }

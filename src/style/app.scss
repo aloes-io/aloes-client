@@ -18,10 +18,9 @@
 #app {
 	width: 100%;
 	font-family: $text-fonts;
-	/*font-family: "Aloes-Rg";*/
 	font-size: $font-size-base;
 	color: $primary;
-	background: $light-grey;
+	background: white;
 }
 
 @media only screen and (min-device-width: 320px) and (max-device-width: 480px) {

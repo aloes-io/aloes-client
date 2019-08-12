@@ -14,22 +14,7 @@
       </b-row>
     </b-navbar-brand>
     <b-collapse id="nav_collapse" is-nav>
-      <b-navbar-nav v-if="!access_token || access_token === null" class="w-55">
-        <b-nav-item @click.prevent.stop="$refs.loginPopup.showModal()">
-          <fa-icon icon="sign-in-alt" size="lg" /> Signin
-        </b-nav-item>
-        <b-nav-item @click.prevent.stop="$refs.signupPopup.showModal()">
-          <fa-icon icon="user-plus" size="lg" /> Signup
-        </b-nav-item>
-        <login-popup ref="loginPopup" />
-        <signup-popup ref="signupPopup" />
-      </b-navbar-nav>
-      <!--   <b-navbar-nav v-else-if="access_token && !account" class="w-55">
-        <b-nav-item @click.prevent.stop="onLogoutClick">
-          <fa-icon icon="sign-out-alt" size="lg" /> Signout
-        </b-nav-item>
-      </b-navbar-nav> -->
-      <b-navbar-nav v-else-if="access_token && account" class="w-55">
+      <b-navbar-nav v-if="access_token && account" class="w-55">
         <b-nav-item
           :to="{
             name: 'search',
@@ -49,7 +34,6 @@
           <i class="fa fa-users" />
         </b-nav-item> -->
         <b-nav-item
-          :disabled="!account.subscribed.startsWith('paid')"
           :to="{
             name: 'device',
             query: {
@@ -58,15 +42,9 @@
             },
           }"
         >
-          <b-img
-            v-if="account.subscribed.startsWith('paid')"
-            :src="$store.state.style.pictures.node"
-            class="thumb-icon"
-          />
-          <b-img v-else :src="$store.state.style.pictures.node" class="thumb-icon" />
+          <b-img :src="$store.state.style.pictures.node" class="thumb-icon" />
         </b-nav-item>
         <b-nav-item
-          :disabled="!account.subscribed.startsWith('paid')"
           :to="{
             name: 'application',
             query: {
@@ -75,12 +53,7 @@
             },
           }"
         >
-          <b-img
-            v-if="account.subscribed.startsWith('paid')"
-            :src="$store.state.style.pictures.device"
-            class="thumb-icon"
-          />
-          <b-img v-else :src="$store.state.style.pictures.deviceAlt" class="thumb-icon" />
+          <b-img :src="$store.state.style.pictures.device" class="thumb-icon" />
         </b-nav-item>
         <b-nav-item
           :to="{
@@ -93,7 +66,7 @@
         >
           <b-img
             v-if="$store.state.auth.account.avatarImgUrl"
-            :src="$store.state.auth.account.avatarImgUrl"
+            :src="`${serverUrl}${$store.state.auth.account.avatarImgUrl}`"
             class="thumb-icon"
           />
           <fa-icon v-else icon="user" size="lg" />
@@ -105,30 +78,46 @@
           <fa-icon icon="sign-out-alt" size="lg" />
         </b-nav-item>
       </b-navbar-nav>
+      <b-navbar-nav v-else class="w-55">
+        <!-- <b-navbar-nav v-else-if="!access_token || access_token === null" class="w-55"> -->
+        <b-nav-item @click.prevent.stop="$refs.loginPopup.showModal()">
+          <fa-icon icon="sign-in-alt" size="lg" /> Signin
+        </b-nav-item>
+        <b-nav-item @click.prevent.stop="$refs.signupPopup.showModal()">
+          <fa-icon icon="user-plus" size="lg" /> Signup
+        </b-nav-item>
+        <login-popup ref="loginPopup" />
+        <signup-popup ref="signupPopup" />
+      </b-navbar-nav>
+      <!--   <b-navbar-nav v-else-if="access_token && !account" class="w-55">
+        <b-nav-item @click.prevent.stop="onLogoutClick">
+          <fa-icon icon="sign-out-alt" size="lg" /> Signout
+        </b-nav-item>
+      </b-navbar-nav> -->
     </b-collapse>
   </b-navbar>
 </template>
 
 <script type="text/javascript">
-import bCollapse from 'bootstrap-vue/es/components/collapse/collapse';
-import bImg from 'bootstrap-vue/es/components/image/img';
-import bNavbar from 'bootstrap-vue/es/components/navbar/navbar';
-import bNavbarNav from 'bootstrap-vue/es/components/navbar/navbar-nav';
-import bNavbarBrand from 'bootstrap-vue/es/components/navbar/navbar-brand';
-import bNavbarToggle from 'bootstrap-vue/es/components/navbar/navbar-toggle';
-import bNavItem from 'bootstrap-vue/es/components/nav/nav-item';
+import { BCollapse } from 'bootstrap-vue';
+import { BImg } from 'bootstrap-vue';
+import { BNavbar } from 'bootstrap-vue';
+import { BNavbarNav } from 'bootstrap-vue';
+import { BNavbarBrand } from 'bootstrap-vue';
+import { BNavbarToggle } from 'bootstrap-vue';
+import { BNavItem } from 'bootstrap-vue';
 //  import NotificationsDropdown from "@/views/containers/NotificationsDropdown.vue";
 import Notification from '@/views/mixins/notification';
 
 export default {
   components: {
-    'b-collapse': bCollapse,
-    'b-img': bImg,
-    'b-navbar': bNavbar,
-    'b-navbar-nav': bNavbarNav,
-    'b-navbar-brand': bNavbarBrand,
-    'b-navbar-toggle': bNavbarToggle,
-    'b-nav-item': bNavItem,
+    'b-collapse': BCollapse,
+    'b-img': BImg,
+    'b-navbar': BNavbar,
+    'b-navbar-nav': BNavbarNav,
+    'b-navbar-brand': BNavbarBrand,
+    'b-navbar-toggle': BNavbarToggle,
+    'b-nav-item': BNavItem,
     //  "notifications-dropdown": NotificationsDropdown,
     'login-popup': () => import('@/views/containers/LoginPopup.vue'),
     'signup-popup': () => import('@/views/containers/SignupPopup.vue'),
@@ -158,6 +147,9 @@ export default {
   },
 
   computed: {
+    serverUrl() {
+      return this.$store.state.serverUrl;
+    },
     accountType: {
       get() {
         if (this.$props.account) {

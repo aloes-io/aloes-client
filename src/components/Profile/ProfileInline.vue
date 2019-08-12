@@ -93,8 +93,8 @@
 </template>
 
 <script type="text/javascript">
-import bButton from 'bootstrap-vue/es/components/button/button';
-import bCard from 'bootstrap-vue/es/components/card/card';
+import { BButton } from 'bootstrap-vue';
+import { BCard } from 'bootstrap-vue';
 import { EventBus } from '@/services/PubSub';
 import logger from '@/services/logger';
 
@@ -102,8 +102,8 @@ export default {
   name: 'ProfileInline',
 
   components: {
-    'b-button': bButton,
-    'b-card': bCard,
+    'b-button': BButton,
+    'b-card': BCard,
     'team-popup': () => import('@/views/containers/TeamPopup.vue'),
   },
 

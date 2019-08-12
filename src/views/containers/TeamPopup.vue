@@ -10,6 +10,7 @@
     modal-class="team-popup-modal"
     header-class="team-popup-header"
     body-class="team-popup-body"
+    hide-backdrop
     @hidden="onModalHidden"
   >
     <b-button v-if="isMember" class="team-popup-button" @click="delTeamMember">
@@ -22,15 +23,15 @@
 </template>
 
 <script type="text/javascript">
-import bButton from 'bootstrap-vue/es/components/button/button';
-import bModal from 'bootstrap-vue/es/components/modal/modal';
+import { BButton } from 'bootstrap-vue';
+import { BModal } from 'bootstrap-vue';
 
 export default {
   name: 'TeamPopup',
 
   components: {
-    'b-button': bButton,
-    'b-modal': bModal,
+    'b-button': BButton,
+    'b-modal': BModal,
   },
 
   props: {
