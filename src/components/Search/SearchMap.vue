@@ -13,12 +13,12 @@
       <div v-for="device in devices" :key="device.id">
         <l-marker
           v-if="
-            device.deviceAddress &&
-              device.deviceAddress.coordinates &&
-              device.deviceAddress.coordinates.lat &&
-              device.deviceAddress.coordinates.lng
+            device.address &&
+              device.address.coordinates &&
+              device.address.coordinates.lat &&
+              device.address.coordinates.lng
           "
-          :lat-lng="[device.deviceAddress.coordinates.lat, device.deviceAddress.coordinates.lng]"
+          :lat-lng="[device.address.coordinates.lat, device.address.coordinates.lng]"
           @mouseover="highlightDevice(device, true)"
           @mouseleave="highlightDevice(device, false)"
         >
@@ -146,14 +146,9 @@ export default {
     setListeners() {
       EventBus.$on('deviceSelected', device => {
         if (device && device !== null) {
-          const hasAddress = Object.getOwnPropertyNames(device).find(
-            key => key === 'deviceAddress',
-          );
-          if (hasAddress && device.deviceAddress.coordinates) {
-            this.currentCenter = [
-              device.deviceAddress.coordinates.lat,
-              device.deviceAddress.coordinates.lng,
-            ];
+          const hasAddress = Object.getOwnPropertyNames(device).find(key => key === 'address');
+          if (hasAddress && device.address.coordinates) {
+            this.currentCenter = [device.address.coordinates.lat, device.address.coordinates.lng];
             return this.currentCenter;
           }
         }
@@ -162,8 +157,8 @@ export default {
     },
 
     getDeviceCoordinates(device) {
-      if (device && device.deviceAddress && device.deviceAddress.coordinates) {
-        return [device.deviceAddress.coordinates.lat, device.deviceAddress.coordinates.lng];
+      if (device && device.address && device.address.coordinates) {
+        return [device.address.coordinates.lat, device.address.coordinates.lng];
       }
       return null;
     },
@@ -187,15 +182,12 @@ export default {
     highlightDevice(device, state) {
       if (!device || device === null) return null;
       if (state === true) {
-        if (device.deviceAddress && device.deviceAddress.coordinates) {
+        if (device.address && device.address.coordinates) {
           // this.currentCenter = L.latLng(
           //   device.deviceAddress.coordinates.lat,
           //   device.deviceAddress.coordinates.lng,
           // );
-          this.currentCenter = [
-            device.deviceAddress.coordinates.lat,
-            device.deviceAddress.coordinates.lng,
-          ];
+          this.currentCenter = [device.address.coordinates.lat, device.address.coordinates.lng];
         }
 
         EventBus.$emit(`deviceSelected-${device.id}`, device, state);

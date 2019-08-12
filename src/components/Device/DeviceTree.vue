@@ -26,8 +26,8 @@
         </feMerge>
       </filter>
     </defs>
-    <g :id="links"></g>
-    <g :id="nodes"></g>
+    <!--  <g :id="links"></g>
+    <g :id="nodes"></g> -->
     <g :id="`tree-${rootNodeId}`"></g>
   </svg>
 </template>
@@ -42,6 +42,7 @@ import { interpolate } from 'd3-interpolate';
 import { event, select } from 'd3-selection';
 import { transition } from 'd3-transition';
 import { zoom, zoomIdentity } from 'd3-zoom';
+import debounce from 'lodash.debounce';
 
 export default {
   name: 'DeviceTree',
@@ -87,10 +88,16 @@ export default {
       updatedWidth: null,
       updatedHeight: null,
       margin: { top: 20, right: 0, bottom: 30, left: 40 },
+      deviceTreeMounted: false,
       updatedNodesRadius: null,
       updatedLinksLengt: null,
       graphNodes: null,
       graphLinks: null,
+      links: null,
+      nodes: null,
+      images: null,
+      descriptions: null,
+      tooltip: null,
       nodeSimulation: null,
       zoom: null,
       nodeLockedMode: false,
@@ -124,123 +131,6 @@ export default {
     svgGroup() {
       return select(`#tree-${this.rootNodeId}`);
     },
-    nodes() {
-      if (this.graphNodes) {
-        return this.svgGroup
-          .append('g')
-          .attr('class', 'nodes-group')
-          .selectAll('circle')
-          .data(this.graphNodes, d => d.data.id)
-          .enter()
-          .append('circle')
-          .attr('id', d => (d.data.id ? `node-${d.data.id}` : ''))
-          .attr('class', this.nodeClass)
-          .attr('r', this.nodeRadius)
-          .attr('filter', 'url(#circle-shadow)')
-          .style('fill', this.nodeFill)
-          .style('cursor', 'pointer')
-          .on('click', this.mouseClick)
-          .on('mouseover', function() {
-            select(this).attr('filter', 'url(#circle-shadow-selected)');
-          })
-          .on('mouseout', function() {
-            select(this).attr('filter', 'url(#circle-shadow)');
-          })
-          .call(
-            drag()
-              .on('start', this.dragStarted)
-              .on('drag', this.dragged)
-              .on('end', this.dragEnded),
-          );
-      }
-      return null;
-    },
-    links() {
-      if (this.graphLinks) {
-        return this.svgGroup
-          .append('g')
-          .attr('class', 'links-group')
-          .selectAll('path.link')
-          .data(this.graphLinks, d => d.target.data.id)
-          .enter()
-          .insert('path')
-          .attr('id', d => (d.target.data.id ? `link-${d.target.data.id}` : ''))
-          .attr('class', this.linkClass)
-          .style('stroke-width', this.linkWidth)
-          .style('stroke', this.colors.lightblue)
-          .style('opacity', '0.4')
-          .style('fill', 'none');
-      }
-      return null;
-    },
-    images() {
-      if (this.graphNodes) {
-        return this.svgGroup
-          .append('g')
-          .attr('class', 'images-group')
-          .selectAll('image')
-          .data(this.graphNodes, d => d.data.id)
-          .enter()
-          .append('image')
-          .attr('class', this.imageClass)
-          .attr('xlink:href', this.imageUrl)
-          .attr('crossOrigin', 'anonymous')
-          .attr('x', d => `${(-1 * this.nodeRadius(d)) / 2}`)
-          .attr('y', d => `${(-1 * this.nodeRadius(d)) / 2}`)
-          .attr('width', d => `${this.nodeRadius(d)}px`)
-          .attr('height', d => `${this.nodeRadius(d)}px`)
-          .style('cursor', 'pointer')
-          .on('click', this.mouseClick)
-          .on('mouseenter', this.mouseEnter)
-          .on('mouseleave', this.mouseLeave)
-          .on('mouseover', d => {
-            select(`#node-${d.data.id}`).attr('filter', 'url(#circle-shadow-selected)');
-          })
-          .on('mouseout', d => {
-            select(`#node-${d.data.id}`).attr('filter', 'url(#circle-shadow)');
-          });
-      }
-      //       .style('display', d =>
-      //   d.data.group === 2 ? (this.showSensors ? 'block' : 'none') : 'block',
-      // )
-      return null;
-    },
-    descriptions() {
-      if (this.graphLinks) {
-        return this.svgGroup
-          .append('g')
-          .attr('class', 'descriptions-group')
-          .style('display', 'none')
-          .selectAll('text')
-          .data(this.graphLinks, d => d.target.data.id)
-          .enter()
-          .insert('text')
-          .attr('id', d => (d.target.data.id ? `description-${d.target.data.id}` : ''))
-          .attr('class', this.textClass)
-          .attr('font-family', this.fonts.text)
-          .attr('fill', this.colors.lightblue)
-          .append('textPath')
-          .attr('xlink:href', d => `#link-${d.target.data.id}`)
-          .attr('text-anchor', 'start')
-          .attr('startOffset', '25%')
-          .style('font-size', '10px')
-          .text(this.textValue);
-      }
-      //          .style('display', d => (this.showDescriptions ? 'block' : 'none'))
-      return null;
-    },
-    tooltip() {
-      if (this.graphNodes) {
-        return this.svgGroup
-          .append('g')
-          .attr('class', 'tooltip-group')
-          .style('display', 'none')
-          .style('cursor', 'pointer')
-          .on('mouseleave', this.hideTooltip)
-          .on('click', this.hideTooltip);
-      }
-      return null;
-    },
   },
 
   watch: {
@@ -248,6 +138,9 @@ export default {
       handler(width) {
         if (width && width !== null) {
           this.updatedWidth = width;
+          if (this.deviceTreeMounted) {
+            this.debouncedFullDeviceTreeUpdate();
+          }
         }
       },
       immediate: true,
@@ -256,6 +149,9 @@ export default {
       handler(height) {
         if (height && height !== null) {
           this.updatedHeight = height;
+          if (this.deviceTreeMounted) {
+            this.debouncedFullDeviceTreeUpdate();
+          }
         }
       },
       immediate: true,
@@ -264,7 +160,9 @@ export default {
       handler(value) {
         if (value && value !== null) {
           this.updatedNodesRadius = value;
-          this.fullUpdateDeviceTree();
+          if (this.deviceTreeMounted) {
+            this.debouncedFullDeviceTreeUpdate();
+          }
         }
       },
       immediate: true,
@@ -273,7 +171,9 @@ export default {
       handler(value) {
         if (value && value !== null) {
           this.updatedLinksLength = value;
-          this.fullUpdateDeviceTree();
+          if (this.deviceTreeMounted) {
+            this.debouncedFullDeviceTreeUpdate();
+          }
         }
       },
       immediate: true,
@@ -301,6 +201,10 @@ export default {
     // },
   },
 
+  created() {
+    this.debouncedFullDeviceTreeUpdate = debounce(this.fullUpdateDeviceTree, 600);
+  },
+
   mounted() {
     this.initDeviceTree();
   },
@@ -313,7 +217,7 @@ export default {
 
   beforeDestroy() {
     //this.nodeSimulation = null;
-    //this.svgGroup.empty();
+    this.deviceTreeMounted = false;
   },
 
   methods: {
@@ -376,8 +280,6 @@ export default {
         const tree = {};
         tree.nodes = root.descendants();
         tree.links = root.links(tree.nodes);
-        // this.initNodes();
-        // this.initLinks();
         return tree;
       } catch (error) {
         return error;
@@ -448,8 +350,8 @@ export default {
     },
 
     removeDeviceTree() {
-      this.removeNodes();
       this.removeLinks();
+      this.removeNodes();
       this.removeImages();
       this.removeTexts();
       this.removeTooltip();
@@ -462,6 +364,11 @@ export default {
         const tree = this.generateTree(this.graph);
         this.graphNodes = tree.nodes;
         this.graphLinks = tree.links;
+        this.links = this.initLinks(this.graphLinks);
+        this.nodes = this.initNodes(this.graphNodes);
+        this.images = this.initImages(this.graphNodes);
+        this.descriptions = this.initTexts(this.graphLinks);
+        this.tooltip = this.initTooltip();
         this.applyForce(tree.nodes, tree.links);
       }
     },
@@ -469,8 +376,14 @@ export default {
     updateDeviceTree() {
       if (this.deviceTreeState()) {
         this.removeDeviceTree();
+        this.links = this.initLinks(this.graphLinks);
+        this.nodes = this.initNodes(this.graphNodes);
+        this.images = this.initImages(this.graphNodes);
+        this.descriptions = this.initTexts(this.graphLinks);
+        this.tooltip = this.initTooltip();
+        this.nodeSimulation.nodes(this.graphNodes);
+        //  this.nodeSimulation.nodes(this.graphNodes).on('tick', this.ticked);
         this.nodeSimulation.alphaTarget(0.3).restart();
-        this.nodeSimulation.nodes(this.graphNodes).on('tick', this.ticked);
       }
     },
 
@@ -482,17 +395,20 @@ export default {
           //  graph = this.graph;
         }
         graph = await this.generateGraph();
-
         const tree = this.generateTree(graph);
         this.graphNodes = tree.nodes;
         this.graphLinks = tree.links;
+        this.links = this.initLinks(this.graphLinks);
+        this.nodes = this.initNodes(this.graphNodes);
+        this.images = this.initImages(this.graphNodes);
+        this.descriptions = this.initTexts(this.graphLinks);
+        this.tooltip = this.initTooltip();
         this.initZoom();
         this.svg.call(this.zoomListener);
         //  this.svg.call(this.zoomListener.transform, zoomIdentity);
         //  this.svg.call(this.initZoom).on('wheel', () => event.preventDefault());
-
-        //  console.log('graph', graph, this.graphNodes, this.graphLinks);
         this.applyForce(tree.nodes, tree.links);
+        this.deviceTreeMounted = true;
         return tree;
       } catch (error) {
         return error;
@@ -514,6 +430,36 @@ export default {
 
     calcYCoordinate(maxNodeSize, y) {
       return Math.max(maxNodeSize, Math.min(this.updatedHeight - this.nodeSize, y));
+    },
+
+    initNodes(graphNodes) {
+      const nodes = this.svgGroup
+        .append('g')
+        .attr('class', 'nodes-group')
+        .selectAll('circle')
+        .data(graphNodes, d => d.data.id)
+        .enter()
+        .append('circle')
+        .attr('id', d => (d.data.id ? `node-${d.data.id}` : ''))
+        .attr('class', this.nodeClass)
+        .attr('r', this.nodeRadius)
+        .attr('filter', 'url(#circle-shadow)')
+        .style('fill', this.nodeFill)
+        .style('cursor', 'pointer')
+        .on('click', this.mouseClick)
+        .on('mouseover', function() {
+          select(this).attr('filter', 'url(#circle-shadow-selected)');
+        })
+        .on('mouseout', function() {
+          select(this).attr('filter', 'url(#circle-shadow)');
+        })
+        .call(
+          drag()
+            .on('start', this.dragStarted)
+            .on('drag', this.dragged)
+            .on('end', this.dragEnded),
+        );
+      return nodes;
     },
 
     removeNodes() {
@@ -575,6 +521,23 @@ export default {
     //   });
     // },
 
+    initLinks(graphLinks) {
+      const links = this.svgGroup
+        .append('g')
+        .attr('class', 'links-group')
+        .selectAll('path.link')
+        .data(graphLinks, d => d.target.data.id)
+        .enter()
+        .insert('path')
+        .attr('id', d => (d.target.data.id ? `link-${d.target.data.id}` : ''))
+        .attr('class', this.linkClass)
+        .style('stroke-width', this.linkWidth)
+        .style('stroke', this.colors.lightblue)
+        .style('opacity', '0.4')
+        .style('fill', 'none');
+      return links;
+    },
+
     removeLinks() {
       [...this.$el.getElementsByClassName('links-group')].map(n => n && n.remove());
     },
@@ -625,6 +588,34 @@ export default {
         .styleTween('opacity', () => interpolate(1, 0.4));
     },
 
+    initImages(graphNodes) {
+      const images = this.svgGroup
+        .append('g')
+        .attr('class', 'images-group')
+        .selectAll('image')
+        .data(graphNodes, d => d.data.id)
+        .enter()
+        .append('image')
+        .attr('class', this.imageClass)
+        .attr('xlink:href', this.imageUrl)
+        .attr('crossOrigin', 'anonymous')
+        .attr('x', d => `${(-1 * this.nodeRadius(d)) / 2}`)
+        .attr('y', d => `${(-1 * this.nodeRadius(d)) / 2}`)
+        .attr('width', d => `${this.nodeRadius(d)}px`)
+        .attr('height', d => `${this.nodeRadius(d)}px`)
+        .style('cursor', 'pointer')
+        .on('click', this.mouseClick)
+        .on('mouseenter', this.mouseEnter)
+        .on('mouseleave', this.mouseLeave)
+        .on('mouseover', d => {
+          select(`#node-${d.data.id}`).attr('filter', 'url(#circle-shadow-selected)');
+        })
+        .on('mouseout', d => {
+          select(`#node-${d.data.id}`).attr('filter', 'url(#circle-shadow)');
+        });
+      return images;
+    },
+
     removeImages() {
       [...this.$el.getElementsByClassName('images-group')].map(n => n && n.remove());
     },
@@ -666,6 +657,28 @@ export default {
       return '';
     },
 
+    initTexts(graphLinks) {
+      const texts = this.svgGroup
+        .append('g')
+        .attr('class', 'descriptions-group')
+        .style('display', 'none')
+        .selectAll('text')
+        .data(graphLinks, d => d.target.data.id)
+        .enter()
+        .insert('text')
+        .attr('id', d => (d.target.data.id ? `description-${d.target.data.id}` : ''))
+        .attr('class', this.textClass)
+        .attr('font-family', this.fonts.text)
+        .attr('fill', this.colors.lightblue)
+        .append('textPath')
+        .attr('xlink:href', d => `#link-${d.target.data.id}`)
+        .attr('text-anchor', 'start')
+        .attr('startOffset', '25%')
+        .style('font-size', '10px')
+        .text(this.textValue);
+      return texts;
+    },
+
     removeTexts() {
       [...this.$el.getElementsByClassName('descriptions-group')].map(n => n && n.remove());
     },
@@ -704,6 +717,21 @@ export default {
         .styleTween('fill', () => interpolate(this.colors.yellow, this.colors.lightblue));
     },
 
+    initTooltip() {
+      const tooltip = this.svgGroup
+        .append('g')
+        .attr('class', 'tooltip-group')
+        .style('display', 'none')
+        .style('cursor', 'pointer')
+        .on('mouseleave', this.hideTooltip)
+        .on('click', this.hideTooltip);
+      return tooltip;
+    },
+
+    removeTooltip() {
+      [...this.$el.getElementsByClassName('tooltip-group')].map(n => n && n.remove());
+    },
+
     showTooltip(d) {
       [...this.$el.getElementsByClassName('tooltip-class')].map(n => n && n.remove());
       // const tootltip = this.svg.selectAll('.tooltip-group');
@@ -738,10 +766,6 @@ export default {
     hideTooltip(d) {
       this.tooltip.style('display', 'none');
       [...this.$el.getElementsByClassName('tooltip-class')].map(n => n && n.remove());
-    },
-
-    removeTooltip() {
-      [...this.$el.getElementsByClassName('tooltip-group')].map(n => n && n.remove());
     },
 
     ticked() {
@@ -806,10 +830,9 @@ export default {
       return () => {
         const transform = event.transform;
         const size = { width: this.updatedWidth, height: this.updatedHeight };
-        //  console.log('zoomed', g, transform, size);
+        //  console.log('zoomed', transform, size);
         const transformToApply = this.updateTransform(transform, this.margin, size);
         this.currentTransform = transform;
-        //  console.log('transformToApply', transformToApply);
         this.$emit('zoom', { transform });
         g.attr('transform', transformToApply);
       };
@@ -886,10 +909,12 @@ export default {
         node.group = 2;
         const graphNode = hierarchy(node);
         graphNode.parent = this.findGraphNode(node.deviceId);
-        graphNode.index = this.graphNodes.length + 1;
+        graphNode.index = this.graphNodes.length;
+        //  graphNode.index = this.graphNodes.length + 1;
         this.addGraphNode(graphNode);
         //  console.log('onNodeCreated:links:res', this.graphLinks[0]);
-        this.addGraphLink(node.deviceId, node.id, { index: this.graphLinks.length + 1 });
+        this.addGraphLink(node.deviceId, node.id, { index: this.graphLinks.length });
+        //  this.addGraphLink(node.ownerId, node.id, { index: this.graphLinks.length + 1 });
         this.updateDeviceTree();
       } else if (node.ownerId) {
         node.size = 0.4;
@@ -897,18 +922,18 @@ export default {
         node.show = true;
         const graphNode = hierarchy(node);
         graphNode.parent = this.findGraphNode(node.ownerId);
-        graphNode.index = this.graphNodes.length + 1;
+        graphNode.index = this.graphNodes.length;
         //  console.log('onNodeCreated:node:res', graphNode);
         this.addGraphNode(graphNode);
-        this.addGraphLink(node.ownerId, node.id, { index: this.graphLinks.length + 1 });
+        this.addGraphLink(node.ownerId, node.id, { index: this.graphLinks.length });
         this.updateDeviceTree();
       }
-
       //  this.keepNodesOnTop();
     },
 
     onNodeUpdated(node) {
       try {
+        if (!node || !node.id) return null;
         if (node.deviceId) {
           node.size = 0.2;
           node.group = 2;
@@ -940,6 +965,7 @@ export default {
     },
 
     onNodeDeleted(node) {
+      if (!node || !node.id) return null;
       this.removeGraphNode(node.id);
       this.updateDeviceTree();
       //  this.keepNodesOnTop();

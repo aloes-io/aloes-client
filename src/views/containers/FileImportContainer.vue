@@ -10,6 +10,7 @@
     header-class="file-import-container-header"
     body-class="file-import-container-body"
     class="file-import-container"
+    hide-backdrop
     @hidden="onModalHidden"
     @shown="onModalShown"
   >

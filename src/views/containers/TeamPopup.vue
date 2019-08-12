@@ -10,6 +10,7 @@
     modal-class="team-popup-modal"
     header-class="team-popup-header"
     body-class="team-popup-body"
+    hide-backdrop
     @hidden="onModalHidden"
   >
     <b-button v-if="isMember" class="team-popup-button" @click="delTeamMember">

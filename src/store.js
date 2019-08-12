@@ -136,6 +136,7 @@ export default new Vuex.Store({
       { text: 'Screen', value: 'screen' },
       { text: 'Switch input', value: 'switch-input' },
       { text: 'Switch output', value: 'switch-output' },
+      { text: 'Timer', value: 'timer' },
       { text: 'Geolocator', value: 'tracker' },
       { text: 'Vehicle', value: 'vehicle' },
       { text: 'Weather station', value: 'weather station' },

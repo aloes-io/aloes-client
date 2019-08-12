@@ -1,167 +1,176 @@
 <template lang="html">
-  <b-row
+  <div
     v-if="fullDevices && fullDevices !== null && tabsIndex === 2"
     v-show="fullDevices.length > 0"
-    align-v="center"
-    align-h="center"
   >
-    <b-col cols="12" sm="12" md="6" lg="7" xl="8" order-md="12" order-lg="12" order-xl="12">
-      <device-tree
-        ref="deviceTree"
-        :height="500"
-        :width="600"
-        :devices="fullDevices"
-        :zoom-slider="zoomSlider"
-        :nodes-radius="nodesRadius"
-        :links-length="linksLength"
-        @node-selected="onNodeSelected"
-        @node-deselected="onNodeDeselected"
-        @node-clicked="onNodeClicked"
-      />
-    </b-col>
-    <b-col
-      class="device-tree-panel"
-      cols="12"
-      sm="12"
-      md="6"
-      lg="5"
-      xl="4"
-      order-md="1"
-      order-lg="1"
-      order-xl="1"
+    <b-row align-v="center" align-h="center">
+      <b-col cols="12" sm="12" md="12" lg="10" xl="8">
+        <device-tree
+          class="device-tree"
+          ref="deviceTree"
+          :height="windowHeight"
+          :width="windowHeight"
+          :devices="fullDevices"
+          :zoom-slider="zoomSlider"
+          :nodes-radius="nodesRadius"
+          :links-length="linksLength"
+          @node-selected="onNodeSelected"
+          @node-deselected="onNodeDeselected"
+          @node-clicked="onNodeClicked"
+        />
+      </b-col>
+    </b-row>
+    <b-row>
+      <b-col class="device-tree-panel" cols="12" sm="4" md="4" lg="5" xl="4">
+        <b-form-group
+          id="zoom-group"
+          label-cols="4"
+          label="Zoom"
+          label-for="zoom-slider"
+          label-size="sm"
+          breakpoint="sm"
+        >
+          <b-form-input
+            id="zoom-slider"
+            class="form-control"
+            type="range"
+            min="0.2"
+            max="2.5"
+            step="0.1"
+            v-model.number="zoomSlider"
+          />
+        </b-form-group>
+        <b-form-group
+          id="nodes-radius-group"
+          label-cols="4"
+          label="Nodes radius :"
+          label-for="nodes-radius"
+          label-size="sm"
+          breakpoint="sm"
+        >
+          <b-form-input
+            id="nodes-radius"
+            type="range"
+            :min="minNodesRadius"
+            :max="maxNodesRadius"
+            :step="nodesRadiusStep"
+            v-model.number="nodesRadius"
+          />
+        </b-form-group>
+        <b-form-group
+          id="links-length-group"
+          label-cols="4"
+          label="Links length :"
+          label-for="links-length"
+          label-size="sm"
+          breakpoint="sm"
+        >
+          <b-form-input
+            id="links-length"
+            class="form-control"
+            type="range"
+            :min="minLinksLength"
+            :max="maxLinksLength"
+            :step="linksLengthStep"
+            v-model.number="linksLength"
+          />
+        </b-form-group>
+        <b-row>
+          <b-col cols="4" sm="4" lg="4" xl="4">
+            Sensors :
+          </b-col>
+          <b-col cols="3" sm="3" lg="3" xl="2">
+            <b-button class="show-sensors" @click.prevent.stop="toggleSensors(!showSensors)">
+              <transition :duration="100" name="fade" mode="out-in">
+                <fa-icon v-if="showSensors" key="showSensors" icon="toggle-on" size="lg" />
+                <fa-icon v-else key="hideSensors" icon="toggle-off" size="lg" />
+              </transition>
+            </b-button>
+          </b-col>
+        </b-row>
+        <b-row>
+          <b-col cols="4" sm="4" lg="4" xl="4">
+            Descriptions :
+          </b-col>
+          <b-col cols="3" sm="3" lg="3" xl="2">
+            <b-button
+              class="show-sensors"
+              @click.prevent.stop="toggleDescriptions(!showDescriptions)"
+            >
+              <transition :duration="100" name="fade" mode="out-in">
+                <fa-icon
+                  v-if="showDescriptions"
+                  key="showDescriptions"
+                  icon="toggle-on"
+                  size="lg"
+                />
+                <fa-icon v-else key="hideDescriptions" icon="toggle-off" size="lg" />
+              </transition>
+            </b-button>
+          </b-col>
+        </b-row>
+      </b-col>
+      <b-col class="device-tree-panel" cols="12" sm="8" md="8" lg="6" xl="6">
+        <transition name="fade" mode="out-in">
+          <sensor-snap
+            v-if="sensor && sensor.id && showSensor"
+            :ref="`sensorSnap-${sensor.id}`"
+            :id="sensor.id.toString()"
+            :device-id="sensor.deviceId.toString()"
+            :owner-id="sensor.ownerId.toString()"
+            :dev-eui="sensor.devEui"
+            :dev-addr="sensor.devAddr"
+            :name="sensor.name"
+            :type="sensor.type"
+            :value="JSON.stringify(sensor.value)"
+            :frame-counter="sensor.frameCounter"
+            :resources="JSON.stringify(sensor.resources)"
+            :resource="sensor.resource"
+            :icons="sensor.icons.toString()"
+            :colors="JSON.stringify(sensor.colors)"
+            :transport-protocol="sensor.transportProtocol"
+            :transport-protocol-version="sensor.transportProtocolVersion"
+            :message-protocol="sensor.messageProtocol"
+            :message-protocol-version="sensor.messageProtocolVersion"
+            :input-path="sensor.inputPath || null"
+            :output-path="sensor.outputPath || null"
+            :in-prefix="sensor.inPrefix"
+            :out-prefix="sensor.outPrefix"
+            :native-type="sensor.nativeType"
+            :native-resource="sensor.nativeResource"
+            :native-sensor-id="sensor.nativeSensorId"
+            :native-node-id="sensor.nativeNodeId || null"
+            :height="320"
+            :width="300"
+            key="sensorSnap"
+            @update-sensor="onUpdateSensor"
+            @update-setting="onUpdateSetting"
+            @delete-sensor="onDeleteSensor"
+          />
+          <device-card
+            v-else-if="device && device !== null && showDevice"
+            :device="device"
+            ref="deviceCard"
+            key="deviceCard"
+          />
+        </transition>
+      </b-col>
+    </b-row>
+    <b-modal
+      id="delete-sensor-modal"
+      ref="confirmPopup"
+      size="sm"
+      hide-backdrop
+      modal-class="header-popup-modal"
+      body-class="header-popup-body"
+      footer-class="header-popup-footer"
+      class="header-popup-view"
+      @ok="onYes"
+      @cancel="onNo"
     >
-      <b-form-group
-        id="zoom-group"
-        label-cols="4"
-        label="Zoom"
-        label-for="zoom-slider"
-        label-size="sm"
-        breakpoint="sm"
-      >
-        <b-form-input
-          id="zoom-slider"
-          class="form-control"
-          type="range"
-          min="0.2"
-          max="2.5"
-          step="0.1"
-          v-model.number="zoomSlider"
-        />
-      </b-form-group>
-      <b-form-group
-        id="nodes-radius-group"
-        label-cols="4"
-        label="Nodes radius :"
-        label-for="nodes-radius"
-        label-size="sm"
-        breakpoint="sm"
-      >
-        <b-form-input
-          id="nodes-radius"
-          type="range"
-          :min="minNodesRadius"
-          :max="maxNodesRadius"
-          :step="nodesRadiusStep"
-          v-model.number="nodesRadius"
-        />
-      </b-form-group>
-      <b-form-group
-        id="links-length-group"
-        label-cols="4"
-        label="Links length :"
-        label-for="links-length"
-        label-size="sm"
-        breakpoint="sm"
-      >
-        <b-form-input
-          id="links-length"
-          class="form-control"
-          type="range"
-          :min="minLinksLength"
-          :max="maxLinksLength"
-          :step="linksLengthStep"
-          v-model.number="linksLength"
-        />
-      </b-form-group>
-      <b-row>
-        <b-col cols="4" sm="4" lg="4" xl="4">
-          Sensors :
-        </b-col>
-        <b-col cols="3" sm="3" lg="3" xl="2">
-          <b-button class="show-sensors" @click.prevent.stop="toggleSensors(!showSensors)">
-            <transition :duration="100" name="fade" mode="out-in">
-              <fa-icon v-if="showSensors" key="showSensors" icon="toggle-on" size="lg" />
-              <fa-icon v-else key="hideSensors" icon="toggle-off" size="lg" />
-            </transition>
-          </b-button>
-        </b-col>
-      </b-row>
-      <b-row>
-        <b-col cols="4" sm="4" lg="4" xl="4">
-          Descriptions :
-        </b-col>
-        <b-col cols="3" sm="3" lg="3" xl="2">
-          <b-button
-            class="show-sensors"
-            @click.prevent.stop="toggleDescriptions(!showDescriptions)"
-          >
-            <transition :duration="100" name="fade" mode="out-in">
-              <fa-icon v-if="showDescriptions" key="showDescriptions" icon="toggle-on" size="lg" />
-              <fa-icon v-else key="hideDescriptions" icon="toggle-off" size="lg" />
-            </transition>
-          </b-button>
-        </b-col>
-      </b-row>
-      <br />
-      <transition name="fade" mode="out-in">
-        <sensor-snap
-          v-if="sensor && sensor.id && showSensor"
-          :ref="`sensorSnap-${sensor.id}`"
-          :id="sensor.id.toString()"
-          :device-id="sensor.deviceId.toString()"
-          :owner-id="sensor.ownerId.toString()"
-          :dev-eui="sensor.devEui"
-          :dev-addr="sensor.devAddr"
-          :name="sensor.name"
-          :type="sensor.type"
-          :value="JSON.stringify(sensor.value)"
-          :frame-counter="sensor.frameCounter"
-          :resources="JSON.stringify(sensor.resources)"
-          :resource="sensor.resource"
-          :icons="sensor.icons.toString()"
-          :colors="JSON.stringify(sensor.colors)"
-          :transport-protocol="sensor.transportProtocol"
-          :transport-protocol-version="sensor.transportProtocolVersion"
-          :message-protocol="sensor.messageProtocol"
-          :message-protocol-version="sensor.messageProtocolVersion"
-          :input-path="sensor.inputPath || null"
-          :output-path="sensor.outputPath || null"
-          :in-prefix="sensor.inPrefix"
-          :out-prefix="sensor.outPrefix"
-          :native-type="sensor.nativeType"
-          :native-resource="sensor.nativeResource"
-          :native-sensor-id="sensor.nativeSensorId"
-          :native-node-id="sensor.nativeNodeId || null"
-          :height="320"
-          :width="300"
-          key="sensorSnap"
-          @update-sensor="onUpdateSensor"
-          @update-setting="onUpdateSetting"
-          @delete-sensor="onDeleteSensor"
-        />
-        <device-card
-          v-else-if="device && device !== null && showDevice"
-          :device="device"
-          ref="deviceCard"
-          key="deviceCard"
-        />
-      </transition>
-    </b-col>
-
-    <b-modal ref="confirmPopup" size="sm" @ok="onYes" @cancel="onNo">
       {{ confirm.message }}
     </b-modal>
-  </b-row>
+  </div>
 </template>
 
 <script type="text/javascript">
@@ -317,6 +326,12 @@ export default {
         }
       },
     },
+    windowWidth() {
+      return this.$store.state.windowWidth;
+    },
+    windowHeight() {
+      return this.$store.state.windowHeight;
+    },
     errorMessageExists() {
       return has(this.error, 'message');
       //  return _.;
@@ -421,7 +436,6 @@ export default {
         sensor,
         userId: this.$props.userId,
       });
-
       return sensor;
     },
 
@@ -467,14 +481,12 @@ export default {
       if (this.deviceTree && this.deviceTree !== null) {
         this.showSensors = state;
         this.deviceTree.initDeviceTree();
-        //  this.devices.forEach(device => this.deviceTree.toggleDeviceSensors(device, state));
       }
     },
 
     toggleDescriptions(state) {
       if (this.deviceTree && this.deviceTree !== null) {
         this.showDescriptions = state;
-        //  this.deviceTree.showDescriptions = state;
         this.deviceTree.toggleDescriptions(state);
       }
     },
@@ -484,4 +496,29 @@ export default {
 
 <style lang="scss">
 @import '../../style/device-container.scss';
+.device-tree-panel {
+  min-height: 80%;
+}
+div#delete-sensor-modal > .modal-dialog > .modal-content {
+  border-radius: $card-border-radius;
+  border: 1px solid transparent;
+  box-shadow: $mini-card-shadow;
+  -webkit-transition: box-shadow 150ms ease;
+  transition: box-shadow 150ms ease;
+  color: black;
+}
+
+.header-popup-body {
+  color: $primary;
+}
+.header-popup-footer {
+  button.btn-primary {
+    color: white;
+    background-color: $blue;
+  }
+  button.btn-secondary {
+    color: white;
+    background-color: $light-blue;
+  }
+}
 </style>

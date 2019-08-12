@@ -1,54 +1,64 @@
 <template lang="html">
-  <b-card class="device-sensors-view">
-    <transition name="fade">
-      <b-row v-if="webComponentsLoaded && sensors">
-        <b-col v-for="sensor in sensors" :key="sensor.id" cols="6" sm="6" md="4" lg="4" xl="4">
-          <sensor-snap
-            :ref="`sensorSnap${sensor.id}`"
-            :id="sensor.id.toString()"
-            :owner-id="sensor.ownerId.toString()"
-            :device-id="sensor.deviceId.toString()"
-            :dev-eui="sensor.devEui"
-            :dev-addr="sensor.devAddr"
-            :name="sensor.name"
-            :type="sensor.type"
-            :value="JSON.stringify(sensor.value)"
-            :frame-counter="sensor.frameCounter"
-            :resources="JSON.stringify(sensor.resources)"
-            :resource="sensor.resource"
-            :icons="sensor.icons.toString()"
-            :colors="JSON.stringify(sensor.colors)"
-            :transport-protocol="sensor.transportProtocol"
-            :transport-protocol-version="sensor.transportProtocolVersion"
-            :message-protocol="sensor.messageProtocol"
-            :message-protocol-version="sensor.messageProtocolVersion"
-            :input-path="sensor.inputPath || null"
-            :output-path="sensor.outputPath || null"
-            :in-prefix="sensor.inPrefix"
-            :out-prefix="sensor.outPrefix"
-            :native-type="sensor.nativeType"
-            :native-resource="sensor.nativeResource"
-            :native-sensor-id="sensor.nativeSensorId"
-            :native-node-id="sensor.nativeNodeId || null"
-            :width="150"
-            :height="160"
-            class="sensor-snap"
-            @update-sensor="onUpdateSensor"
-            @update-setting="onUpdateSetting"
-            @delete-sensor="onDeleteSensor"
-          />
-        </b-col>
-      </b-row>
-    </transition>
-    <b-modal ref="confirmPopup" size="sm" @ok="onYes" @cancel="onNo">
+  <div class="device-sensors-view">
+    <div class="sensors-list">
+      <transition name="fade">
+        <b-row v-if="webComponentsLoaded && sensors" class="sensor-snaps-container">
+          <b-col
+            v-for="sensor in sensors"
+            :key="sensor.id"
+            cols="12"
+            sm="6"
+            md="6"
+            lg="4"
+            xl="3"
+            class="sensor-snap-container"
+          >
+            <sensor-snap
+              :ref="`sensorSnap${sensor.id}`"
+              :id="sensor.id.toString()"
+              :owner-id="sensor.ownerId.toString()"
+              :device-id="sensor.deviceId.toString()"
+              :dev-eui="sensor.devEui"
+              :dev-addr="sensor.devAddr"
+              :name="sensor.name"
+              :type="sensor.type"
+              :value="JSON.stringify(sensor.value)"
+              :frame-counter="sensor.frameCounter"
+              :resources="JSON.stringify(sensor.resources)"
+              :resource="sensor.resource"
+              :icons="sensor.icons.toString()"
+              :colors="JSON.stringify(sensor.colors)"
+              :transport-protocol="sensor.transportProtocol"
+              :transport-protocol-version="sensor.transportProtocolVersion"
+              :message-protocol="sensor.messageProtocol"
+              :message-protocol-version="sensor.messageProtocolVersion"
+              :input-path="sensor.inputPath || null"
+              :output-path="sensor.outputPath || null"
+              :in-prefix="sensor.inPrefix"
+              :out-prefix="sensor.outPrefix"
+              :native-type="sensor.nativeType"
+              :native-resource="sensor.nativeResource"
+              :native-sensor-id="sensor.nativeSensorId"
+              :native-node-id="sensor.nativeNodeId || null"
+              :width="180"
+              :height="200"
+              @update-sensor="onUpdateSensor"
+              @update-setting="onUpdateSetting"
+              @delete-sensor="onDeleteSensor"
+            />
+          </b-col>
+        </b-row>
+      </transition>
+    </div>
+    <b-modal ref="confirmPopup" hide-backdrop size="sm" @ok="onYes" @cancel="onNo">
       {{ confirm.message }}
     </b-modal>
-  </b-card>
+  </div>
 </template>
 
 <script>
 import { updateAloesSensors } from 'aloes-handlers';
-import { BCard } from 'bootstrap-vue';
+//  import { BCard } from 'bootstrap-vue';
 import { BModal } from 'bootstrap-vue';
 import logger from '@/services/logger';
 
@@ -56,7 +66,7 @@ export default {
   name: 'SensorsList',
 
   components: {
-    'b-card': BCard,
+    //  'b-card': BCard,
     'b-modal': BModal,
     'sensor-snap': () => import('sensor-snap'),
   },
@@ -172,7 +182,7 @@ export default {
       if (!args || !args[0].id) return null;
       let sensor = args[0];
       sensor.resources[args[1].toString()] = args[2];
-      sensor.resource = args[1].toString();
+      sensor.resource = args[1];
       sensor.value = args[2];
       sensor.lastSignal = new Date();
       //  console.log('onUpdateSetting', sensor);

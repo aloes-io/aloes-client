@@ -39,7 +39,6 @@
 <script type="text/javascript">
 import { BButton } from 'bootstrap-vue';
 import { BFormSelect } from 'bootstrap-vue';
-//  import DeviceInline from '@/components/Device/DeviceInline.vue';
 
 export default {
   name: 'DevicesList',
@@ -47,7 +46,6 @@ export default {
   components: {
     'b-button': BButton,
     'b-form-select': BFormSelect,
-    //  'device-inline': DeviceInline,
     'device-inline': () => import('@/components/Device/DeviceInline.vue'),
   },
 

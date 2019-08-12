@@ -14,22 +14,7 @@
       </b-row>
     </b-navbar-brand>
     <b-collapse id="nav_collapse" is-nav>
-      <b-navbar-nav v-if="!access_token || access_token === null" class="w-55">
-        <b-nav-item @click.prevent.stop="$refs.loginPopup.showModal()">
-          <fa-icon icon="sign-in-alt" size="lg" /> Signin
-        </b-nav-item>
-        <b-nav-item @click.prevent.stop="$refs.signupPopup.showModal()">
-          <fa-icon icon="user-plus" size="lg" /> Signup
-        </b-nav-item>
-        <login-popup ref="loginPopup" />
-        <signup-popup ref="signupPopup" />
-      </b-navbar-nav>
-      <!--   <b-navbar-nav v-else-if="access_token && !account" class="w-55">
-        <b-nav-item @click.prevent.stop="onLogoutClick">
-          <fa-icon icon="sign-out-alt" size="lg" /> Signout
-        </b-nav-item>
-      </b-navbar-nav> -->
-      <b-navbar-nav v-else-if="access_token && account" class="w-55">
+      <b-navbar-nav v-if="access_token && account" class="w-55">
         <b-nav-item
           :to="{
             name: 'search',
@@ -93,6 +78,22 @@
           <fa-icon icon="sign-out-alt" size="lg" />
         </b-nav-item>
       </b-navbar-nav>
+      <b-navbar-nav v-else class="w-55">
+        <!-- <b-navbar-nav v-else-if="!access_token || access_token === null" class="w-55"> -->
+        <b-nav-item @click.prevent.stop="$refs.loginPopup.showModal()">
+          <fa-icon icon="sign-in-alt" size="lg" /> Signin
+        </b-nav-item>
+        <b-nav-item @click.prevent.stop="$refs.signupPopup.showModal()">
+          <fa-icon icon="user-plus" size="lg" /> Signup
+        </b-nav-item>
+        <login-popup ref="loginPopup" />
+        <signup-popup ref="signupPopup" />
+      </b-navbar-nav>
+      <!--   <b-navbar-nav v-else-if="access_token && !account" class="w-55">
+        <b-nav-item @click.prevent.stop="onLogoutClick">
+          <fa-icon icon="sign-out-alt" size="lg" /> Signout
+        </b-nav-item>
+      </b-navbar-nav> -->
     </b-collapse>
   </b-navbar>
 </template>

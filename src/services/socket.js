@@ -2,6 +2,8 @@ import mqtt from 'async-mqtt';
 import logger from './logger';
 import PubSub from './PubSub';
 
+const Storage = window.sessionStorage;
+
 const brokerUrl = process.env.VUE_APP_BROKER_URL;
 const baseOptions = {
   //  keepalive: 60,
@@ -10,13 +12,30 @@ const baseOptions = {
   protocolVersion: 4,
   reconnectPeriod: 5000,
   connectTimeout: 30 * 1000,
-  clean: false,
+  clean: true,
   clientId: null,
   username: null,
   password: null,
 };
 
 const socket = {};
+
+const setSocketId = socketId => {
+  if (Storage) {
+    Storage.setItem('socket-id', socketId);
+  }
+};
+
+const delSocketId = () => {
+  if (Storage) {
+    Storage.removeItem('socket-id');
+  }
+};
+
+const getSocketId = () => {
+  const socketId = Storage && Storage.getItem('socket-id');
+  return socketId;
+};
 
 socket.setToken = async token => {
   try {
@@ -53,32 +72,34 @@ socket.removeToken = async () => {
 
 socket.initSocket = options => {
   logger.publish(3, 'socket', 'initSocket', options);
+
+  let socketId = getSocketId();
+  if (socketId && socketId !== null && socket.client) {
+    return null;
+  }
+
   socket.client = mqtt.connect(brokerUrl, options);
 
-  socket.client.once('connect', async state => {
+  socket.client.on('connect', async state => {
     logger.publish(3, 'socket', 'onConnect', state);
     if (socket.client && socket.client._client.connected) {
+      setSocketId(options.clientId);
       await PubSub.setListeners(socket.client, socket.token);
     }
     //  socket.client.publish(`${token.userId.toString()}/Authentication/POST`, "yooo");
     return null;
   });
 
-  socket.client.once('disconnect', async state => {
+  socket.client.on('offline', async state => {
     logger.publish(3, 'socket', 'onDisconnect', state);
-    await PubSub.close(socket.client);
-    return null;
-  });
-
-  socket.client.once('offline', async state => {
-    logger.publish(3, 'socket', 'onDisconnect', state);
+    delSocketId();
     await PubSub.close(socket.client);
     return null;
   });
 
   socket.client.on('message', async (topic, message) => {
     logger.publish(3, 'socket', 'onMessage', topic);
-    await PubSub.handler(topic, message);
+    return PubSub.handler(topic, message);
   });
 
   return socket;

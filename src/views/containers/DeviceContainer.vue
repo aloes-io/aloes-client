@@ -49,9 +49,9 @@
 </template>
 
 <script type="text/javascript">
-import has from 'lodash.has';
 import { BTab } from 'bootstrap-vue';
 import { BTabs } from 'bootstrap-vue';
+import has from 'lodash.has';
 import { EventBus } from '@/services/PubSub';
 import logger from '@/services/logger';
 
@@ -149,10 +149,6 @@ export default {
       },
       set(value) {
         if (value.sensors) {
-          // this.$store.commit('sensor/setStateKV', {
-          //   key: 'deviceSensors',
-          //   value: value.sensors,
-          // });
           delete value.sensors;
         }
         this.$store.commit('device/setStateKV', {
@@ -194,7 +190,6 @@ export default {
     },
     errorMessageExists() {
       return has(this.error, 'message');
-      //  return _.;
     },
     successMessageExists() {
       return has(this.sucess, 'message');
@@ -363,42 +358,58 @@ export default {
       }
     },
 
-    setListeners() {
-      // TODO Avoid duplicated listeners
-      EventBus.$on('onDeviceDeleted', device => {
+    deleteDevice(device) {
+      try {
         if (device && device.id) {
           this.updateCollection('devices', 'delete', device);
           if (this.deviceTree && this.deviceTree !== null) {
             this.deviceTree.onNodeDeleted(device);
           }
-          if (device.id.toString() === this.device.id.toString()) {
+          if (this.device && this.device.id && device.id.toString() === this.device.id.toString()) {
             this.$store.commit('device/cleanModel');
           }
+          return device;
         }
-      });
+        throw new Error('No device Id');
+      } catch (error) {
+        return error;
+      }
+    },
 
-      EventBus.$on('onDeviceCreated', device => {
+    createDevice(device) {
+      try {
         if (device && device.id) {
           this.updateCollection('devices', 'create', device);
           if (this.deviceTree && this.deviceTree !== null) {
             this.deviceTree.onNodeCreated(device);
           }
           //  this.device = device;
+          return device;
         }
-      });
+        throw new Error('No device Id');
+      } catch (error) {
+        return error;
+      }
+    },
 
-      EventBus.$on('onDeviceUpdated', device => {
+    updateDevice(device) {
+      try {
         if (device && device.id) {
           this.updateCollection('devices', 'update', device);
           if (this.deviceTree && this.deviceTree !== null) {
             this.deviceTree.onNodeUpdated(device);
           }
         }
-      });
+        throw new Error('No device Id');
+      } catch (error) {
+        return error;
+      }
+    },
 
-      EventBus.$on('onSensorDeleted', sensor => {
+    deleteSensor(sensor) {
+      try {
         if (sensor && sensor.id) {
-          if (sensor.deviceId === this.device.id) {
+          if (this.device && this.device.id && sensor.deviceId === this.device.id) {
             this.updateCollection('sensors', 'delete', sensor);
           }
           if (this.deviceTree && this.deviceTree !== null) {
@@ -408,9 +419,14 @@ export default {
           //   this.$store.commit('sensor/cleanModel');
           // }
         }
-      });
+        throw new Error('No sensor Id');
+      } catch (error) {
+        return error;
+      }
+    },
 
-      EventBus.$on('onSensorCreated', sensor => {
+    createSensor(sensor) {
+      try {
         if (sensor && sensor.id) {
           //  if (sensor.deviceId.toString() === this.device.id.toString()) {
           if (sensor.isNewInstance) {
@@ -427,9 +443,14 @@ export default {
             }
           }
         }
-      });
+        throw new Error('No sensor Id');
+      } catch (error) {
+        return error;
+      }
+    },
 
-      EventBus.$on('onSensorUpdated', sensor => {
+    updateSensor(sensor) {
+      try {
         if (sensor && sensor.id) {
           //  if (sensor.deviceId.toString() === this.device.id.toString()) {
           this.updateCollection('sensors', 'update', sensor);
@@ -438,7 +459,20 @@ export default {
             this.deviceTree.onNodeUpdated(sensor);
           }
         }
-      });
+        throw new Error('No sensor Id');
+      } catch (error) {
+        return error;
+      }
+    },
+
+    setListeners() {
+      EventBus.$on('onDeviceDeleted', this.deleteDevice);
+      EventBus.$on('onDeviceCreated', this.createDevice);
+      EventBus.$on('onDeviceUpdated', this.updateDevice);
+      EventBus.$on('onSensorDeleted', this.deleteSensor);
+      EventBus.$on('onSensorPresented', sensor => EventBus.$emit('onSensorCreated', sensor));
+      EventBus.$on('onSensorCreated', this.createSensor);
+      EventBus.$on('onSensorUpdated', this.updateSensor);
     },
 
     removeListeners() {

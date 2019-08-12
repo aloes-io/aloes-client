@@ -304,7 +304,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss">
-@import '../../style/home.scss';
-</style>

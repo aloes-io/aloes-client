@@ -8,6 +8,7 @@
     modal-class="header-popup-modal"
     body-class="header-popup-body"
     class="header-popup-view"
+    hide-backdrop
     @shown="onModalShown"
     @hidden="onModalHidden"
   >

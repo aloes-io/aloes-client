@@ -1,10 +1,10 @@
 <template lang="html">
   <div class="address-form-view">
     <b-row v-if="!viewer || editorMode" :class="complete" class="address-editor">
-      <b-col cols="12" sm="8" md="8" lg="8" xl="8">
+      <b-col cols="12" sm="12" md="8" lg="8" xl="8">
         <b-form-group
           id="street-group"
-          label-cols="3"
+          label-cols="4"
           label="Street :"
           label-for="street"
           label-size="sm"
@@ -22,10 +22,10 @@
           />
         </b-form-group>
       </b-col>
-      <b-col cols="6" sm="4" md="4" lg="4" xl="4">
+      <b-col cols="6" sm="6" md="4" lg="4" xl="4">
         <b-form-group
           id="city-group"
-          label-cols="2"
+          label-cols="3"
           label="City :"
           label-for="city"
           label-size="sm"
@@ -43,7 +43,7 @@
           />
         </b-form-group>
       </b-col>
-      <b-col cols="6" sm="5" md="5" lg="5" xl="5">
+      <b-col cols="6" sm="6" md="5" lg="5" xl="5">
         <b-form-group
           id="zip-code-group"
           label-cols="5"
@@ -73,7 +73,7 @@
           <span class="checkmark" />
         </label>
       </b-col>
-      <b-col cols="6" sm="5" md="4" lg="4" xl="4">
+      <b-col cols="6" sm="6" md="4" lg="4" xl="4">
         <b-form-group
           id="verify-address-group"
           label-cols="8"

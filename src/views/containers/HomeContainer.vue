@@ -405,7 +405,7 @@
 import { updateAloesSensors } from 'aloes-handlers';
 import { interpolate } from 'd3-interpolate';
 import { select } from 'd3-selection';
-// import { transition } from 'd3-transition';
+import debounce from 'lodash.debounce';
 import logger from '@/services/logger';
 
 export default {
@@ -450,13 +450,9 @@ export default {
     },
   },
 
-  // created() {
-  //   let aloesWebcomponents = document.createElement("script");
-  //   aloesWebcomponents.setAttribute("src", "/aloes-webcomponents/aloes.js");
-  //   //  aloesWebcomponents.setAttribute("async", true);
-  //   aloesWebcomponents.onload = () => (this.deviceTreeLoaded = true);
-  //   document.body.appendChild(aloesWebcomponents);
-  // },
+  created() {
+    this.debouncedUpdateSensor = debounce(this.updateSensor, 300);
+  },
 
   mounted() {
     //  console.log('sensor-snap', SensorSnap);
@@ -474,16 +470,19 @@ export default {
   },
 
   methods: {
+    updateSensor(sensor) {
+      this.sensor = sensor;
+      this.$refs.deviceTree.onNodeUpdated(sensor);
+    },
+
     async onUpdateSetting(...args) {
       logger.publish(2, 'demo-device', 'onUpdateSetting:req', args);
       if (!args || !args[0].id) return null;
       let sensor = args[0];
       sensor[args[1].toString()] = args[2];
-      sensor.resource = args[1].toString();
+      sensor.resource = args[1];
       sensor.value = args[2];
-      //  sensor = await updateAloesSensors(sensor, args[1], args[2]);
-      this.$refs.deviceTree.onNodeUpdated(sensor);
-      this.sensor = sensor;
+      this.debouncedUpdateSensor(sensor);
       return sensor;
     },
 
@@ -505,13 +504,14 @@ export default {
       //   this.measurementTest();
       // }
       sensor = await updateAloesSensors(sensor, args[1], args[2]);
-      this.$refs.deviceTree.onNodeUpdated(sensor);
-      this.sensor = sensor;
+      this.debouncedUpdateSensor(sensor);
+      // this.sensor = sensor;
+      // this.$refs.deviceTree.onNodeUpdated(sensor);
       return sensor;
     },
 
     onDeleteSensor(sensor) {
-      logger.publish(4, 'demo-device', 'onDeleteSensor:req', sensor);
+      logger.publish(3, 'demo-device', 'onDeleteSensor:req', sensor);
       this.$refs.deviceTree.onNodeDeleted(sensor);
     },
 

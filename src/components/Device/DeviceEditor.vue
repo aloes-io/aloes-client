@@ -129,11 +129,15 @@
         <fa-icon icon="check" size="lg" />
         <small>save</small>
       </b-button>
-      <b-button :disabled="!deviceIdExists" class="remove-device" @click="removeDevice">
+      <b-button :disabled="!deviceIdExists" class="remove-device" @click="onDeleteDevice">
         <fa-icon icon="trash" size="lg" />
         <small>delete</small>
       </b-button>
     </b-card-footer>
+
+    <b-modal v-model="showModal" hide-backdrop size="sm" @ok="onYes" @cancel="onNo">
+      {{ confirm.message }}
+    </b-modal>
   </b-card>
 </template>
 
@@ -146,6 +150,7 @@ import { BCardFooter } from 'bootstrap-vue';
 import { BFormInput } from 'bootstrap-vue';
 import { BFormGroup } from 'bootstrap-vue';
 import { BFormSelect } from 'bootstrap-vue';
+import { BModal } from 'bootstrap-vue';
 
 export default {
   name: 'DeviceEditor',
@@ -158,6 +163,7 @@ export default {
     'b-form-input': BFormInput,
     'b-form-group': BFormGroup,
     'b-form-select': BFormSelect,
+    'b-modal': BModal,
     'address-form': () => import('@/components/Address/AddressForm.vue'),
     'aloesclient-form': () => import('@/components/Device/AloesClientForm.vue'),
     'aloeslight-form': () => import('@/components/Device/AloesLightForm.vue'),
@@ -182,6 +188,10 @@ export default {
       editorMode: false,
       complete: false,
       updatedStatus: null,
+      showModal: false,
+      confirm: {
+        message: `Are you sure you want to delete this device ?`,
+      },
     };
   },
 
@@ -414,10 +424,10 @@ export default {
         this.complete =
           this.isDeviceNameValid() &&
           this.isDeviceProtocolNameValid() &&
-          this.isDeviceProtocolVersionValid() &&
+          //  this.isDeviceProtocolVersionValid() &&
           this.isDeviceTypeValid();
       }
-      //  console.log('updateDeviceForm : protocolVersion', this.isDeviceProtocolVersionValid());
+      //  console.log('updateDeviceForm : complete ?', this.complete);
     },
 
     async saveDevice(evt) {
@@ -461,19 +471,30 @@ export default {
         .catch(err => err);
     },
 
-    async removeDevice(evt) {
+    onDeleteDevice(evt) {
       if (evt) evt.preventDefault();
       if (evt) evt.stopPropagation();
       this.error = null;
       this.success = null;
       this.dismissCountDown = this.dismissSec;
-      await this.$store
-        .dispatch('device/deleteInstance', {
-          device: this.device,
-        })
-        .then(res => res)
-        .catch(err => err);
-      return null;
+      if (this.device && this.device.id) {
+        this.showModal = true;
+        // this.$refs.confirmPopup.show();
+      }
+    },
+
+    async onYes() {
+      await this.$store.dispatch('device/deleteInstance', {
+        device: this.device,
+      });
+      this.showModal = false;
+      return;
+      //  return this.$refs.confirmPopup.hide();
+    },
+
+    onNo() {
+      //  this.$refs.confirmPopup.hide();
+      this.showModal = false;
     },
   },
 };
