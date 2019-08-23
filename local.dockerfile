@@ -1,9 +1,15 @@
 # build stage
 FROM node:lts-alpine as build-stage
 
+# RUN apk add --no-cache python make g++
+
 RUN mkdir -p /home/node/$NODE_NAME
 WORKDIR /home/node/$NODE_NAME
-ENV PATH /home/node/$NODE_NAME/node_modules/.bin:$PATH
+
+# ENV NPM_CONFIG_PREFIX=/home/node/.npm-global
+# ENV PATH=$PATH:/home/node/.npm-global/bin 
+
+ENV PATH=/home/node/$NODE_NAME/node_modules/.bin:$PATH
 
 ARG VUE_APP_NAME=ALOES
 ARG VUE_APP_DOMAIN=localhost
@@ -24,9 +30,12 @@ ENV VUE_APP_LOGGER_LEVEL=$VUE_APP_LOGGER_LEVEL
 ENV GIT_REPO_SSH_URL=$GIT_REPO_SSH_URL
 
 COPY package.json /home/node/$NODE_NAME/package.json
-RUN npm install --silent
-RUN npm install @vue/cli@3.7.0 -g
-# COPY . /home/node/$NODE_NAME/.
+RUN npm install 
+
+# RUN npm install --production --silent
+# RUN npm install @vue/cli@3.7.0 -g
+# RUN npm install @vue/cli-service@3.7.0 -g
+ 
 COPY . /home/node/$NODE_NAME
 RUN npm run build
 

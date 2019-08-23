@@ -77,13 +77,14 @@ export default {
       //  this.$refs.loginMaster.onReset();
     },
 
-    onModalHidden() {
-      this.$refs.loginMaster.onReset();
-    },
+    onModalHidden() {},
 
     hideModal() {
       if (this.$route.name !== 'home') {
         this.$router.push({ name: 'home' });
+      }
+      if (this.$refs.loginMaster && this.$refs.loginMaster !== null) {
+        this.$refs.loginMaster.onReset();
       }
       this.$refs.loginPopup.hide();
     },
