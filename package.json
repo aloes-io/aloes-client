@@ -1,7 +1,7 @@
 {
   "name": "aloes-client",
   "version": "1.0.0",
-  "private": true,
+  "private": false,
   "scripts": {
     "lint": "vue-cli-service lint",
     "start": "vue-cli-service serve",
@@ -23,7 +23,7 @@
     "@fortawesome/fontawesome-svg-core": "^1.2.18",
     "@fortawesome/free-solid-svg-icons": "^5.8.2",
     "@fortawesome/vue-fontawesome": "^0.1.6",
-    "aloes-handlers": "^1.2.9",
+    "aloes-handlers": "^1.2.10",
     "aloes-logger": "^1.0.4",
     "animejs": "^3.0.1",
     "async-mqtt": "^2.0.0",
@@ -52,7 +52,7 @@
     "mqtt-pattern": "^1.2.0",
     "pc-bootstrap4-datetimepicker": "^4.17.50",
     "qrcode-generator": "^1.4.1",
-    "sensor-snap": "^0.1.24",
+    "sensor-snap": "^0.2.2",
     "tiza": "^2.2.1",
     "uid": "0.0.2",
     "v-file-upload": "^3.1.3",

@@ -68,15 +68,15 @@
           offset-xl="1"
         >
           <p class="info-subtitle">
-            Easily register your devices
+            Register your devices easily
           </p>
           <p class="info-description">
             Add context to raw devices data.
             <br />
             Powered by
-            <a href="https://framagit.org/aloes/aloes-handlers" target="_blank">aloes-handlers</a>
+            <a href="https://github.com/aloes-io/aloes-handlers" target="_blank">aloes-handlers</a>
             to encode/decode MQTT stream, and
-            <a href="https://framagit.org/aloes/device-manager" target="_blank">device-manager</a>
+            <a href="https://github.com/aloes-io/device-manager" target="_blank">device-manager</a>
             to transport and persist data.
           </p>
         </b-col>
@@ -195,9 +195,9 @@
             Create actionable and meaningful data with rich semantic properties.
             <br />
             Displayed with
-            <a href="https://framagit.org/aloes/aloes-client" target="_blank">aloes-client</a>
+            <a href="https://github.com/aloes-io/aloes-client" target="_blank">aloes-client</a>
             &
-            <a href="https://framagit.org/aloes/sensor-snap" target="_blank">sensor-snap</a>
+            <a href="https://github.com/aloes-io/sensor-snap" target="_blank">sensor-snap</a>
             VueJS libraries.
           </p>
         </b-col>
@@ -220,9 +220,9 @@
         </p>
         <p class="info-description">
           Easily create new device on any Linux machine (
-          <a href="https://framagit.org/aloes/node-red-device" target="_blank">node-red-device</a>
+          <a href="https://github.com/getlarge/node-red-device" target="_blank">node-red-device</a>
           ) or on ESP8266 / ESP32 microcrontrollers (
-          <a href="https://framagit.org/aloes/arduino-device-mqtt" target="_blank"
+          <a href="https://github.com/aloes-io/arduino-device-mqtt" target="_blank"
             >arduino-device-mqtt</a
           >
           ).
@@ -257,7 +257,7 @@
             </p>
             <p class="info-description">
               Use
-              <a href="https://framagit.org/aloes/node-red-bridge" target="_blank"
+              <a href="https://github.com/getlarge/node-red-bridge" target="_blank"
                 >node-red-bridge</a
               >
               to create custom scenarios where you can set interaction rules inside your network.

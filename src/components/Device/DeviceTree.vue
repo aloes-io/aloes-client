@@ -209,12 +209,6 @@ export default {
     this.initDeviceTree();
   },
 
-  updated() {
-    if (this.deviceTreeState) {
-      //  this.updateDeviceTree();
-    }
-  },
-
   beforeDestroy() {
     //this.nodeSimulation = null;
     this.deviceTreeMounted = false;
@@ -858,10 +852,11 @@ export default {
 
     updateGraphNode(node) {
       const index = this.findGraphNodeIndex(node.id);
-      if (index !== -1) {
+      if (index > -1) {
         this.graphNodes[index].data = node;
+        return this.graphNodes[index];
       }
-      return this.graphNodes[index];
+      return null;
     },
 
     removeGraphNode(id) {

@@ -8,6 +8,8 @@ export const EventBus = new Vue();
 const Storage = window.sessionStorage;
 const PubSub = {};
 
+const debounceDelay = 50;
+
 const pushContainer = subscriptionName => {
   if (!subscriptionName || subscriptionName === null) return false;
   logger.publish(4, 'pubsub', 'pushContainer:req', subscriptionName);
@@ -64,7 +66,10 @@ PubSub.unSubscribeWhere = async (client, options) => {
         name = `/${options.userId}/${options.collection}/${options.method}`;
       }
       logger.publish(5, 'pubsub', 'unSubscribeWhere:req', name);
-      const container = JSON.parse(Storage.getItem('subscription-container'));
+      let container = JSON.parse(Storage.getItem('subscription-container'));
+      if (!container || container === null) {
+        container = [];
+      }
       const index = container.indexOf(name);
       if (index !== -1) {
         container.splice(index, 1);
@@ -93,7 +98,10 @@ PubSub.unSubscribeWhere = async (client, options) => {
 PubSub.removeListeners = async client => {
   try {
     if (client && Storage) {
-      const container = JSON.parse(Storage.getItem('subscription-container'));
+      let container = JSON.parse(Storage.getItem('subscription-container'));
+      if (!container || container === null) {
+        container = [];
+      }
       container.forEach(async route => await client.unsubscribe(route));
       Storage.setItem('subscription-container', '[]');
       return null;
@@ -145,8 +153,8 @@ PubSub.setListeners = async (client, token) => {
   try {
     logger.publish(4, 'PubSub', 'setListeners', token);
     if (client && client !== null && token && token !== null) {
-      //  await PubSub.subscribeToCollectionCreation(client, 'Notification', token.userId);
       await PubSub.subscribeToCollectionPresentation(client, 'Sensor', token.userId);
+      await PubSub.subscribeToCollectionPresentation(client, 'Device', token.userId);
       await PubSub.subscribeToCollectionPresentation(client, 'Scheduler', token.userId);
       await PubSub.subscribeToCollectionCreation(client, 'Device', token.userId);
       await PubSub.subscribeToCollectionCreation(client, 'Sensor', token.userId);
@@ -168,28 +176,28 @@ const onCollectionPresented = (collectionName, instance) => {
   EventBus.$emit(`on${collectionName}Presented`, instance);
 };
 
-PubSub.onCollectionPresented = debounce(onCollectionPresented, 250);
+PubSub.onCollectionPresented = debounce(onCollectionPresented, debounceDelay);
 
 const onCollectionCreated = (collectionName, instance) => {
   logger.publish(4, 'PubSub', `on${collectionName}Created`, instance.name);
   EventBus.$emit(`on${collectionName}Created`, instance);
 };
 
-PubSub.onCollectionCreated = debounce(onCollectionCreated, 250);
+PubSub.onCollectionCreated = debounce(onCollectionCreated, debounceDelay);
 
 const onCollectionDeleted = (collectionName, instance) => {
   logger.publish(4, 'PubSub', `on${collectionName}Deleted`, instance.name);
   EventBus.$emit(`on${collectionName}Deleted`, instance);
 };
 
-PubSub.onCollectionDeleted = debounce(onCollectionDeleted, 250);
+PubSub.onCollectionDeleted = debounce(onCollectionDeleted, debounceDelay);
 
 const onCollectionUpdated = (collectionName, instance) => {
   logger.publish(4, 'PubSub', `on${collectionName}Updated`, instance.name);
   EventBus.$emit(`on${collectionName}Updated`, instance);
 };
 
-PubSub.onCollectionUpdated = debounce(onCollectionUpdated, 250);
+PubSub.onCollectionUpdated = debounce(onCollectionUpdated, debounceDelay);
 
 const handler = async (topic, message) => {
   try {
@@ -266,7 +274,7 @@ const handler = async (topic, message) => {
   }
 };
 
-PubSub.handler = debounce(handler, 300);
+PubSub.handler = debounce(handler, debounceDelay);
 
 PubSub.publish = async (client, options) => {
   try {

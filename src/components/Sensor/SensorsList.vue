@@ -170,6 +170,7 @@ export default {
       let sensor = args[0];
       sensor = await updateAloesSensors(sensor, args[1], args[2]);
       sensor.lastSignal = new Date();
+      sensor.method = 'PUT';
       await this.$store.dispatch('sensor/publish', {
         sensor,
         userId: this.$props.userId,
@@ -184,6 +185,7 @@ export default {
       sensor.resources[args[1].toString()] = args[2];
       sensor.resource = args[1];
       sensor.value = args[2];
+      sensor.method = 'PUT';
       sensor.lastSignal = new Date();
       //  console.log('onUpdateSetting', sensor);
       //  const updatedSensor = await this.$store.dispatch('sensor/updateInstance', { sensor });

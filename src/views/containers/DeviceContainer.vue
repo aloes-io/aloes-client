@@ -409,7 +409,11 @@ export default {
     deleteSensor(sensor) {
       try {
         if (sensor && sensor.id) {
-          if (this.device && this.device.id && sensor.deviceId === this.device.id) {
+          if (
+            this.device &&
+            this.device.id &&
+            sensor.deviceId.toString() === this.device.id.toString()
+          ) {
             this.updateCollection('sensors', 'delete', sensor);
           }
           if (this.deviceTree && this.deviceTree !== null) {
@@ -467,6 +471,7 @@ export default {
 
     setListeners() {
       EventBus.$on('onDeviceDeleted', this.deleteDevice);
+      EventBus.$on('onDevicePresented', device => EventBus.$emit('onDeviceUpdated', device));
       EventBus.$on('onDeviceCreated', this.createDevice);
       EventBus.$on('onDeviceUpdated', this.updateDevice);
       EventBus.$on('onSensorDeleted', this.deleteSensor);
