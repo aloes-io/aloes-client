@@ -222,7 +222,7 @@
           Easily create new device on any Linux machine (
           <a href="https://github.com/getlarge/node-red-device" target="_blank">node-red-device</a>
           ) or on ESP8266 / ESP32 microcrontrollers (
-          <a href="https://github.com/aloes-io/arduino-device-mqtt" target="_blank"
+          <a href="https://github.com/getlarge/arduino-device-mqtt" target="_blank"
             >arduino-device-mqtt</a
           >
           ).
