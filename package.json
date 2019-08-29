@@ -8,15 +8,16 @@
     "start:dev": "cp deploy/.env_development .env && vue-cli-service serve",
     "start:local": "cp deploy/.env_local .env && vue-cli-service serve",
     "start:stage": "cp deploy/.env_staging .env && vue-cli-service serve",
-    "start:docker": "docker run -it -p 8080:80 --rm --name aloes-client-1 getlarge/aloes-client:test",
+    "start:docker": "cp deploy/.env_docker .env && docker-compose up",
     "build": "vue-cli-service build --dest build",
     "build:local": "cp deploy/.env_local .env && vue-cli-service build --dest build --modern",
     "build:stage": "cp deploy/.env_staging .env && vue-cli-service build --dest build --modern",
     "build:prod": "cp deploy/.env_production .env && vue-cli-service build --dest build --modern",
-    "build:docker": "docker build -t getlarge/aloes-client:test .",
+    "build:docker": "cp deploy/.env_docker .env && docker-compose build",
     "serve:local": "cp deploy/.env_local .env; node ./server.js ",
     "serve:stage": "cp deploy/.env_staging .env; node ./server.js ",
-    "deploy:local": "pm2 startOrRestart ecosystem.config.js --env local --update-env"
+    "deploy:local": "pm2 startOrRestart ecosystem.config.js --env local --update-env",
+    "stop:docker": "docker-compose down"
   },
   "dependencies": {
     "@babel/polyfill": "^7.4.3",

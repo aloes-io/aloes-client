@@ -12,7 +12,7 @@ const baseOptions = {
   protocolVersion: 4,
   reconnectPeriod: 5000,
   connectTimeout: 30 * 1000,
-  clean: true,
+  // clean: true,
   clientId: null,
   username: null,
   password: null,

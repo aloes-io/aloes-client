@@ -171,6 +171,7 @@ export default {
       sensor = await updateAloesSensors(sensor, args[1], args[2]);
       sensor.lastSignal = new Date();
       sensor.method = 'PUT';
+      sensor.value = args[2];
       await this.$store.dispatch('sensor/publish', {
         sensor,
         userId: this.$props.userId,
