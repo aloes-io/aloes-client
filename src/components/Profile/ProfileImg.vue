@@ -43,7 +43,6 @@
       v-if="!viewer && editorMode"
       ref="headerImport"
       :access-token="$store.state.auth.access_token"
-      :profile-type="profileType"
       resource-type="Images"
       image-type="Header"
     />
@@ -51,7 +50,6 @@
       v-if="!viewer && editorMode"
       ref="avatarImport"
       :access-token="$store.state.auth.access_token"
-      :profile-type="profileType"
       resource-type="Images"
       image-type="Avatar"
     />
@@ -75,11 +73,6 @@ export default {
   },
 
   props: {
-    'profile-type': {
-      type: String,
-      require: true,
-      default: null,
-    },
     'is-viewer': {
       type: Boolean,
       default: true,

@@ -331,14 +331,17 @@ export default {
         switch (operation) {
           case 'create':
             updatedCollection = JSON.parse(JSON.stringify(this[collection]));
-            updatedCollection.push(instance);
-            this[collection] = updatedCollection;
+            index = updatedCollection.findIndex(compareIds);
+            if (index === -1) {
+              updatedCollection.push(instance);
+              this[collection] = updatedCollection;
+            }
             break;
           case 'update':
             updatedCollection = JSON.parse(JSON.stringify(this[collection]));
             index = updatedCollection.findIndex(compareIds);
             logger.publish(4, 'device', `${collection}Updated`, index);
-            if (index !== -1) {
+            if (index > -1) {
               updatedCollection[index] = instance;
               this[collection] = updatedCollection;
             }
@@ -347,7 +350,7 @@ export default {
             updatedCollection = JSON.parse(JSON.stringify(this[collection]));
             index = updatedCollection.findIndex(compareIds);
             logger.publish(4, 'device', `${collection}Deleted`, index);
-            if (index !== -1) {
+            if (index > -1) {
               updatedCollection.splice(index, 1);
               this[collection] = updatedCollection;
             }
@@ -432,13 +435,11 @@ export default {
     createSensor(sensor) {
       try {
         if (sensor && sensor.id) {
-          //  if (sensor.deviceId.toString() === this.device.id.toString()) {
           if (sensor.isNewInstance) {
             this.updateCollection('sensors', 'create', sensor);
           } else {
             this.updateCollection('sensors', 'update', sensor);
           }
-          //  }
           if (this.deviceTree && this.deviceTree !== null) {
             if (sensor.isNewInstance) {
               this.deviceTree.onNodeCreated(sensor);
@@ -456,9 +457,7 @@ export default {
     updateSensor(sensor) {
       try {
         if (sensor && sensor.id) {
-          //  if (sensor.deviceId.toString() === this.device.id.toString()) {
           this.updateCollection('sensors', 'update', sensor);
-          //  }
           if (this.deviceTree && this.deviceTree !== null) {
             this.deviceTree.onNodeUpdated(sensor);
           }
@@ -475,7 +474,7 @@ export default {
       EventBus.$on('onDeviceCreated', this.createDevice);
       EventBus.$on('onDeviceUpdated', this.updateDevice);
       EventBus.$on('onSensorDeleted', this.deleteSensor);
-      EventBus.$on('onSensorPresented', sensor => EventBus.$emit('onSensorCreated', sensor));
+      EventBus.$on('onSensorPresented', sensor => EventBus.$emit('onSensorUpdated', sensor));
       EventBus.$on('onSensorCreated', this.createSensor);
       EventBus.$on('onSensorUpdated', this.updateSensor);
     },
@@ -485,9 +484,11 @@ export default {
       EventBus.$off('onDeviceCreated');
       EventBus.$off('onDeviceDeleted');
       EventBus.$off('onDeviceUpdated');
+      EventBus.$off('onDevicePresented');
       EventBus.$off('onSensorCreated');
       EventBus.$off('onSensorDeleted');
       EventBus.$off('onSensorUpdated');
+      EventBus.$off('onSensorPresented');
     },
   },
 };

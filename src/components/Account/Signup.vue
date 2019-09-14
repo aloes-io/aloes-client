@@ -86,14 +86,6 @@ export default {
   },
 
   computed: {
-    accountType: {
-      get() {
-        return this.$store.state.auth.accountType;
-      },
-      set(type) {
-        this.$store.commit('auth/setAccountType', type);
-      },
-    },
     windowWidth: {
       get() {
         return this.$store.state.windowWidth;
@@ -156,7 +148,6 @@ export default {
         const firstName = this.$store.state.auth.account.firstName;
         const lastName = this.$store.state.auth.account.lastName;
         const account = await this.$store.dispatch(`auth/signUp`, {
-          type: this.accountType,
           email: this.$store.state.auth.signup.email,
           password: this.$store.state.auth.signup.password,
           firstName,
@@ -200,7 +191,7 @@ export default {
     onReset(evt) {
       if (evt) evt.preventDefault();
       if (evt) evt.stopPropagation();
-      this.$store.commit('auth/setAccountType', '');
+      // this.$store.commit('auth/setAccountType', '');
       this.error = null;
       this.loading = false;
       this.success = null;

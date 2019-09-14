@@ -68,20 +68,6 @@ export default {
   },
 
   computed: {
-    accountType: {
-      get() {
-        return this.$store.state.auth.accountType;
-      },
-      set(type) {
-        this.$store.commit('auth/setAccountType', type);
-      },
-    },
-    accountTypes: {
-      get() {
-        return this.$store.state.auth.accountTypes;
-      },
-    },
-
     firstName: {
       get() {
         return this.$store.state.auth.signup.firstName;

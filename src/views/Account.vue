@@ -2,10 +2,10 @@
   <div v-if="account" class="account-view">
     <header-container :access_token="$store.state.auth.access_token" :account="account" />
     <profile-container
-      v-if="account && subscribeType !== 'new'"
+      v-if="account"
       :account="account"
       :token="accessToken"
-      :profile-type="account.type"
+      :profile-type="account.role"
       :profile-id="account.id"
       :is-viewer="false"
     />
@@ -54,16 +54,6 @@ export default {
         return this.$store.state.auth.account;
       },
     },
-    subscribeType: {
-      get() {
-        return this.$store.state.auth.account.subscribed;
-      },
-    },
-    // profile: {
-    //   get() {
-    //     return this.$store.state[`${this.account.type.toLowerCase()}`].model;
-    //   }
-    // }
   },
 
   mounted() {

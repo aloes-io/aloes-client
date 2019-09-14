@@ -13,7 +13,6 @@
 <script type="text/javascript">
 import HeaderContainer from '@/views/containers/HeaderContainer.vue';
 import FooterContainer from '@/views/containers/FooterContainer.vue';
-//  import LoginPopup from "@/views/containers/LoginPopup.vue";
 import SearchContainer from '@/views/containers/SearchContainer.vue';
 
 export default {
@@ -23,7 +22,6 @@ export default {
     'footer-container': FooterContainer,
     'header-container': HeaderContainer,
     'login-popup': () => import('@/views/containers/LoginPopup.vue'),
-    //  "login-popup": LoginPopup,
     'search-container': SearchContainer,
   },
 
@@ -43,14 +41,9 @@ export default {
   },
 
   computed: {
-    subscribeType: {
-      get() {
-        return this.$store.state.auth.account.subscribed;
-      },
-    },
     accountType: {
       get() {
-        return this.$store.state.auth.account.type.toLowerCase();
+        return this.$store.state.auth.account.role.toLowerCase();
       },
     },
     results: {

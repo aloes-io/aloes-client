@@ -3,7 +3,7 @@
     v-show="updatedProfile"
     v-if="updatedProfile !== null"
     class="profile-inline-view"
-    :disabled="!account.subscribed.startsWith('paid')"
+    :disabled="!account.role === 'admin'"
     @mouseover="highlightProfile(updatedProfile)"
     @mouseleave="highlightProfile(null)"
   >
@@ -15,7 +15,7 @@
           @click="goToProfile"
         />
         <!--  <b-button
-          :disabled="!account.subscribed.startsWith('paid')"
+          :disabled="!accout.role === 'paid'"
           class="profile-inline-button"
           @click="goToProfile">
           Voir le profil
@@ -29,33 +29,31 @@
             </h6>
             <p
               v-if="
-                account.subscribed.startsWith('paid') &&
-                  updatedProfile.fullAddress &&
-                  (updatedProfile.profileAddress || updatedProfile.address)
+                account.role === 'admin' && updatedProfile.fullAddress && updatedProfile.address
               "
               class="profile-inline-address"
             >
               {{ updatedProfile.fullAddress }}
             </p>
-            <p v-if="account.subscribed.startsWith('paid')" class="profile-inline-description">
+            <p v-if="account.role === 'admin'" class="profile-inline-description">
               {{ updatedProfile.description }}
             </p>
           </b-col>
           <b-col class="profile-inline-team" cols="1" sm="1">
             <b-button
-              :disabled="!account.subscribed.startsWith('paid')"
+              :disabled="!account.role === 'admin'"
               @click="$refs.teamPopup.showModal(updatedProfile, isMember, memberId)"
             >
               <img
-                v-if="isMember && account.subscribed.startsWith('paid')"
+                v-if="isMember && account.role === 'admin'"
                 :src="$store.state.style.pictures.team"
               />
               <img
-                v-else-if="!isMember && account.subscribed.startsWith('paid')"
+                v-else-if="!isMember && account.role === 'admin'"
                 :src="$store.state.style.pictures.teamOff"
               />
               <img
-                v-else-if="!account.subscribed.startsWith('paid')"
+                v-else-if="!account.role === 'admin'"
                 :src="$store.state.style.pictures.teamAlt"
               />
             </b-button>
@@ -63,11 +61,11 @@
         </b-row>
         <b-row>
           <b-col class="profile-inline-status" cols="10" sm="10">
-            <div v-if="!account.subscribed.startsWith('paid')" class="profile-inline-status-off">
+            <div v-if="!account.role === 'admin'" class="profile-inline-status-off">
               <img :src="$store.state.style.pictures.statusAlt" />
             </div>
             <div
-              v-else-if="!updatedProfile.status && account.subscribed.startsWith('paid')"
+              v-else-if="!updatedProfile.status && account.role === 'admin'"
               class="profile-inline-status-off"
             >
               <img :src="$store.state.style.pictures.statusOff" />
@@ -76,7 +74,7 @@
               </small>
             </div>
             <div
-              v-else-if="updatedProfile.status && account.subscribed.startsWith('paid')"
+              v-else-if="updatedProfile.status && account.role === 'admin'"
               class="profile-inline-status-on"
             >
               <img :src="$store.state.style.pictures.statusOn" />
@@ -137,7 +135,6 @@ export default {
       memberId: null,
       updatedAccount: null,
       updatedProfile: null,
-      updatedProfileType: null,
       updatedClassName: null,
     };
   },
@@ -150,7 +147,7 @@ export default {
     },
     profileAddress: {
       get() {
-        return this.$store.state.address.viewer.profileAddress;
+        return this.$store.state.address.viewer.address;
       },
     },
     teams: {
@@ -170,12 +167,6 @@ export default {
     profile: {
       handler(profile) {
         this.updatedProfile = profile;
-      },
-      immediate: true,
-    },
-    profileType: {
-      handler(type) {
-        this.updatedProfileType = type;
       },
       immediate: true,
     },
@@ -292,7 +283,7 @@ export default {
         name: 'profile',
         query: {
           profileId: this.updatedProfile.id,
-          profileType: this.updatedProfileType,
+          profileRole: this.updatedProfile.role,
         },
       });
     },

@@ -432,6 +432,9 @@ export default {
       sensor: null,
       showSensor: false,
       showDevice: false,
+      gaugeTimer: null,
+      mapTimer: null,
+      scenarioTimer: null,
       randomPics: [
         '/icons/aloes/dither.png',
         '/icons/aloes/camera.png',
@@ -451,7 +454,7 @@ export default {
   },
 
   created() {
-    this.debouncedUpdateSensor = debounce(this.updateSensor, 300);
+    this.debouncedUpdateSensor = debounce(this.updateSensorView, 100);
   },
 
   mounted() {
@@ -467,10 +470,19 @@ export default {
     this.sensor = null;
     this.device = null;
     this.deviceTwinSelected = false;
+    if (this.scenarioTimer && this.scenarioTimer !== null) {
+      clearInterval(this.scenarioTimer);
+    }
+    if (this.gaugeTimer && this.gaugeTimer !== null) {
+      clearInterval(this.gaugeTimer);
+    }
+    if (this.mapTimer && this.mapTimer !== null) {
+      clearInterval(this.mapTimer);
+    }
   },
 
   methods: {
-    updateSensor(sensor) {
+    updateSensorView(sensor) {
       this.sensor = sensor;
       this.$refs.deviceTree.onNodeUpdated(sensor);
     },
@@ -500,9 +512,11 @@ export default {
         args[1] = 5522;
         args[2] = buffer;
       }
-      // if (this.$refs[`sensorSnap-${this.sensor.id}`].componentsType === "gauge") {
-      //   this.measurementTest();
-      // }
+      if (this.$refs[`sensorSnap-${this.sensor.id}`].componentsType === 'gauge') {
+        this.gaugeTest();
+      } else if (this.$refs[`sensorSnap-${this.sensor.id}`].componentsType === 'map') {
+        this.mapTest();
+      }
       sensor = await updateAloesSensors(sensor, args[1], args[2]);
       this.debouncedUpdateSensor(sensor);
       // this.sensor = sensor;
@@ -542,14 +556,36 @@ export default {
       }
     },
 
-    measurementTest() {
-      setInterval(() => {
+    gaugeTest() {
+      if (this.sensor.type !== 3300) return null;
+      if (this.gaugeTimer && this.gaugeTimer !== null) {
+        clearInterval(this.gaugeTimer);
+      }
+      this.gaugeTimer = setInterval(() => {
         const resource = this.sensor.resource.toString();
         const sensor = JSON.parse(JSON.stringify(this.sensor));
-        sensor.value = this.sensor.resources[resource] + Math.floor(Math.random() + 10);
+        sensor.value = this.sensor.resources[resource] + Math.floor(Math.random() + 1);
         sensor.resources[resource] = sensor.value;
-        this.sensor = sensor;
-      }, 1000);
+        this.updatedSensor = sensor;
+      }, 3000);
+    },
+
+    mapTest() {
+      if (this.sensor.type !== 3336) return null;
+      if (this.mapTimer && this.mapTimer !== null) {
+        clearInterval(this.mapTimer);
+      }
+      this.mapTimer = setInterval(() => {
+        const sensor = JSON.parse(JSON.stringify(this.sensor));
+        sensor.resources['5514'] = (
+          Number(sensor.resources['5514']) + Math.floor(Math.random() + 1)
+        ).toString();
+        sensor.resources['5515'] = (
+          Number(sensor.resources['5515']) + Math.floor(Math.random() + 1)
+        ).toString();
+        sensor.resources['5518'] = new Date().getTime();
+        this.updatedSensor = sensor;
+      }, 3000);
     },
 
     arrayBufferToBase64(buffer) {
@@ -561,10 +597,7 @@ export default {
 
     async audioTest(testNumber) {
       try {
-        // const sensorIsAudio = componentsList.audio.list.find(
-        //   objectId => objectId === this.sensor.type,
-        // );
-        // if (!sensorIsAudio) return null;
+        if (this.sensor.type !== 3339) return null;
         const randomSound = this.randomSounds[Math.floor(Math.random() * this.randomSounds.length)];
         const buf = await fetch(`${randomSound}`)
           .then(response => {
@@ -592,6 +625,7 @@ export default {
     },
 
     async cameraTest(testNumber) {
+      if (this.sensor.type !== 3349) return null;
       const randomPic = this.randomPics[Math.floor(Math.random() * this.randomPics.length)];
       const result = await fetch(`${randomPic}`)
         .then(response => {
@@ -632,7 +666,10 @@ export default {
 
     playScenario() {
       const duration = 300;
-      setInterval(() => {
+      if (this.scenarioTimer && this.scenarioTimer !== null) {
+        clearInterval(this.scenarioTimer);
+      }
+      this.scenarioTimer = setInterval(() => {
         this.linkBlink('scanner-1', 0, duration);
         this.linkBlink('switch-output-1', 50, duration);
         this.nodeBlink('scanner-1', 0, duration);

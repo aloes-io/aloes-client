@@ -4,7 +4,7 @@
       :is-viewer="viewer"
       :account="account"
       :profile="profile"
-      :profile-type="updatedProfileType"
+      :profile-type="updatedProfileRole"
       :profile-id="updatedProfileId"
     />
     <br />
@@ -54,7 +54,7 @@ export default {
       type: String,
       default: '',
     },
-    'profile-type': {
+    'profile-role': {
       type: String,
       required: true,
     },
@@ -74,7 +74,7 @@ export default {
       success: null,
       viewer: true,
       editMode: false,
-      updatedProfileType: null,
+      updatedProfileRole: null,
       updatedProfileId: null,
     };
   },
@@ -141,9 +141,9 @@ export default {
       },
       immediate: true,
     },
-    profileType: {
+    profileRole: {
       handler(type) {
-        this.updatedProfileType = type;
+        this.updatedProfileRole = type;
       },
       immediate: true,
     },
@@ -188,7 +188,7 @@ export default {
           viewer: this.viewer,
         })
         .catch(err => {
-          logger.publish(3, this.$props.profileType, 'checkProfile:err', err);
+          logger.publish(3, this.updatedProfileRole, 'checkProfile:err', err);
           this.error = {
             message: "Sorry, this profile can't be displayed",
           };
@@ -196,17 +196,17 @@ export default {
             this.$router.go(-1);
           }, 1000);
         });
-      logger.publish(3, this.updatedProfileType, 'checkProfile:res', result);
+      logger.publish(3, this.updatedProfileRole, 'checkProfile:res', result);
 
       if (result.id === this.$store.state.auth.account.id) {
-        logger.publish(3, this.$props.profileType, 'checkProfile:res', {
+        logger.publish(3, this.updatedProfileRole, 'checkProfile:res', {
           viewer: this.isViewer,
           editMode: this.editMode,
         });
         //  return this.loadFavoriteProfiles();
         return null;
       }
-      logger.publish(3, this.$props.profileType, 'checkProfile:res', {
+      logger.publish(3, this.updatedProfileRole, 'checkProfile:res', {
         viewer: this.isViewer,
         editMode: this.editMode,
       });

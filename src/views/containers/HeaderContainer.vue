@@ -141,7 +141,6 @@ export default {
 
   data() {
     return {
-      updatedAccountType: null,
       showNotifications: false,
     };
   },
@@ -150,14 +149,7 @@ export default {
     serverUrl() {
       return this.$store.state.serverUrl;
     },
-    accountType: {
-      get() {
-        if (this.$props.account) {
-          return this.$props.account.type.toLowerCase();
-        }
-        return null;
-      },
-    },
+
     windowWidth: {
       get() {
         return this.$store.state.windowWidth;
@@ -188,14 +180,7 @@ export default {
     },
   },
 
-  watch: {
-    accountType: {
-      handler(state) {
-        this.updatedAccountType = state;
-      },
-      immediate: true,
-    },
-  },
+  watch: {},
 
   mounted() {
     this.$nextTick(() => {

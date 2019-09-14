@@ -18,7 +18,6 @@
 <script type="text/javascript">
 import HeaderContainer from '@/views/containers/HeaderContainer.vue';
 import FooterContainer from '@/views/containers/FooterContainer.vue';
-//  import DeviceContainer from '@/views/containers/DeviceContainer.vue';
 
 export default {
   name: 'Device',
@@ -26,7 +25,6 @@ export default {
   components: {
     'header-container': HeaderContainer,
     'footer-container': FooterContainer,
-    //  'device-container': DeviceContainer,
     'device-container': () => import('@/views/containers/DeviceContainer.vue'),
   },
 

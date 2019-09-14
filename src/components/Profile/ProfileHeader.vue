@@ -1,13 +1,13 @@
 <template lang="html">
   <b-card no-body class="profile-header">
-    <profile-img :is-viewer="viewer" :edit-mode="editorMode" :profile-type="profileType" />
+    <profile-img :is-viewer="viewer" :edit-mode="editorMode" :profile-type="profileRole" />
     <br />
     <profile-form
       :is-viewer="viewer"
       :edit-mode="editorMode"
       :account="account"
       :profile-id="profileId"
-      :profile-type="profileType"
+      :profile-type="profileRole"
     />
   </b-card>
 </template>
@@ -40,7 +40,7 @@ export default {
       require: true,
       default: null,
     },
-    'profile-type': {
+    'profile-role': {
       type: String,
       require: true,
       default: null,
@@ -94,18 +94,6 @@ export default {
     account: {
       handler(account) {
         this.updatedAccount = account;
-      },
-      immediate: true,
-    },
-    profile: {
-      handler(profile) {
-        this.updatedProfile = profile;
-      },
-      immediate: true,
-    },
-    profileType: {
-      handler(type) {
-        this.updatedProfileType = type;
       },
       immediate: true,
     },
