@@ -66,7 +66,7 @@ export async function onFileImport(
     });
 
     let url = `${process.env.VUE_APP_SERVER_URL}${process.env.VUE_APP_ROOT_API}/${
-      state.collectionName
+      state.resources
     }/${userId}/upload`;
     if (name && name !== null) {
       url = `${url}/${name}`;
@@ -106,11 +106,11 @@ export async function uploadBuffer(
     //  console.log('uploadBuffer', buffer, ownerId);
     const config = {
       headers: {
-        ['Content-Type']: `application/octet-stream`,
+        'Content-Type': 'application/octet-stream',
       },
     };
     const res = await loopback.post(
-      `/${state.collectionName}/${ownerId}/upload-buffer/${name}`,
+      `/${state.resources}/${ownerId}/upload-buffer/${name}`,
       buffer,
       config,
     );
@@ -137,7 +137,7 @@ export async function getFilesMetaByOwner({ state }, { ownerId, name, type }) {
       filter.where.and.push({ type: { like: `.*${type}.*`, options: 'i' } });
     }
 
-    const filesMeta = await loopback.find(`/${state.collectionName}`, filter);
+    const filesMeta = await loopback.find(`/${state.resources}`, filter);
     // console.log('filesMeta', filesMeta);
     if (filesMeta && filesMeta.length) {
       return filesMeta;
@@ -150,7 +150,7 @@ export async function getFilesMetaByOwner({ state }, { ownerId, name, type }) {
 
 export async function getFile({ state }, { ownerId, name }) {
   try {
-    const file = await loopback.get(`/${state.collectionName}/${ownerId}/download/${name}`);
+    const file = await loopback.get(`/${state.resources}/${ownerId}/download/${name}`);
     if (file && file !== null) {
       return file;
     }
@@ -167,7 +167,7 @@ export async function updateFileMeta({ state }, { ownerType, fileMeta }) {
     }
     const fileMetaId = fileMeta.id;
     delete fileMeta.id;
-    const updatedFileMeta = await loopback.put(`/${state.collectionName}/${fileMetaId}`, fileMeta);
+    const updatedFileMeta = await loopback.put(`/${state.resources}/${fileMetaId}`, fileMeta);
     // const updatedFileMeta = await loopback.put(
     //   `/${ownerType}/${fileMeta.ownerId}/${state.collectionName}/${fileMetaId}`,
     //   fileMeta,

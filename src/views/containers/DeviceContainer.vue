@@ -474,7 +474,7 @@ export default {
       EventBus.$on('onDeviceCreated', this.createDevice);
       EventBus.$on('onDeviceUpdated', this.updateDevice);
       EventBus.$on('onSensorDeleted', this.deleteSensor);
-      EventBus.$on('onSensorPresented', sensor => EventBus.$emit('onSensorUpdated', sensor));
+      EventBus.$on('onSensorPresented', sensor => EventBus.$emit('onSensorCreated', sensor));
       EventBus.$on('onSensorCreated', this.createSensor);
       EventBus.$on('onSensorUpdated', this.updateSensor);
     },
