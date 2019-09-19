@@ -100,7 +100,7 @@
         {{ street }} {{ postalCode }} {{ city }}
       </b-col>
     </b-row>
-    <b-modal ref="addressModal" hide-footer size="sm">
+    <b-modal ref="addressModal" hide-backdrop hide-footer size="sm">
       <p v-if="verify">
         {{ verify.message }}
       </p>
@@ -316,7 +316,7 @@ export default {
 
     async saveCollectionAddress() {
       return this.$store.dispatch('address/updateAddress', {
-        ownerType: this.$route.ownerType,
+        ownerType: this.$props.ownerType,
         ownerId: this.$props.ownerId,
       });
     },

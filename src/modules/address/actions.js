@@ -19,6 +19,7 @@ export async function findAddress({ state, commit }, { ownerType, ownerId, viewe
     }
     throw new Error('Wrong ownerType');
   } catch (error) {
+    logger.publish(3, state.collectionName, 'dispatch:findAddress:err', error);
     throw error;
   }
 }
@@ -26,6 +27,8 @@ export async function findAddress({ state, commit }, { ownerType, ownerId, viewe
 export async function verifyAddress({ state, commit }, ownerType) {
   try {
     let newAddress;
+    logger.publish(4, state.collectionName, 'dispatch:verifyAddress:req', ownerType);
+
     if (ownerType.toLowerCase() === 'device') {
       newAddress = {
         street: state.deviceAddress.street,
@@ -45,9 +48,6 @@ export async function verifyAddress({ state, commit }, ownerType) {
     }
     const address = await loopback.post(`/Addresses/verify`, { address: newAddress });
 
-    if (address.message) {
-      return address;
-    }
     logger.publish(4, state.collectionName, 'dispatch:verifyAddress:res', address);
     if (ownerType.toLowerCase() === 'device') {
       commit('setDeviceAddress', address);
@@ -57,6 +57,7 @@ export async function verifyAddress({ state, commit }, ownerType) {
     commit('setModelKV', { ownerType, key: 'verified', value: true });
     return address;
   } catch (error) {
+    logger.publish(3, state.collectionName, 'dispatch:verifyAddress:err', error);
     throw error;
   }
 }
@@ -83,6 +84,7 @@ export async function updateAddress({ state, commit }, { ownerType, ownerId }) {
     }
     throw new Error('Wrong ownerType');
   } catch (error) {
+    logger.publish(3, state.collectionName, 'dispatch:updateAddress:err', error);
     throw error;
   }
 }

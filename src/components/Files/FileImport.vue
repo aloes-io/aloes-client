@@ -409,7 +409,7 @@ export default {
         logger.publish(4, 'files', 'onResult:req', blob);
         this.uploadedFile = await this.$store.dispatch('files/onFileImport', {
           resourceType: this.rscType,
-          ownerId: this.$store.state.account.id,
+          ownerId: this.$store.state.auth.account.id,
           role: this.imgType,
           file: blob,
           name: `${this.imgType}.${blob.type.split('/')[1]}`,

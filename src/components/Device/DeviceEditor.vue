@@ -462,7 +462,7 @@ export default {
 
     async saveCollectionAddress() {
       return this.$store.dispatch('address/updateAddress', {
-        route: this.$route.name,
+        ownerType: 'Device',
         ownerId: this.device.id,
       });
     },
