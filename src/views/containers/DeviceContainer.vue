@@ -54,6 +54,7 @@ import { BTabs } from 'bootstrap-vue';
 import has from 'lodash.has';
 import { EventBus } from '@/services/PubSub';
 import logger from '@/services/logger';
+import Collection from '@/views/mixins/collection';
 
 export default {
   name: 'DeviceContainer',
@@ -67,6 +68,8 @@ export default {
     'device-sensors-tab': () => import('@/views/containers/DeviceSensorsTab.vue'),
     'search-map': () => import('@/components/Search/SearchMap.vue'),
   },
+
+  mixins: [Collection],
 
   props: {
     token: {
@@ -214,11 +217,6 @@ export default {
   async mounted() {
     this.loading = false;
     await this.loadDevices();
-    await this.setListeners();
-  },
-
-  updated() {
-    this.removeListeners();
     this.setListeners();
   },
 
@@ -257,13 +255,11 @@ export default {
           this.$store.state.auth.account.id,
         );
         if (!devices) {
-          this.loading = false;
-          this.error = { message: 'error while looking for devices' };
-          return this.error;
+          const error = new Error('error while looking for devices');
+          throw error;
         } else if (devices.length < 1) {
-          this.loading = false;
-          this.error = { message: 'you have no device registered' };
-          return this.error;
+          const error = new Error('you have no device registered');
+          throw error;
         }
 
         let sensors = [];
@@ -276,17 +272,17 @@ export default {
           }
           return;
         });
+        this.loading = false;
         this.sensors = sensors;
         // device + sensors
         this.fullDevices = devices;
         logger.publish(4, 'device', 'loadDevices:res', this.devicesCacheExists);
-        this.loading = false;
         this.success = { message: 'found devices' };
         return devices;
       } catch (error) {
-        // this.error = error;
         this.loading = false;
-        return error;
+        this.error = error;
+        throw error;
       }
     },
 
@@ -297,67 +293,57 @@ export default {
         this.loading = true;
         this.dismissCountDown = this.dismissSecs;
         if (!deviceId || deviceId === null) {
-          this.loading = false;
-          return null;
+          const error = new Error('Missing deviceId');
+          throw error;
         }
-        //  logger.publish(4, 'device', 'loadSensorsByDevice:req', this.sensorsCacheExists);
+        //  logger.publish(4, 'sensor', 'loadSensorsByDevice:req', this.sensorsCacheExists);
         const sensors = await this.$store.dispatch('sensor/findByDevice', deviceId);
-        //  logger.publish(4, 'device', 'loadSensorsByDevice:res', sensors);
+        //  logger.publish(4, 'sensor', 'loadSensorsByDevice:res', sensors);
+        this.loading = false;
         if (!sensors || sensors === null) {
-          this.loading = false;
           return null;
         }
-        this.loading = false;
         return sensors;
       } catch (error) {
-        // this.error = error;
         this.loading = false;
-        return error;
+        // this.error = error;
+        throw error;
       }
     },
 
-    updateCollection(collection, operation, instance) {
-      logger.publish(4, 'device', 'updateCollection:req', { collection, operation });
-      const compareIds = source => {
-        if (source && source.id) {
-          return source.id.toString() === instance.id.toString();
+    createDevice(device) {
+      try {
+        if (device && device.id) {
+          this.updateCollection('devices', 'create', device);
+          if (this.deviceTree && this.deviceTree !== null) {
+            this.deviceTree.onNodeCreated(device);
+          }
+          if (this.device.id === device.id) {
+            this.device = device;
+          }
+          return device;
         }
-        return false;
-      };
+        throw new Error('No device Id');
+      } catch (error) {
+        throw error;
+      }
+    },
 
-      if (collection === 'devices' || collection === 'sensors') {
-        let updatedCollection;
-        let index;
-        switch (operation) {
-          case 'create':
-            updatedCollection = JSON.parse(JSON.stringify(this[collection]));
-            index = updatedCollection.findIndex(compareIds);
-            if (index === -1) {
-              updatedCollection.push(instance);
-              this[collection] = updatedCollection;
-            }
-            break;
-          case 'update':
-            updatedCollection = JSON.parse(JSON.stringify(this[collection]));
-            index = updatedCollection.findIndex(compareIds);
-            logger.publish(4, 'device', `${collection}Updated`, index);
-            if (index > -1) {
-              updatedCollection[index] = instance;
-              this[collection] = updatedCollection;
-            }
-            break;
-          case 'delete':
-            updatedCollection = JSON.parse(JSON.stringify(this[collection]));
-            index = updatedCollection.findIndex(compareIds);
-            logger.publish(4, 'device', `${collection}Deleted`, index);
-            if (index > -1) {
-              updatedCollection.splice(index, 1);
-              this[collection] = updatedCollection;
-            }
-            break;
-          default:
-            throw new Error('Wrong operation');
+    updateDevice(device) {
+      try {
+        if (device && device.id) {
+          this.updateCollection('devices', 'update', device);
+          if (this.deviceTree && this.deviceTree !== null) {
+            this.deviceTree.onNodeUpdated(device);
+          }
+          if (this.device.id === device.id) {
+            this.device = device;
+          }
+          return device;
         }
+        throw new Error('No device Id');
+      } catch (error) {
+        throw error;
       }
     },
 
@@ -371,41 +357,52 @@ export default {
           if (this.device && this.device.id && device.id.toString() === this.device.id.toString()) {
             this.$store.commit('device/cleanModel');
           }
+          if (this.device.id === device.id) {
+            this.$store.commit('device/cleanModel');
+          }
           return device;
         }
         throw new Error('No device Id');
       } catch (error) {
-        return error;
+        throw error;
       }
     },
 
-    createDevice(device) {
+    createSensor(sensor) {
       try {
-        if (device && device.id) {
-          this.updateCollection('devices', 'create', device);
-          if (this.deviceTree && this.deviceTree !== null) {
-            this.deviceTree.onNodeCreated(device);
+        if (sensor && sensor.id) {
+          if (sensor.isNewInstance) {
+            this.updateCollection('sensors', 'create', sensor);
+          } else {
+            this.updateCollection('sensors', 'update', sensor);
           }
-          //  this.device = device;
-          return device;
+          if (this.deviceTree && this.deviceTree !== null) {
+            if (sensor.isNewInstance) {
+              this.deviceTree.onNodeCreated(sensor);
+            } else {
+              this.deviceTree.onNodeUpdated(sensor);
+            }
+          }
+          return sensor;
         }
-        throw new Error('No device Id');
+        throw new Error('No sensor Id');
       } catch (error) {
-        return error;
+        throw error;
       }
     },
 
-    updateDevice(device) {
+    updateSensor(sensor) {
       try {
-        if (device && device.id) {
-          this.updateCollection('devices', 'update', device);
+        if (sensor && sensor.id) {
+          this.updateCollection('sensors', 'update', sensor);
           if (this.deviceTree && this.deviceTree !== null) {
-            this.deviceTree.onNodeUpdated(device);
+            this.deviceTree.onNodeUpdated(sensor);
           }
+          return;
         }
-        throw new Error('No device Id');
+        throw new Error('No sensor Id');
       } catch (error) {
-        return error;
+        throw error;
       }
     },
 
@@ -425,46 +422,11 @@ export default {
           // if (sensor.id.toString() === this.sensor.id.toString()) {
           //   this.$store.commit('sensor/cleanModel');
           // }
+          return sensor;
         }
         throw new Error('No sensor Id');
       } catch (error) {
-        return error;
-      }
-    },
-
-    createSensor(sensor) {
-      try {
-        if (sensor && sensor.id) {
-          if (sensor.isNewInstance) {
-            this.updateCollection('sensors', 'create', sensor);
-          } else {
-            this.updateCollection('sensors', 'update', sensor);
-          }
-          if (this.deviceTree && this.deviceTree !== null) {
-            if (sensor.isNewInstance) {
-              this.deviceTree.onNodeCreated(sensor);
-            } else {
-              this.deviceTree.onNodeUpdated(sensor);
-            }
-          }
-        }
-        throw new Error('No sensor Id');
-      } catch (error) {
-        return error;
-      }
-    },
-
-    updateSensor(sensor) {
-      try {
-        if (sensor && sensor.id) {
-          this.updateCollection('sensors', 'update', sensor);
-          if (this.deviceTree && this.deviceTree !== null) {
-            this.deviceTree.onNodeUpdated(sensor);
-          }
-        }
-        throw new Error('No sensor Id');
-      } catch (error) {
-        return error;
+        throw error;
       }
     },
 
@@ -480,7 +442,6 @@ export default {
     },
 
     removeListeners() {
-      //  this.$store.dispatch("device/unsubscribeFromDevicesUpdate", {userId: this.$props.userId});
       EventBus.$off('onDeviceCreated');
       EventBus.$off('onDeviceDeleted');
       EventBus.$off('onDeviceUpdated');

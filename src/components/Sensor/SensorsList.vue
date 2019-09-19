@@ -58,7 +58,6 @@
 
 <script>
 import { updateAloesSensors } from 'aloes-handlers';
-//  import { BCard } from 'bootstrap-vue';
 import { BModal } from 'bootstrap-vue';
 import logger from '@/services/logger';
 
@@ -66,7 +65,6 @@ export default {
   name: 'SensorsList',
 
   components: {
-    //  'b-card': BCard,
     'b-modal': BModal,
     'sensor-snap': () => import('sensor-snap'),
   },
@@ -132,8 +130,6 @@ export default {
     // },
   },
 
-  created() {},
-
   async mounted() {
     //  if (!this.sensors || this.sensors === null) {
     //  await this.loadSensors(this.$props.deviceId);
@@ -149,9 +145,9 @@ export default {
         this.error = null;
         this.success = null;
         this.dismissCountDown = this.dismissSecs;
-        //  logger.publish(4, 'device', 'loadSensors:req', this.sensorsCacheExists);
+        //  logger.publish(4, 'sensor', 'loadSensors:req', this.sensorsCacheExists);
         const sensors = await this.$store.dispatch('sensor/findByDevice', deviceId);
-        //  logger.publish(4, 'device', 'loadSensors:res', sensors);
+        //  logger.publish(4, 'sensor', 'loadSensors:res', sensors);
         if (!sensors || sensors === null) {
           this.loading = false;
           return null;
@@ -160,45 +156,53 @@ export default {
         return sensors;
       } catch (error) {
         this.loading = false;
-        return error;
+        throw error;
       }
     },
 
     async onUpdateSensor(...args) {
-      logger.publish(4, 'device', 'onUpdateSensor:req', args);
-      if (!args || !args[0].id) return null;
-      let sensor = args[0];
-      sensor = await updateAloesSensors(sensor, args[1], args[2]);
-      sensor.lastSignal = new Date();
-      sensor.method = 'PUT';
-      sensor.value = args[2];
-      await this.$store.dispatch('sensor/publish', {
-        sensor,
-        userId: this.$props.userId,
-      });
-      return sensor;
+      try {
+        logger.publish(4, 'sensor', 'onUpdateSensor:req', args);
+        if (!args || !args[0].id) return null;
+        let sensor = args[0];
+        sensor = updateAloesSensors(sensor, args[1], args[2]);
+        sensor.lastSignal = new Date();
+        sensor.method = 'PUT';
+        sensor.value = args[2];
+        await this.$store.dispatch('sensor/publish', {
+          sensor,
+          userId: this.$props.userId,
+        });
+        return sensor;
+      } catch (error) {
+        throw error;
+      }
     },
 
     async onUpdateSetting(...args) {
-      logger.publish(4, 'device', 'onUpdateSetting:req', args);
-      if (!args || !args[0].id) return null;
-      let sensor = args[0];
-      sensor.resources[args[1].toString()] = args[2];
-      sensor.resource = args[1];
-      sensor.value = args[2];
-      sensor.method = 'PUT';
-      sensor.lastSignal = new Date();
-      //  console.log('onUpdateSetting', sensor);
-      //  const updatedSensor = await this.$store.dispatch('sensor/updateInstance', { sensor });
-      await this.$store.dispatch('sensor/publish', {
-        sensor,
-        userId: this.$props.userId,
-      });
-      return sensor;
+      try {
+        logger.publish(4, 'sensor', 'onUpdateSetting:req', args);
+        if (!args || !args[0].id) return null;
+        let sensor = args[0];
+        sensor.resources[args[1].toString()] = args[2];
+        sensor.resource = args[1];
+        sensor.value = args[2];
+        sensor.method = 'PUT';
+        sensor.lastSignal = new Date();
+        //  console.log('onUpdateSetting', sensor);
+        //  const updatedSensor = await this.$store.dispatch('sensor/updateInstance', { sensor });
+        await this.$store.dispatch('sensor/publish', {
+          sensor,
+          userId: this.$props.userId,
+        });
+        return sensor;
+      } catch (error) {
+        throw error;
+      }
     },
 
     onDeleteSensor(sensor) {
-      logger.publish(4, 'device', 'onDeleteSensor:req', sensor);
+      logger.publish(4, 'sensor', 'onDeleteSensor:req', sensor);
       if (sensor && sensor.id) {
         this.sensor = sensor;
         this.$refs.confirmPopup.show();

@@ -55,34 +55,34 @@
           class="profile-team"
         >
           <b-button
-            :disabled="!account.subscribed.startsWith('paid')"
+            :disabled="!account.role.startsWith('admin')"
             class="profile-inline-button"
             @click="$refs.teamPopup.showModal(receiver, isMember, memberId)"
           >
             <img
-              v-if="!account.subscribed.startsWith('paid')"
+              v-if="!account.role.startsWith('admin')"
               :src="$store.state.style.pictures.teamAlt"
             />
             <img
-              v-else-if="account.subscribed.startsWith('paid') && isMember"
+              v-else-if="account.role.startsWith('admin') && isMember"
               :src="$store.state.style.pictures.team"
             />
             <img
-              v-else-if="account.subscribed.startsWith('paid') && !isMember"
+              v-else-if="account.role.startsWith('admin') && !isMember"
               :src="$store.state.style.pictures.teamOff"
             />
           </b-button>
           <b-button
-            :disabled="!account.subscribed.startsWith('paid')"
+            :disabled="!account.role.startsWith('admin')"
             class="profile-messenger"
             @click="sendMessage"
           >
             <img
-              v-if="!account.subscribed.startsWith('paid')"
+              v-if="!account.role.startsWith('admin')"
               :src="$store.state.style.pictures.messageAlt"
             />
             <img
-              v-else-if="account.subscribed.startsWith('paid')"
+              v-else-if="account.role.startsWith('admin')"
               :src="$store.state.style.pictures.message"
             />
           </b-button>
@@ -109,7 +109,7 @@
       :is-viewer="viewer"
       :edit-mode="editorMode"
       :owner-id="updatedAccount.id"
-      owner-type="users"
+      owner-type="user"
       class="address-form"
     />
     <b-button v-show="editorMode" class="save-profile" @click="saveProfile">
@@ -120,11 +120,7 @@
     <br />
     <change-password :is-viewer="viewer" :edit-mode="editorMode" />
 
-    <team-popup
-      v-if="viewer && account.subscribed.startsWith('paid')"
-      ref="teamPopup"
-      :account-type="account.type"
-    />
+    <team-popup v-if="viewer" ref="teamPopup" :account-type="account.type" />
   </div>
 </template>
 
@@ -345,10 +341,14 @@ export default {
     this.setListeners();
   },
 
-  mounted() {
-    this.editorMode = false;
-    this.loadTeams();
-    this.isTeamMember(this.favorites);
+  async mounted() {
+    try {
+      this.editorMode = false;
+      await this.loadTeams();
+      return this.isTeamMember(this.favorites);
+    } catch (error) {
+      throw error;
+    }
   },
 
   beforeDestroy() {
@@ -356,48 +356,18 @@ export default {
   },
 
   methods: {
-    setListeners() {
-      EventBus.$on('onTeamDeleted', async team => {
-        if (team && this.loaderCounter < 1) {
-          this.loaderCounter += 1;
-          return setTimeout(async () => {
-            await this.loadTeams();
-            this.isTeamMember(this.teams);
-          }, 200);
-        }
-      });
-
-      EventBus.$on('onTeamCreated', team => {
-        if (team && this.loaderCounter < 1) {
-          this.loaderCounter += 1;
-          return setTimeout(async () => {
-            await this.loadTeams();
-            this.isTeamMember(this.teams);
-          }, 200);
-        }
-      });
-    },
-
-    removeListeners() {
-      EventBus.$off('onTeamCreated');
-      EventBus.$off('onTeamDeleted');
-    },
-
     async loadTeams() {
-      this.error = null;
-      this.success = null;
-      return this.$store
-        .dispatch('team/loadTeams', this.profile.id)
-        .then(res => {
-          this.loaderCounter = 0;
-          return res;
-        })
-        .catch(err => {
-          this.loaderCounter = 0;
-          this.error = err;
-          return this.error;
-        });
-      //  return favorites;
+      try {
+        this.error = null;
+        this.success = null;
+        const members = await this.$store.dispatch('team/loadTeams', this.profile.id);
+        this.loaderCounter = 0;
+        return members;
+      } catch (error) {
+        this.error = error;
+        this.loaderCounter = 0;
+        throw error;
+      }
     },
 
     isTeamMember(teams) {
@@ -407,11 +377,48 @@ export default {
           logger.publish(4, 'profile', 'isTeamMember:res', true);
           this.memberId = foundFavorite.id;
           this.isMember = true;
-          return;
+          return true;
         }
       }
       logger.publish(4, 'profile', 'isTeamMember:res', false);
       this.isMember = false;
+      return false;
+    },
+
+    async onTeamCreated(team) {
+      try {
+        if (team && this.loaderCounter < 1) {
+          this.loaderCounter += 1;
+          await this.loadTeams();
+          this.isTeamMember(this.teams);
+        }
+        return;
+      } catch (error) {
+        throw error;
+      }
+    },
+
+    async onTeamDeleted(team) {
+      try {
+        if (team && this.loaderCounter < 1) {
+          this.loaderCounter += 1;
+          await this.loadTeams();
+          this.isTeamMember(this.teams);
+        }
+        return;
+      } catch (error) {
+        throw error;
+      }
+    },
+
+    setListeners() {
+      EventBus.$on('onTeamDeleted', this.onTeamDeleted);
+      EventBus.$on('onTeamCreated', this.onTeamCreated);
+    },
+
+    removeListeners() {
+      EventBus.$off('onTeamCreated');
+      EventBus.$off('onTeamDeleted');
     },
 
     toggleEditMode(evt) {

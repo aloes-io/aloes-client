@@ -78,7 +78,7 @@
 </template>
 
 <script type="text/javascript">
-import bButton from 'bootstrap-vue/es/components/button/button';
+import { BButton } from 'bootstrap-vue';
 import ForgotPassword from '@/components/Account/ForgotPassword.vue';
 import LoginAlert from '@/components/Account/LoginAlert.vue';
 import LoginForm from '@/components/Account/LoginForm.vue';
@@ -87,7 +87,7 @@ export default {
   name: 'LoginMaster',
 
   components: {
-    'b-button': bButton,
+    'b-button': BButton,
     'forgot-password': ForgotPassword,
     'login-alert': LoginAlert,
     'login-form': LoginForm,

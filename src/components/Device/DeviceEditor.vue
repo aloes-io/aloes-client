@@ -120,7 +120,7 @@
         :is-viewer="false"
         :edit-mode="editorMode"
         :owner-id="device.id"
-        owner-type="Devices"
+        owner-type="Device"
         class="address-form"
       />
     </b-card-body>
@@ -347,7 +347,6 @@ export default {
       },
     },
     deviceIdExists() {
-      //  console.log(has(this.device, "id"));
       return has(this.device, 'id');
     },
     // specific device properties
@@ -462,13 +461,10 @@ export default {
     },
 
     async saveCollectionAddress() {
-      return this.$store
-        .dispatch('address/updateAddress', {
-          route: this.$route.name,
-          ownerId: this.device.id,
-        })
-        .then(res => res)
-        .catch(err => err);
+      return this.$store.dispatch('address/updateAddress', {
+        route: this.$route.name,
+        ownerId: this.device.id,
+      });
     },
 
     onDeleteDevice(evt) {

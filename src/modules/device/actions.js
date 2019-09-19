@@ -22,7 +22,7 @@ export async function findByAccount({ state, commit }, ownerId) {
     commit('setStateKV', { key: 'collection', value: collection });
     return devices;
   } catch (error) {
-    return error;
+    throw error;
   }
 }
 
@@ -36,9 +36,9 @@ export async function findDeviceKV({ state, commit }, { key, value }) {
     });
     return devices;
   } catch (error) {
-    await commit('setStateKV', { key: 'error', value: error });
+    commit('setStateKV', { key: 'error', value: error });
     logger.publish(2, state.collectionName, 'dispatch:findDeviceKV:err', error);
-    return error;
+    throw error;
   }
 }
 
@@ -53,15 +53,15 @@ export async function createInstance({ state, commit }, { device }) {
   try {
     const createdDevice = await loopback.post(`/${state.resources}`, device);
     //.post(`/${userResources}/${device.ownerId}/${state.resources.toLowerCase()}`, device)
-    await commit('setModel', createdDevice);
-    await commit('setStateKV', {
+    commit('setModel', createdDevice);
+    commit('setStateKV', {
       key: 'success',
       value: { message: 'device created' },
     });
     return createdDevice;
   } catch (error) {
-    await commit('setStateKV', { key: 'error', value: error });
-    return error;
+    commit('setStateKV', { key: 'error', value: error });
+    throw error;
   }
 }
 
@@ -70,29 +70,29 @@ export async function updateInstance({ state, commit }, { device }) {
     const deviceId = device.id;
     delete device.id;
     const updatedDevice = await loopback.put(`/${state.resources}/${deviceId}`, device);
-    await commit('setModel', updatedDevice);
-    await commit('setStateKV', {
+    commit('setModel', updatedDevice);
+    commit('setStateKV', {
       key: 'success',
       value: { message: 'device updated' },
     });
     return updatedDevice;
   } catch (error) {
     await commit('setStateKV', { key: 'error', value: error });
-    return error;
+    throw error;
   }
 }
 
 export async function deleteInstance({ state, commit }, { device }) {
   try {
     const deletedDevice = await loopback.delete(`/${state.resources}/${device.id}`);
-    await commit('setStateKV', {
+    commit('setStateKV', {
       key: 'success',
       value: { message: 'device removed' },
     });
     return deletedDevice;
   } catch (error) {
-    await commit('setStateKV', { key: 'error', value: error });
-    return error;
+    commit('setStateKV', { key: 'error', value: error });
+    throw error;
   }
 }
 
@@ -109,13 +109,13 @@ export async function refreshToken({ state, commit }, device) {
 }
 
 export async function subscribeToDevicesUpdate({ state }, { userId }) {
-  await state.collection.forEach(device =>
+  return state.collection.map(async device =>
     PubSub.subscribeToInstanceUpdate(socket.client, 'Device', userId, device.id),
   );
 }
 
 export async function unsubscribeFromDevicesUpdate({ state }, { ownerId }) {
-  await state.collection.map(device =>
+  return state.collection.map(async device =>
     PubSub.unSubscribeWhere(socket.client, {
       collection: 'Device',
       userId: ownerId,

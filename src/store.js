@@ -44,7 +44,6 @@ export default new Vuex.Store({
     serverUrl: `${process.env.VUE_APP_SERVER_URL}`,
     restApiRoot: `${process.env.VUE_APP_ROOT_API}`,
     clientUrl: `${process.env.VUE_APP_CLIENT_URL}`,
-    fileUploadUrl: `${process.env.VUE_APP_SERVER_URL}${process.env.VUE_APP_ROOT_API}/Files`,
     repoUrl: 'https://github.com/aloes-io',
     style: {
       color: {

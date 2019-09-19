@@ -42,7 +42,7 @@ export async function addTeamMember({ state, commit }, { ownerId, memberId }) {
       return res;
     })
     .catch(err => err);
-  await commit('addTeamMember', newTeam);
+  commit('addTeamMember', newTeam);
   return newTeam;
 }
 
@@ -52,6 +52,6 @@ export async function delTeamMember({ state, commit }, { ownerId, memberId }) {
     .catch(err => err);
   const deletedTeam = state.teams.find(team => team.memberId === memberId);
   await logger.publish(3, state.collectionName, 'dispatch:delTeamMember:res', deletedTeam);
-  await commit('delTeamMember', deletedTeam);
+  commit('delTeamMember', deletedTeam);
   return deletedTeam;
 }

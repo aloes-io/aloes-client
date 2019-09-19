@@ -18,7 +18,6 @@
 import HeaderContainer from '@/views/containers/HeaderContainer.vue';
 import FooterContainer from '@/views/containers/FooterContainer.vue';
 import ProfileContainer from '@/views/containers/ProfileContainer.vue';
-//  import LoginPopup from "@/views/containers/LoginPopup.vue";
 
 export default {
   name: 'Account',
@@ -27,7 +26,6 @@ export default {
     'footer-container': FooterContainer,
     'header-container': HeaderContainer,
     'login-popup': () => import('@/views/containers/LoginPopup.vue'),
-    //  "login-popup": LoginPopup,
     'profile-container': ProfileContainer,
   },
 

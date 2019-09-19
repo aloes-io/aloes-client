@@ -21,7 +21,7 @@ export function setDeviceAddress(state, address) {
 }
 
 export function setModelKV(state, { ownerType, key, value }) {
-  if (ownerType === 'Devices') {
+  if (ownerType.toLowerCase() === 'device') {
     state.deviceAddress[key] = value;
     logger.publish(
       4,
@@ -29,7 +29,7 @@ export function setModelKV(state, { ownerType, key, value }) {
       'commit:setDeviceAddressKV:res',
       state.deviceAddress[key],
     );
-  } else if (ownerType === 'users') {
+  } else if (ownerType.toLowerCase() === 'user') {
     state.profileAddress[key] = value;
     logger.publish(
       4,

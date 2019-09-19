@@ -1,6 +1,6 @@
 <template lang="html">
   <b-container fluid class="search-container-view">
-    <b-card title="Start your device research here" class="search-card">
+    <b-card title="Search your devices" class="search-card">
       <b-row>
         <b-col sm="12" md="12" lg="12" xl="12">
           <search-form v-if="$store.state.auth.account" :token="token" :user-id="userId" />
@@ -13,7 +13,7 @@
         <search-result :token="token" :user-id="userId" :devices="searchResults" />
       </b-col>
       <b-col sm="12" md="4" lg="4" xl="4">
-        <search-map :token="token" :user-id="userId" />
+        <search-map :token="token" :user-id="userId" :devices="searchResults" />
       </b-col>
     </b-row>
   </b-container>

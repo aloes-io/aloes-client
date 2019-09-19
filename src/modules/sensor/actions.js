@@ -20,7 +20,7 @@ export async function updateInstance({ state, commit }, { sensor }) {
     delete sensor.id;
     const updatedSensor = await loopback.put(`/${state.resources}/${sensorId}`, sensor);
     if (updatedSensor && updatedSensor !== null) {
-      await commit('setStateKV', {
+      commit('setStateKV', {
         key: 'success',
         value: { message: 'sensor updated' },
       });
@@ -29,39 +29,35 @@ export async function updateInstance({ state, commit }, { sensor }) {
 
     throw new Error('Cannot update Sensor');
   } catch (error) {
-    await commit('setStateKV', { key: 'error', value: error });
+    commit('setStateKV', { key: 'error', value: error });
     logger.publish(4, state.collectionName, 'dispatch:updateInstance:err', error);
-    return error;
+    throw error;
   }
 }
 
 export async function deleteInstance({ state, commit }, { sensor }) {
   try {
     const deletedSensor = await loopback.delete(`/${state.resources}/${sensor.id}`);
-    await commit('setStateKV', {
+    commit('setStateKV', {
       key: 'success',
       value: { message: 'sensor removed' },
     });
     return deletedSensor;
   } catch (error) {
-    await commit('setStateKV', { key: 'error', value: error });
+    commit('setStateKV', { key: 'error', value: error });
     logger.publish(4, state.collectionName, 'dispatch:deleteInstance:err', error);
-    return error;
+    throw error;
   }
 }
 
 export async function subscribeToSensorsUpdate({ state }, { userId }) {
-  try {
-    await state.collection.forEach(sensor => {
-      return PubSub.subscribeToInstanceUpdate(socket.client, 'Sensor', userId, sensor.id);
-    });
-  } catch (error) {
-    return error;
-  }
+  return state.collection.map(async sensor =>
+    PubSub.subscribeToInstanceUpdate(socket.client, 'Sensor', userId, sensor.id),
+  );
 }
 
 export async function unsubscribeFromSensorsUpdate({ state }, { userId }) {
-  await state.collection.forEach(sensor =>
+  return state.collection.map(async sensor =>
     PubSub.unSubscribeWhere(socket.client, {
       collection: 'Sensor',
       userId,

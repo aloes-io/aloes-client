@@ -38,13 +38,13 @@ http.setLoadingFunction = fn => {
   setLoading = fn;
 };
 
-http.setToken = async (token, save = true) => {
+http.setToken = (token, save = true) => {
   http.token = token;
   http.defaults.headers.common.Authorization = token.id;
   if (save) exportTokenToLocalStorage(token);
 };
 
-http.removeToken = async () => {
+http.removeToken = () => {
   delete http.token;
   delete http.defaults.headers.common.Authorization;
   return removeTokenFromLocalStorage();

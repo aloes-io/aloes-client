@@ -4,7 +4,7 @@
       <b-col cols="12" sm="5" md="5" lg="5" xl="5">
         <b-form-input
           id="search-place"
-          v-model="placeSearch"
+          v-model="searchKeys"
           :required="!nameSearch"
           placeholder="Where ?"
           type="text"
@@ -54,18 +54,13 @@ export default {
   data() {
     return {
       nameSearch: null,
-      placeSearch: null,
+      searchKeys: null,
       dateSearch: null,
       searchFields: null,
     };
   },
 
   computed: {
-    accountType: {
-      get() {
-        return this.$store.state.auth.account.type;
-      },
-    },
     profileType: {
       get() {
         return this.$store.state.search.model.profileType;
@@ -113,9 +108,9 @@ export default {
     },
   },
 
-  mounted() {
-    this.$store.commit('search/cleanSearch');
-  },
+  // mounted() {
+  //   this.$store.commit('search/cleanSearch');
+  // },
 
   beforeDestroy() {
     this.$store.commit('search/cleanSearch');
@@ -128,22 +123,18 @@ export default {
       this.searchError = null;
       this.searchSuccess = null;
       this.dateSearch = null;
-      if (!this.placeSearch) {
-        this.searchError = new Error('Please fill where field');
+      if (!this.searchKeys) {
+        this.searchError = new Error('Please fill search field');
         return this.searchError;
       }
-
       const filter = {
-        place: this.placeSearch,
+        text: this.searchKeys,
       };
       logger.publish(4, 'search', 'composeFilter:req', filter);
-      const profiles = await this.$store
+      return this.$store
         .dispatch(`search/searchDevices`, filter)
         .then(res => res)
         .catch(err => err);
-      //  this.$store.commit('search/cleanSearch');
-
-      return profiles;
     },
 
     async getDevicesByGeolocation(position) {
@@ -154,7 +145,7 @@ export default {
       this.searchLocation = location;
       const filter = {
         location,
-        maxDistance: 1000,
+        maxDistance: 300,
         unit: 'kilometers',
       };
       logger.publish(4, 'search', 'getDevicesByGeolocation:req', filter);
@@ -220,7 +211,7 @@ export default {
       this.searchSuccess = false;
       this.searchError = null;
       const userCoordinates = this.$store.state.address.profileAddress.coordinates;
-      if (userCoordinates) {
+      if (userCoordinates && userCoordinates.lat && userCoordinates.lng) {
         const position = {
           coords: {
             latitude: userCoordinates.lat,

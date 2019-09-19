@@ -40,15 +40,11 @@ function importTokenFromCookies() {
 /**
  * Sync loopback token with current state
  */
-export function syncToken({ commit, dispatch }) {
+export async function syncToken({ commit, dispatch }) {
   if (loopback.token) {
     commit('setAccessToken', loopback.token);
-    socket.setToken(loopback.token);
-    return dispatch('loadAccount', loopback.token.userId).catch(err => {
-      commit('setAccessToken', null);
-      socket.removeToken();
-      return err;
-    });
+    await socket.setToken(loopback.token);
+    return dispatch('loadAccount', loopback.token.userId);
   }
   // else if (importTokenFromCookies()) {
   //   const token = importTokenFromCookies();
@@ -105,36 +101,52 @@ function evaluateRoute(state, to, from, next) {
 /**
  * Sync router for auth
  */
-export function syncRouter({ state, dispatch }, myRouter) {
-  myRouter.beforeEach((to, from, next) => {
+export function syncRouter({ state, dispatch }, router) {
+  router.beforeEach((to, from, next) => {
     dispatch('syncToken').then(evaluateRoute(state, to, from, next));
   });
 }
 
-export async function verifyCaptcha({ state }, token) {
-  const hashes = state.hashes;
-  return loopback
-    .post(`/${state.resources}/verify-captcha`, { hashes, token })
-    .then(res => res.result.success)
-    .catch(err => err);
-}
-
 export async function signUp({ state }, { type, email, password, firstName, lastName }) {
-  const result = await loopback
-    .post(`/${state.resources}`, {
+  try {
+    const result = await loopback.post(`/${state.resources}`, {
       type,
       email,
       password,
       firstName,
       lastName,
-    })
-    .then(res => res)
-    .catch(err => err);
-  if (!result) {
-    return null;
+    });
+
+    logger.publish(3, state.collectionName, 'dispatch:signUp:res', result);
+    return result;
+  } catch (error) {
+    logger.publish(3, state.collectionName, 'dispatch:signUp:err', error);
+    throw error;
   }
-  logger.publish(3, state.collectionName, 'dispatch:signUp:res', result);
-  return result;
+}
+
+export async function loadAccount({ state, commit }, userId) {
+  try {
+    const account = await loopback.get(`/${state.resources}/${userId}`);
+    commit('setAccount', { viewer: false, account });
+    return account;
+  } catch (error) {
+    loopback.removeToken();
+    await socket.removeToken();
+    commit('setAccount', { viewer: false, account: null });
+    throw error;
+  }
+}
+
+export async function findAccountById({ state, commit }, { userId, viewer }) {
+  return loopback
+    .get(`/${state.resources}/${userId}`)
+    .then(account => {
+      logger.publish(3, state.collectionName, 'dispatch:findAccountById:res', account);
+      commit('setAccount', { viewer, account });
+      return account;
+    })
+    .catch(err => err);
 }
 
 export async function signIn({ state, commit, dispatch }, { email, password, save }) {
@@ -144,16 +156,19 @@ export async function signIn({ state, commit, dispatch }, { email, password, sav
       email,
       password,
     });
+    logger.publish(3, state.collectionName, 'dispatch:signIn:res', accessToken);
+
     if (!accessToken || accessToken === null || accessToken instanceof Error) {
       throw new Error('Invalid token');
     }
-    await commit('setAccessToken', accessToken);
+    commit('setAccessToken', accessToken);
     if (state.access_token !== null) {
       loopback.setToken(state.access_token, save);
+      await socket.setToken(state.access_token);
     } else {
       loopback.removeToken();
+      await socket.removeToken();
     }
-    logger.publish(3, state.collectionName, 'dispatch:signIn:res', accessToken);
     await dispatch('loadAccount', state.access_token.userId);
     return accessToken;
   } catch (error) {
@@ -166,7 +181,7 @@ export async function externalSignIn({ state, commit }, save = true) {
   try {
     //  const accessToken = await loopback.get(`${state.authRoute}/${provider}`);
     const accessToken = await importTokenFromCookies();
-    await commit('setAccessToken', accessToken);
+    commit('setAccessToken', accessToken);
     if (save) {
       // if (state.access_token !== null) {
       //   loopback.setToken(state.access_token, save);
@@ -182,6 +197,43 @@ export async function externalSignIn({ state, commit }, save = true) {
   }
 }
 
+export async function signOut({ commit, state }) {
+  try {
+    await loopback.post(`/${state.resources}/logout`, {
+      // eslint-disable-next-line dot-notation
+      accessToken: state['access_token'],
+    });
+    loopback.removeToken();
+    await socket.removeToken();
+    commit('setAccount', { viewer: false, account: null });
+    return;
+  } catch (error) {
+    loopback.removeToken();
+    await socket.removeToken();
+    commit('setAccount', { viewer: false, account: null });
+    return;
+  }
+}
+
+export async function externalSignOut({ commit, state }) {
+  try {
+    await loopback.get(`/${state.authRoute}/logout`);
+    loopback.removeToken();
+    await socket.removeToken();
+    deleteCookie('access_token');
+    deleteCookie('userId');
+    commit('setAccessToken', null);
+    commit('setAccount', { viewer: false, account: null });
+    return;
+  } catch (error) {
+    deleteCookie('access_token');
+    deleteCookie('userId');
+    commit('setAccessToken', null);
+    commit('setAccount', { viewer: false, account: null });
+    return;
+  }
+}
+
 export async function findAccountByEmail({ state }, email) {
   try {
     logger.publish(3, state.collectionName, 'dispatch:findAccountByEmail:req', email);
@@ -189,16 +241,16 @@ export async function findAccountByEmail({ state }, email) {
       email,
     });
     logger.publish(3, state.collectionName, 'dispatch:findAccountByEmail:res', res);
-    if (res.result && res.result.email) {
-      logger.publish(3, state.collectionName, 'dispatch:findAccountByEmail:res', res.result.email);
-      if (res.result.email.accepted && res.result.email.accepted[0] === email) return true;
+    if (res && res.email) {
+      logger.publish(3, state.collectionName, 'dispatch:findAccountByEmail:res', res.email);
+      if (res.email.accepted && res.email.accepted[0] === email) return true;
       //  if (res.result.email.rejected === [`${email}`]) return false; // please try again
       return false;
     }
     return false;
   } catch (error) {
     logger.publish(3, state.collectionName, 'dispatch:findAccountByEmail:err', error);
-    return error;
+    throw error;
   }
 }
 
@@ -213,7 +265,7 @@ export async function verifyEmail({ state }, user) {
     return false;
   } catch (error) {
     logger.publish(3, state.collectionName, 'dispatch:verifyEmail:err', error);
-    return error;
+    throw error;
   }
 }
 
@@ -224,17 +276,18 @@ export async function changePassword({ state }, { oldPassword, newPassword }) {
       newPassword,
     });
     logger.publish(3, state.collectionName, 'dispatch:changePassword:res', res);
+    return res;
   } catch (error) {
     logger.publish(2, state.collectionName, 'dispatch:changePassword:err', error);
-    return error;
+    throw error;
   }
 }
 
-export function rememberPassword(ctx, email) {
+export async function rememberPassword(ctx, email) {
   return loopback.post(`/${ctx.state.resources}/reset`, { email });
 }
 
-export function updatePasswordFromToken(ctx, { accessToken, newPassword }) {
+export async function updatePasswordFromToken(ctx, { accessToken, newPassword }) {
   logger.publish(4, ctx.state.collectionName, 'dispatch:updatePasswordFromToken:req', accessToken);
   return loopback.post(`/${ctx.state.resources}/update-password-from-token`, {
     accessToken,
@@ -242,104 +295,14 @@ export function updatePasswordFromToken(ctx, { accessToken, newPassword }) {
   });
 }
 
-export async function signOut({ commit, state }) {
-  await loopback.post(`/${state.resources}/logout`, {
-    // eslint-disable-next-line dot-notation
-    accessToken: state['access_token'],
-  });
-  await loopback.removeToken();
-  await socket.removeToken();
-  await commit('setAccount', { viewer: false, account: null });
-  return null;
-}
-
-export async function externalSignOut({ commit, state }) {
-  await loopback.get(`/${state.authRoute}/logout`);
-  await loopback.removeToken();
-  await socket.removeToken();
-  deleteCookie('access_token');
-  deleteCookie('userId');
-  await commit('setAccessToken', null);
-  await commit('setAccount', { viewer: false, account: null });
-  return null;
-}
-
-export async function loadFullAccount({ state, commit }, accountId) {
-  // return loopback
-  //   .get(`/Accounts/${accountId}/${state.resources.toLowerCase()}`)
-  return loopback
-    .find(`/${state.resources}`, {
-      where: { accountId },
-      //  include: 'profileAddress',
-      include: 'address',
-      limit: 1,
-    })
-    .then(account => {
-      logger.publish(3, state.collectionName, 'dispatch:loadFullAccount:res', account);
-      commit('setAccount', { viewer: false, account });
-      return account;
-    })
-    .catch(err => {
-      loopback.removeToken();
-      return err;
-    });
-}
-
-export async function loadAccount({ state, commit }, userId) {
-  return loopback
-    .get(`/${state.resources}/${userId}`)
-    .then(account => {
-      commit('setAccount', { viewer: false, account });
-    })
-    .catch(err => {
-      loopback.removeToken();
-      return err;
-    });
-}
-
-export async function findAccountById({ state, commit }, { userId, viewer }) {
-  return loopback
-    .get(`/${state.resources}/${userId}`)
-    .then(account => {
-      logger.publish(3, state.collectionName, 'dispatch:findAccountById:res', account);
-      commit('setAccount', { viewer, account });
-      return account;
-    })
-    .catch(err => err);
-}
-
 export async function updateAccount({ commit, state }, user) {
   return loopback
     .patch(`/${state.resources}/${user.id}`, user)
     .then(res => {
       logger.publish(3, state.collectionName, 'dispatch:updateAccount:res', res);
-      commit('setAccount', { viewer: false, account: user });
+      commit('setAccount', { viewer: false, account: res });
       return res;
     })
     .catch(err => err);
   //  return result;
-}
-
-export async function subscribePlan({ state }, subscribeType) {
-  const user = state.account;
-  const result = await loopback
-    .post(`/${state.resources}/subscribe-plan`, {
-      user,
-      subscribeType,
-    })
-    .then(res => res.subscription)
-    .catch(err => {
-      logger.publish(2, state.collectionName, 'dispatch:subscribePlan:err', err);
-      return err;
-    });
-  logger.publish(3, state.collectionName, 'dispatch:subscribePlan:res', result);
-  return result;
-}
-
-export async function sendUnscribeReasons({ state }, { user, reasons }) {
-  const response = await loopback
-    .post(`/${state.resources}/send-unsubscribe-reasons`, { user, reasons })
-    .catch(err => err);
-  logger.publish(4, state.collectionName, 'dispatch:sendUnscribeReasons:res', response);
-  return response;
 }

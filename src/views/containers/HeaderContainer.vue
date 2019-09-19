@@ -64,11 +64,7 @@
             },
           }"
         >
-          <b-img
-            v-if="$store.state.auth.account.avatarImgUrl"
-            :src="`${serverUrl}${$store.state.auth.account.avatarImgUrl}`"
-            class="thumb-icon"
-          />
+          <b-img v-if="$store.state.auth.account.avatarImgUrl" :src="userIcon" class="thumb-icon" />
           <fa-icon v-else icon="user" size="lg" />
           <small v-show="screenIsLarge">
             {{ $store.state.auth.account.firstName }}
@@ -106,7 +102,7 @@ import { BNavbarNav } from 'bootstrap-vue';
 import { BNavbarBrand } from 'bootstrap-vue';
 import { BNavbarToggle } from 'bootstrap-vue';
 import { BNavItem } from 'bootstrap-vue';
-//  import NotificationsDropdown from "@/views/containers/NotificationsDropdown.vue";
+import File from '@/views/mixins/file';
 import Notification from '@/views/mixins/notification';
 
 export default {
@@ -118,12 +114,11 @@ export default {
     'b-navbar-brand': BNavbarBrand,
     'b-navbar-toggle': BNavbarToggle,
     'b-nav-item': BNavItem,
-    //  "notifications-dropdown": NotificationsDropdown,
     'login-popup': () => import('@/views/containers/LoginPopup.vue'),
     'signup-popup': () => import('@/views/containers/SignupPopup.vue'),
   },
 
-  mixins: [Notification],
+  mixins: [File, Notification],
 
   props: {
     // eslint-disable-next-line camelcase
@@ -142,6 +137,7 @@ export default {
   data() {
     return {
       showNotifications: false,
+      userIcon: null,
     };
   },
 
@@ -180,14 +176,13 @@ export default {
     },
   },
 
-  watch: {},
-
   mounted() {
     this.$nextTick(() => {
       window.addEventListener('resize', this.getWindowWidth);
       window.addEventListener('resize', this.getWindowHeight);
       this.getWindowWidth();
       this.getWindowHeight();
+      this.getUserIcon();
     });
   },
 
@@ -205,22 +200,53 @@ export default {
       this.windowHeight = document.documentElement.clientHeight;
     },
 
+    async getUserIcon() {
+      try {
+        if (this.$store.state.auth.account && this.$store.state.auth.account.avatarImgUrl) {
+          const url = `${this.$store.state.serverUrl}${
+            this.$store.state.auth.account.avatarImgUrl
+          }`;
+          const file = await this.$store.dispatch('files/download', url);
+          if (file && file !== null) {
+            this.userIcon = await this.parseImage(file);
+          } else {
+            this.userIcon = this.$store.state.user;
+          }
+        }
+        return true;
+      } catch (error) {
+        this.userIcon = this.$store.state.user;
+        throw error;
+      }
+    },
+
     async onLogoutClick() {
-      this.$router.push({
-        name: 'home',
-      });
-      if (this.account && this.account !== null) {
-        return setTimeout(() => {
+      try {
+        if (this.account && this.account !== null) {
           this.$store.commit('device/cleanModel');
           this.$store.commit('team/setTeams', null);
           //  this.$store.cache.clear()
-          this.$store.dispatch('auth/signOut').catch(this.notifyError);
-        }, 300);
+          await this.$store.dispatch('auth/signOut');
+          return setTimeout(
+            () =>
+              this.$router.push({
+                name: 'home',
+              }),
+            500,
+          );
+        }
+        await this.$store.dispatch('auth/externalSignOut');
+        return setTimeout(
+          () =>
+            this.$router.push({
+              name: 'home',
+            }),
+          500,
+        );
+      } catch (error) {
+        this.notifyError(error);
+        throw error;
       }
-      return setTimeout(() => {
-        //  this.$store.cache.clear()
-        this.$store.dispatch('auth/externalSignOut').catch(this.notifyError);
-      }, 300);
     },
   },
 };

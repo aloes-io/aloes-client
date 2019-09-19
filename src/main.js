@@ -1,6 +1,7 @@
 import Vue from 'vue';
-import { Layout } from 'bootstrap-vue/es/components';
+import { LayoutPlugin } from 'bootstrap-vue';
 import VueCroppie from 'vue-croppie';
+import 'croppie/croppie.css';
 import { library, dom } from '@fortawesome/fontawesome-svg-core';
 import {
   faBinoculars,
@@ -52,7 +53,7 @@ import store from '@/store';
 
 Vue.config.productionTip = false;
 
-Vue.use(Layout);
+Vue.use(LayoutPlugin);
 Vue.use(VueCroppie);
 //  Object.defineProperty(Vue.prototype, '$moment', {value: moment});
 

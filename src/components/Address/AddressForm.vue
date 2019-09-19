@@ -140,7 +140,7 @@ export default {
     'owner-type': {
       type: String,
       required: true,
-      default: 'users',
+      default: 'user',
     },
   },
 
@@ -157,9 +157,9 @@ export default {
   computed: {
     address: {
       get() {
-        if (this.$props.ownerType === 'Devices') {
+        if (this.$props.ownerType === 'Device') {
           return this.$store.state.address.deviceAddress;
-        } else if (this.$props.ownerType === 'users') {
+        } else if (this.$props.ownerType === 'user') {
           return this.$store.state.address.profileAddress;
         }
         return null;
@@ -307,24 +307,18 @@ export default {
     },
 
     async getCollectionAddress() {
-      return this.$store
-        .dispatch('address/findAddress', {
-          ownerType: this.$props.ownerType,
-          ownerId: this.$props.ownerId,
-          viewer: this.viewer,
-        })
-        .then(res => res)
-        .catch(err => err);
+      return this.$store.dispatch('address/findAddress', {
+        ownerType: this.$props.ownerType,
+        ownerId: this.$props.ownerId,
+        viewer: this.viewer,
+      });
     },
 
     async saveCollectionAddress() {
-      return this.$store
-        .dispatch('address/updateAddress', {
-          ownerType: this.$route.ownerType,
-          ownerId: this.$props.ownerId,
-        })
-        .then(res => res)
-        .catch(err => err);
+      return this.$store.dispatch('address/updateAddress', {
+        ownerType: this.$route.ownerType,
+        ownerId: this.$props.ownerId,
+      });
     },
 
     async verifyAddress() {
@@ -356,7 +350,6 @@ export default {
           this.$refs.addressModal.show();
           return err;
         });
-      return null;
     },
   },
 };
