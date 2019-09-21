@@ -12,9 +12,6 @@ module.exports = {
   configureWebpack: {
     // trick to avoid compile error
     externals: { canvas: {} },
-    // output: {
-    //   libraryExport: 'default',
-    // },
   },
   // devServer: {
   //   proxy: {

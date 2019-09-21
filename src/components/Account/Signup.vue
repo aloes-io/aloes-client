@@ -2,7 +2,6 @@
   <b-card class="signup-view">
     <b-form @submit="onSignup" @reset="onReset">
       <signup-form>
-        <!-- <captcha ref="captcha" /> -->
         <b-row align-h="center" class="signup-actions">
           <b-col sm="12" md="12" lg="12" xl="12">
             <b-button id="signup-button" type="submit" variant="primary">
@@ -43,11 +42,7 @@
 </template>
 
 <script type="text/javascript">
-import { BAlert } from 'bootstrap-vue';
-import { BButton } from 'bootstrap-vue';
-import { BForm } from 'bootstrap-vue';
-import { BCard } from 'bootstrap-vue';
-//  import Captcha from '@/components/Account/Captcha.vue';
+import { BAlert, BButton, BForm, BCard } from 'bootstrap-vue';
 import SignupForm from '@/components/Account/SignupForm.vue';
 import notification from '@/views/mixins/notification';
 
@@ -60,7 +55,6 @@ export default {
     'b-card': BCard,
     'b-form': BForm,
     'signup-form': SignupForm,
-    //  captcha: Captcha,
   },
 
   mixins: [notification],
@@ -115,10 +109,6 @@ export default {
     },
   },
 
-  mounted() {
-    //  this.captchaBody = this.$el.querySelector('#coinhive-captcha');
-  },
-
   methods: {
     async onSignup(evt) {
       this.error = null;
@@ -126,15 +116,6 @@ export default {
       if (evt) evt.preventDefault();
       if (evt) evt.stopPropagation();
       try {
-        // const target = evt.target;
-        // const success = await this.$refs.captcha.verifyCaptcha(target);
-        // if (success !== true) {
-        //   this.error = {
-        //     message: 'Verify signup with captcha first',
-        //   };
-        //   return this.error;
-        // }
-
         if (
           this.$store.state.auth.signup.password !== this.$store.state.auth.signup.confirmPassword
         ) {

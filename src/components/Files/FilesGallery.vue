@@ -205,7 +205,7 @@ export default {
         // console.log('updatedMeta', updatedMeta);
         if (updatedMeta && updatedMeta !== null) {
           //  this.files = result.files;
-          return this.updateCollection('filesMeta', 'update', updatedMeta);
+          //  return this.updateCollection('filesMeta', 'update', updatedMeta);
         }
         return false;
       } catch (error) {

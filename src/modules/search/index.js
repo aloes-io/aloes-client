@@ -9,6 +9,7 @@ export default {
     filter: null,
     model: {
       location: null,
+      type: null,
       statusFilter: false,
       deviceSelected: null,
       results: [],

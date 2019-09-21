@@ -31,8 +31,7 @@
 </template>
 
 <script type="text/javascript">
-import { BForm } from 'bootstrap-vue';
-import { BFormInput } from 'bootstrap-vue';
+import { BForm, BFormInput } from 'bootstrap-vue';
 
 export default {
   name: 'LoginForm',

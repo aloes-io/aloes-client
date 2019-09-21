@@ -49,15 +49,14 @@
 
 <script type="text/javascript">
 import has from 'lodash.has';
-import { BFormInput } from 'bootstrap-vue';
-import { BFormGroup } from 'bootstrap-vue';
+import { BFormGroup, BFormInput } from 'bootstrap-vue';
 
 export default {
   name: 'MySensorsForm',
 
   components: {
-    'b-form-input': BFormInput,
     'b-form-group': BFormGroup,
+    'b-form-input': BFormInput,
   },
 
   props: {

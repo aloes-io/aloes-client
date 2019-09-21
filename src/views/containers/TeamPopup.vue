@@ -23,8 +23,7 @@
 </template>
 
 <script type="text/javascript">
-import { BButton } from 'bootstrap-vue';
-import { BModal } from 'bootstrap-vue';
+import { BButton, BModal } from 'bootstrap-vue';
 
 export default {
   name: 'TeamPopup',

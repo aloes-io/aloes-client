@@ -49,8 +49,7 @@
 
 <script type="text/javascript">
 import has from 'lodash.has';
-import { BFormInput } from 'bootstrap-vue';
-import { BFormGroup } from 'bootstrap-vue';
+import { BFormGroup, BFormInput } from 'bootstrap-vue';
 
 export default {
   name: 'AloesClientForm',

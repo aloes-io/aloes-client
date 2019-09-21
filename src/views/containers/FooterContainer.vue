@@ -15,9 +15,7 @@
 </template>
 
 <script type="text/javascript">
-import { BNavbar } from 'bootstrap-vue';
-import { BNavbarNav } from 'bootstrap-vue';
-import { BNavItem } from 'bootstrap-vue';
+import { BNavbar, BNavbarNav, BNavItem } from 'bootstrap-vue';
 
 export default {
   name: 'FooterContainer',

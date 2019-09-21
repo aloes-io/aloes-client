@@ -48,10 +48,7 @@
 </template>
 
 <script type="text/javascript">
-import { BAlert } from 'bootstrap-vue';
-import { BButton } from 'bootstrap-vue';
-import { BCard } from 'bootstrap-vue';
-import { BForm } from 'bootstrap-vue';
+import { BAlert, BButton, BCard, BForm } from 'bootstrap-vue';
 import FooterContainer from '@/views/containers/FooterContainer.vue';
 
 export default {

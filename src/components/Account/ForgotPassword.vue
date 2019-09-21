@@ -21,9 +21,7 @@
 </template>
 
 <script type="text/javascript">
-import { BForm } from 'bootstrap-vue';
-import { BFormInput } from 'bootstrap-vue';
-import { BFormGroup } from 'bootstrap-vue';
+import { BForm, BFormInput, BFormGroup } from 'bootstrap-vue';
 
 export default {
   name: 'ForgotPassword',

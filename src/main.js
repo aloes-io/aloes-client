@@ -55,6 +55,7 @@ Vue.config.productionTip = false;
 
 Vue.use(LayoutPlugin);
 Vue.use(VueCroppie);
+
 //  Object.defineProperty(Vue.prototype, '$moment', {value: moment});
 
 library.add(

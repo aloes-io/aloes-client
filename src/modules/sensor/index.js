@@ -12,7 +12,10 @@ export default {
     dismissCountDown: 0,
     loading: null,
     outputTopic: 'IoTAgent',
+    deviceSensors: [],
+    deviceSensorsCount: 0,
     collection: [],
+    collectionCount: 0,
     instance: {
       devAddr: null,
       devEui: null,

@@ -109,10 +109,7 @@
 </template>
 
 <script type="text/javascript">
-import { BModal } from 'bootstrap-vue';
-import { BButton } from 'bootstrap-vue';
-import { BFormGroup } from 'bootstrap-vue';
-import { BFormInput } from 'bootstrap-vue';
+import { BButton, BFormGroup, BFormInput, BModal } from 'bootstrap-vue';
 
 export default {
   name: 'AddressForm',
@@ -324,7 +321,7 @@ export default {
     async verifyAddress() {
       // if (evt) evt.preventDefault();
       // if (evt) evt.stopPropagation();
-      await this.$store
+      return this.$store
         .dispatch('address/verifyAddress', this.$props.ownerType)
         .then(res => {
           if (res.message) {

@@ -1,4 +1,12 @@
 .search-result-view {
-  margin-top: 4%;
+	margin-top: 2%;
+	.search-result {
+		height: 70vh;
+		max-height: 80vh;
+		overflow-y: scroll;
+	}
 }
 
+.sensor-snap-container {
+	margin-bottom: 1%;
+}

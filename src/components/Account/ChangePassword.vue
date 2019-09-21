@@ -71,11 +71,7 @@
 </template>
 
 <script type="text/javascript">
-import { BAlert } from 'bootstrap-vue';
-import { BButton } from 'bootstrap-vue';
-import { BForm } from 'bootstrap-vue';
-import { BFormInput } from 'bootstrap-vue';
-import { BFormGroup } from 'bootstrap-vue';
+import { BAlert, BButton, BForm, BFormInput, BFormGroup } from 'bootstrap-vue';
 
 export default {
   name: 'ChangePassword',

@@ -18,6 +18,7 @@ export function setModelList(state, { command, list, value }) {
 
 export function cleanSearch(state) {
   const model = {
+    type: null,
     location: null,
     statusFilter: false,
     profileSelected: null,

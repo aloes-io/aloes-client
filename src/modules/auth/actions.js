@@ -56,6 +56,7 @@ export async function syncToken({ commit, dispatch }) {
 }
 
 function evaluateRoute(state, to, from, next) {
+  //   await store.restored
   return sessionError => {
     if (to.matched.some(record => record.meta.requiresAuth)) {
       logger.publish(4, 'Router', 'evaluateRoute:res', '1');

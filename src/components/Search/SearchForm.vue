@@ -1,15 +1,25 @@
 <template lang="html">
-  <b-form class="search-form" @submit="searchDevices">
+  <b-form class="search-form" @submit="search">
     <b-row align-h="center">
       <b-col cols="12" sm="5" md="5" lg="5" xl="5">
         <b-form-input
           id="search-place"
           v-model="searchKeys"
           :required="!nameSearch"
-          placeholder="Where ?"
+          placeholder="Keywords"
           type="text"
           size="sm"
           autocomplete="search"
+        />
+        <b-form-select
+          id="search-type"
+          ref="searchType"
+          v-model="searchType"
+          :select-size="1"
+          :options="searchTypes"
+          placeholder="Collection"
+          size="sm"
+          required
         />
       </b-col>
       <!-- TODO : add a reset parameter button  -->
@@ -17,7 +27,7 @@
         <b-button id="search-custom" type="submit">
           <fa-icon icon="search" size="lg" />
         </b-button>
-        <b-button id="search-geolocation" @click="getUserLocation">
+        <b-button id="search-geolocation" @click="locationSearch">
           <fa-icon icon="map-marker" size="lg" />
         </b-button>
       </b-col>
@@ -26,9 +36,7 @@
 </template>
 
 <script type="text/javascript">
-import { BButton } from 'bootstrap-vue';
-import { BForm } from 'bootstrap-vue';
-import { BFormInput } from 'bootstrap-vue';
+import { BButton, BForm, BFormInput, BFormSelect } from 'bootstrap-vue';
 import logger from '@/services/logger';
 
 export default {
@@ -38,6 +46,7 @@ export default {
     'b-button': BButton,
     'b-form': BForm,
     'b-form-input': BFormInput,
+    'b-form-select': BFormSelect,
   },
 
   props: {
@@ -57,18 +66,15 @@ export default {
       searchKeys: null,
       dateSearch: null,
       searchFields: null,
+      searchTypes: [
+        { text: 'type', value: null, disabled: true },
+        { text: 'Device', value: 'device' },
+        { text: 'Sensor', value: 'sensor' },
+      ],
     };
   },
 
   computed: {
-    profileType: {
-      get() {
-        return this.$store.state.search.model.profileType;
-      },
-      set(value) {
-        this.$store.commit('search/setModelKV', { key: 'profileType', value });
-      },
-    },
     statusFilter: {
       get() {
         return this.$store.state.search.model.statusFilter;
@@ -80,6 +86,14 @@ export default {
       },
       set(value) {
         this.$store.commit('search/setModelKV', { key: 'location', value });
+      },
+    },
+    searchType: {
+      get() {
+        return this.$store.state.search.model.type;
+      },
+      set(value) {
+        this.$store.commit('search/setModelKV', { key: 'type', value });
       },
     },
     searchResults: {
@@ -117,7 +131,7 @@ export default {
   },
 
   methods: {
-    async searchDevices(evt) {
+    async search(evt) {
       if (evt) evt.preventDefault();
       if (evt) evt.stopPropagation();
       this.searchError = null;
@@ -125,14 +139,14 @@ export default {
       this.dateSearch = null;
       if (!this.searchKeys) {
         this.searchError = new Error('Please fill search field');
-        return this.searchError;
+        return null;
       }
       const filter = {
         text: this.searchKeys,
       };
       logger.publish(4, 'search', 'composeFilter:req', filter);
       return this.$store
-        .dispatch(`search/searchDevices`, filter)
+        .dispatch(`search/search`, filter)
         .then(res => res)
         .catch(err => err);
     },
@@ -153,7 +167,6 @@ export default {
         .dispatch('search/getDevicesByGeolocation', filter)
         .then(res => res)
         .catch(err => err);
-      //  return profiles;
     },
 
     showLocationError(error) {
@@ -205,7 +218,7 @@ export default {
       }
     },
 
-    getUserLocation(evt) {
+    async locationSearch(evt) {
       if (evt) evt.preventDefault();
       if (evt) evt.stopPropagation();
       this.searchSuccess = false;
@@ -218,8 +231,8 @@ export default {
             longitude: userCoordinates.lng,
           },
         };
-        logger.publish(4, 'search', 'getUserLocation:req', position);
-        this.getDevicesByGeolocation(position);
+        logger.publish(4, 'search', 'locationSearch:req', position);
+        await this.getDevicesByGeolocation(position);
       } else if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           this.getDevicesByGeolocation,

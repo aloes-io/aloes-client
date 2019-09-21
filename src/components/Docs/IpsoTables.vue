@@ -47,9 +47,7 @@ import { omaObjects, omaResources, omaViews } from 'oma-json';
 import { keys } from 'd3-collection';
 import { hierarchy } from 'd3-hierarchy';
 import { select } from 'd3-selection';
-import { BDropdown } from 'bootstrap-vue';
-import { BDropdownDivider } from 'bootstrap-vue';
-import { BDropdownItemButton } from 'bootstrap-vue';
+import { BDropdown, BDropdownDivider, BDropdownItemButton } from 'bootstrap-vue';
 
 export default {
   name: 'IpsoTables',

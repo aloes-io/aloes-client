@@ -62,6 +62,13 @@ export async function verifyAddress({ state, commit }, ownerType) {
   }
 }
 
+// export async function saveInstance({ dispatch }, { device }) {
+//   if (device.id) {
+//     return dispatch('updateInstance', { device });
+//   }
+//   return dispatch('createInstance', { device });
+// }
+
 export async function updateAddress({ state, commit }, { ownerType, ownerId }) {
   try {
     if (ownerType.toLowerCase() === 'device') {

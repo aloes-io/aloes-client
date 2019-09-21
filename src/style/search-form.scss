@@ -25,6 +25,22 @@ input#search-name:hover {
   box-shadow: $input-shadow-selected;
 }
 
+select.custom-select#search-type {
+  margin-bottom: 2%;
+  background-color: white;
+  height: $input-height-small;
+  padding: $input-padding;
+  border-radius: $input-border-radius;
+  border: 1px solid transparent;
+  box-shadow: $input-shadow;
+  -webkit-transition: box-shadow 150ms ease;
+  transition: box-shadow 150ms ease;
+}
+
+select.custom-select#search-type:hover {
+  box-shadow: $input-shadow-selected;
+}
+
 input#search-place {
   margin-bottom: 2%;
   background-color: white;

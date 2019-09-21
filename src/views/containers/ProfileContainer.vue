@@ -168,7 +168,7 @@ export default {
       try {
         this.error = null;
         this.success = null;
-        const members = await this.$store.dispatch('teams/loadTeams', this.updatedProfileId);
+        const members = await this.$store.cache.dispatch('teams/loadTeams', this.updatedProfileId);
         // if (members && members.length <1)
         return members;
       } catch (error) {
@@ -181,20 +181,11 @@ export default {
       try {
         this.error = null;
         this.success = null;
-        const result = await this.$store
-          .dispatch('auth/findAccountById', {
-            userId: this.updatedProfileId,
-            viewer: this.viewer,
-          })
-          .catch(err => {
-            logger.publish(3, this.updatedProfileRole, 'checkProfile:err', err);
-            this.error = {
-              message: "Sorry, this profile can't be displayed",
-            };
-            return setTimeout(() => {
-              this.$router.go(-1);
-            }, 1000);
-          });
+        const result = await this.$store.cache.dispatch('auth/findAccountById', {
+          userId: this.updatedProfileId,
+          viewer: this.viewer,
+        });
+
         logger.publish(3, this.updatedProfileRole, 'checkProfile:res', result);
 
         if (result.id === this.$store.state.auth.account.id) {
@@ -213,6 +204,9 @@ export default {
       } catch (error) {
         this.error = error;
         logger.publish(3, this.updatedProfileRole, 'checkProfile:err', error);
+        setTimeout(() => {
+          this.$router.go(-1);
+        }, 1000);
         throw error;
       }
     },

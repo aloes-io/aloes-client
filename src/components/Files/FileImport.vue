@@ -349,7 +349,7 @@ export default {
     async getImg() {
       try {
         if (this.source && this.source !== null) {
-          const file = await this.$store.dispatch('files/download', this.source);
+          const file = await this.$store.cache.dispatch('files/download', this.source);
           if (file && file !== null) {
             const dataUrl = await this.parseImage(file);
             this.imageUrl = dataUrl;

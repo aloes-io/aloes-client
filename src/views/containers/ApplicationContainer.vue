@@ -48,9 +48,7 @@
 
 <script type="text/javascript">
 import has from 'lodash.has';
-import { BAlert } from 'bootstrap-vue';
-import { BTab } from 'bootstrap-vue';
-import { BTabs } from 'bootstrap-vue';
+import { BAlert, BTab, BTabs } from 'bootstrap-vue';
 import ApplicationEditor from '@/components/Application/ApplicationEditor.vue';
 import { EventBus } from '@/services/PubSub';
 import logger from '@/services/logger';

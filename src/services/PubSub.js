@@ -8,7 +8,7 @@ export const EventBus = new Vue();
 const Storage = window.sessionStorage;
 const PubSub = { hasListeners: false };
 
-const debounceDelay = 100;
+const debounceDelay = 150;
 
 const lastMessage = { topic: '', payload: '', timestamp: 0 };
 

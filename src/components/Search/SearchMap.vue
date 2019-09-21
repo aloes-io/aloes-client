@@ -1,5 +1,5 @@
 <template lang="html">
-  <div v-if="searchSuccess || devices" class="search-map">
+  <div v-if="devices" class="search-map">
     <l-map
       ref="map"
       :zoom="currentZoom"

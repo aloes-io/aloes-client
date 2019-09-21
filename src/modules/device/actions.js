@@ -3,31 +3,44 @@ import socket from '@/services/socket';
 import PubSub from '@/services/PubSub';
 import logger from '@/services/logger';
 
-export async function findByAccount({ state, commit }, ownerId) {
+export async function findByAccount({ state, commit }, { ownerId, filter }) {
   try {
-    const devices = await loopback.find(`/${state.resources}`, {
+    let devices = await loopback.find(`/${state.resources}`, {
       where: { ownerId },
-      include: ['sensors', 'address'],
-      limit: 100,
+      // include: ['sensors', 'address'],
+      include: filter.include || ['address'],
+      limit: filter.limit || 50,
+      skip: filter.skip || 0,
+    });
+    logger.publish(4, state.collectionName, 'dispatch:findByAccount:req', filter);
+    if (!devices || devices === null) {
+      devices = [];
+    }
+    // commit('setStateKV', { key: 'collection', value: collection });
+    devices = JSON.parse(JSON.stringify(devices));
+    logger.publish(3, state.collectionName, 'dispatch:findByAccount:res', devices.length);
+    return devices;
+  } catch (error) {
+    commit('setStateKV', { key: 'error', value: error });
+    throw error;
+  }
+}
+
+export async function countByAccount({ state, commit }, { ownerId }) {
+  try {
+    const res = await loopback.find(`/${state.resources}/count`, {
+      where: { ownerId },
     });
 
-    let collection = JSON.parse(JSON.stringify(devices));
-    collection = collection.map(device => {
-      if (device.sensors) {
-        delete device.sensors;
-      }
-      return device;
-    });
-    //  logger.publish(3, state.collectionName, 'dispatch:findDevicesByAccount:res', collection);
-    commit('setStateKV', { key: 'collection', value: collection });
-    return devices;
+    logger.publish(3, state.collectionName, 'dispatch:countByAccount:res', res.count);
+    commit('setStateKV', { key: 'collectionCount', value: res.count });
+    return res.count;
   } catch (error) {
     throw error;
   }
 }
 
 export async function findDeviceKV({ state, commit }, { key, value }) {
-  // define limit base on acccount type ?
   try {
     const devices = await loopback.find(`/${state.resources}`, {
       where: { [key]: value },

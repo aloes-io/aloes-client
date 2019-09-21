@@ -143,14 +143,16 @@
 
 <script type="text/javascript">
 import has from 'lodash.has';
-import { BButton } from 'bootstrap-vue';
-import { BCard } from 'bootstrap-vue';
-import { BCardBody } from 'bootstrap-vue';
-import { BCardFooter } from 'bootstrap-vue';
-import { BFormInput } from 'bootstrap-vue';
-import { BFormGroup } from 'bootstrap-vue';
-import { BFormSelect } from 'bootstrap-vue';
-import { BModal } from 'bootstrap-vue';
+import {
+  BButton,
+  BCard,
+  BCardBody,
+  BCardFooter,
+  BFormInput,
+  BFormGroup,
+  BFormSelect,
+  BModal,
+} from 'bootstrap-vue';
 
 export default {
   name: 'DeviceEditor',

@@ -68,9 +68,7 @@
 </template>
 
 <script type="text/javascript">
-import { BAlert } from 'bootstrap-vue';
-import { BButton } from 'bootstrap-vue';
-import { BForm } from 'bootstrap-vue';
+import { BAlert, BButton, BForm } from 'bootstrap-vue';
 import logger from '@/services/logger';
 
 export default {

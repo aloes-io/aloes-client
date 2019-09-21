@@ -95,13 +95,15 @@
 </template>
 
 <script type="text/javascript">
-import { BCollapse } from 'bootstrap-vue';
-import { BImg } from 'bootstrap-vue';
-import { BNavbar } from 'bootstrap-vue';
-import { BNavbarNav } from 'bootstrap-vue';
-import { BNavbarBrand } from 'bootstrap-vue';
-import { BNavbarToggle } from 'bootstrap-vue';
-import { BNavItem } from 'bootstrap-vue';
+import {
+  BCollapse,
+  BImg,
+  BNavbar,
+  BNavbarNav,
+  BNavbarBrand,
+  BNavbarToggle,
+  BNavItem,
+} from 'bootstrap-vue';
 import File from '@/views/mixins/file';
 import Notification from '@/views/mixins/notification';
 
@@ -206,7 +208,7 @@ export default {
           const url = `${this.$store.state.serverUrl}${
             this.$store.state.auth.account.avatarImgUrl
           }`;
-          const file = await this.$store.dispatch('files/download', url);
+          const file = await this.$store.cache.dispatch('files/download', url);
           if (file && file !== null) {
             this.userIcon = await this.parseImage(file);
           } else {

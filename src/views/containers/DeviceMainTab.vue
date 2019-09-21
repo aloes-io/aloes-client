@@ -6,9 +6,8 @@
       <br />
     </b-col>
     <b-col sm="4">
-      <devices-list v-if="devices" :token="token" :user-id="userId" :devices="devices" />
+      <devices-list :token="token" :user-id="userId" />
     </b-col>
-
     <b-row v-if="!viewer && editorMode" align-h="center">
       <b-col sm="8">
         <b-alert
@@ -100,17 +99,6 @@ export default {
         });
       },
     },
-    devices: {
-      get() {
-        return this.$store.state.device.collection;
-      },
-      set(value) {
-        this.$store.commit('device/setStateKV', {
-          key: 'collection',
-          value,
-        });
-      },
-    },
     device: {
       get() {
         // if (this.$props.deviceId)
@@ -138,7 +126,6 @@ export default {
     },
     errorMessageExists() {
       return has(this.error, 'message');
-      //  return _.;
     },
     successMessageExists() {
       return has(this.sucess, 'message');
@@ -160,7 +147,7 @@ export default {
     },
   },
 
-  async mounted() {
+  mounted() {
     this.loading = false;
   },
 
