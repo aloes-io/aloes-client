@@ -27,20 +27,13 @@ ENV VUE_APP_CLIENT_URL=$VUE_APP_CLIENT_URL
 ENV VUE_APP_LOGGER_LEVEL=$VUE_APP_LOGGER_LEVEL
 ENV GIT_REPO_SSH_URL=$GIT_REPO_SSH_URL
 
-# COPY package.json /home/node/$NODE_NAME/package.json
 COPY package*.json /home/node/$NODE_NAME/
 COPY vue.config.js /home/node/$NODE_NAME/
 COPY src /home/node/$NODE_NAME/src
 COPY public /home/node/$NODE_NAME/public
 
-# RUN npm install 
 RUN npm ci 
-
-# RUN npm install --production --silent
-# RUN npm install @vue/cli@3.7.0 -g
-# RUN npm install @vue/cli-service@3.7.0 -g
  
-# COPY . /home/node/$NODE_NAME
 RUN npm run build
 
 # production stage 

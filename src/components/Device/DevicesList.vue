@@ -189,7 +189,7 @@ export default {
     },
 
     async countDevices() {
-      await this.$store.dispatch('device/countByAccount', {
+      await this.$store.cache.dispatch('device/countByAccount', {
         ownerId: this.$store.state.auth.account.id,
       });
     },
@@ -236,7 +236,7 @@ export default {
       let counter = 0;
       if (this.devicesFilter) counter = this.filteredDevices.length - this.devicesListLimit || 0;
       else counter = this.devicesCount - this.devicesListLimit || 0;
-      // const counter = this.devicesCount - this.filteredDevices.length;
+      if (counter < 0) counter = 0;
       if (counter !== this.devicesListCounter) {
         this.devicesListCounter = counter;
         // this.$emit('scroll-bottom', counter, this.page);

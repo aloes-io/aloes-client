@@ -157,7 +157,6 @@ export default {
         if (this.$el && id && id !== null) {
           this.updatedDeviceId = id;
           if (id !== prevId) {
-            // this.sensors = [];
             this.deviceSensors = [];
             this.filteredSensors = [];
             this.sensorsListCounter = 0;
@@ -206,7 +205,6 @@ export default {
             filter,
           });
         }
-
         // logger.publish(4, 'sensor', 'loadSensors:res', sensors);
         if (!sensors || sensors === null) {
           this.loading = false;
@@ -221,7 +219,7 @@ export default {
     },
 
     async countSensors() {
-      await this.$store.dispatch('sensor/countByDevice', {
+      await this.$store.cache.dispatch('sensor/countByDevice', {
         deviceId: this.updatedDeviceId,
       });
     },
@@ -320,6 +318,7 @@ export default {
       let counter = 0;
       if (this.sensorsFilter) counter = this.filteredSensors.length - this.sensorsListLimit || 0;
       else counter = this.sensorsCount - this.sensorsListLimit || 0;
+      if (counter < 0) counter = 0;
       // console.log('onScrollBottom', counter, this.sensorsCount, this.sensorsListLimit);
       if (counter !== this.sensorsListCounter) {
         this.sensorsListCounter = counter;

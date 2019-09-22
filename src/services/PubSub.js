@@ -8,7 +8,7 @@ export const EventBus = new Vue();
 const Storage = window.sessionStorage;
 const PubSub = { hasListeners: false };
 
-const debounceDelay = 150;
+const debounceDelay = 50;
 
 const lastMessage = { topic: '', payload: '', timestamp: 0 };
 
@@ -226,6 +226,7 @@ PubSub.onCollectionUpdated = debounce(onCollectionUpdated, debounceDelay);
 const handler = (topic, payload) => {
   try {
     if (lastMessage.topic === topic && lastMessage.timestamp > Date.now() - debounceDelay * 3) {
+      // debounceDelay = 150;
       return;
     }
     logger.publish(4, 'PubSub', 'handler:req', JSON.parse(payload));
