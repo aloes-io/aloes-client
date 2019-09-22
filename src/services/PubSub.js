@@ -176,12 +176,12 @@ PubSub.removeListeners = async client => {
         } catch (e) {
           container = [];
         }
+        PubSub.hasListeners = false;
+        Storage.setItem('subscription-container', '[]');
         if (container && container.length > 0) {
           // container.map(async route => client.unsubscribe(route));
           Promise.all(container.map(route => client.unsubscribe(route)));
         }
-        Storage.setItem('subscription-container', '[]');
-        PubSub.hasListeners = false;
         logger.publish(3, 'pubsub', 'removeListeners:res', 'success');
         return;
       }
@@ -225,7 +225,7 @@ PubSub.onCollectionUpdated = debounce(onCollectionUpdated, debounceDelay);
 
 const handler = (topic, payload) => {
   try {
-    if (lastMessage.topic === topic && lastMessage.timestamp > Date.now() - debounceDelay * 3) {
+    if (lastMessage.topic === topic && lastMessage.timestamp > Date.now() - debounceDelay * 4) {
       // debounceDelay = 150;
       return;
     }
@@ -305,7 +305,8 @@ const handler = (topic, payload) => {
   }
 };
 
-PubSub.handler = debounce(handler, debounceDelay);
+// PubSub.handler = debounce(handler, debounceDelay);
+PubSub.handler = handler;
 
 PubSub.publish = async (client, options) => {
   try {

@@ -133,7 +133,7 @@ export async function loadAccount({ state, commit }, userId) {
     return account;
   } catch (error) {
     loopback.removeToken();
-    await socket.removeToken();
+    socket.removeToken();
     commit('setAccount', { viewer: false, account: null });
     throw error;
   }
@@ -168,7 +168,7 @@ export async function signIn({ state, commit, dispatch }, { email, password, sav
       await socket.setToken(state.access_token);
     } else {
       loopback.removeToken();
-      await socket.removeToken();
+      socket.removeToken();
     }
     await dispatch('loadAccount', state.access_token.userId);
     return accessToken;
@@ -205,12 +205,12 @@ export async function signOut({ commit, state }) {
       accessToken: state['access_token'],
     });
     loopback.removeToken();
-    await socket.removeToken();
+    socket.removeToken();
     commit('setAccount', { viewer: false, account: null });
     return;
   } catch (error) {
     loopback.removeToken();
-    await socket.removeToken();
+    socket.removeToken();
     commit('setAccount', { viewer: false, account: null });
     return;
   }
@@ -220,7 +220,7 @@ export async function externalSignOut({ commit, state }) {
   try {
     await loopback.get(`/${state.authRoute}/logout`);
     loopback.removeToken();
-    await socket.removeToken();
+    socket.removeToken();
     deleteCookie('access_token');
     deleteCookie('userId');
     commit('setAccessToken', null);

@@ -57,11 +57,11 @@ socket.setToken = async token => {
   }
 };
 
-socket.removeToken = async () => {
+socket.removeToken = () => {
   try {
     logger.publish(3, 'socket', 'removeToken:req', socket.token);
     if (socket.client) {
-      await PubSub.removeListeners(socket.client);
+      PubSub.removeListeners(socket.client);
       // await socket.client.end();
     }
     delete socket.token;
