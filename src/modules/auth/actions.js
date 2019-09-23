@@ -40,10 +40,9 @@ function importTokenFromCookies() {
 /**
  * Sync loopback token with current state
  */
-export async function syncToken({ commit, dispatch }) {
+export function syncToken({ commit, dispatch }) {
   if (loopback.token) {
     commit('setAccessToken', loopback.token);
-    await socket.setToken(loopback.token);
     return dispatch('loadAccount', loopback.token.userId);
   }
   // else if (importTokenFromCookies()) {
@@ -69,12 +68,12 @@ function evaluateRoute(state, to, from, next) {
           to.name === 'search') &&
         to.query['access-token'] &&
         to.query['user-id'] &&
-        (state.access_token || loopback.token || getCookie('access_token'))
+        (state.access_token || getCookie('access_token'))
         //  (state.access_token || loopback.token)
       ) {
         logger.publish(4, 'Router', 'evaluateRoute:res', '1a');
         next();
-      } else if (!state.access_token && !loopback.token && !getCookie('access_token')) {
+      } else if (!state.access_token  && !getCookie('access_token')) {
         logger.publish(4, 'Router', 'evaluateRoute:res', '1c');
         next({
           name: 'login',
@@ -130,6 +129,7 @@ export async function loadAccount({ state, commit }, userId) {
   try {
     const account = await loopback.get(`/${state.resources}/${userId}`);
     commit('setAccount', { viewer: false, account });
+    socket.setToken(state.access_token);
     return account;
   } catch (error) {
     loopback.removeToken();
@@ -165,10 +165,8 @@ export async function signIn({ state, commit, dispatch }, { email, password, sav
     commit('setAccessToken', accessToken);
     if (state.access_token !== null) {
       loopback.setToken(state.access_token, save);
-      await socket.setToken(state.access_token);
     } else {
       loopback.removeToken();
-      socket.removeToken();
     }
     await dispatch('loadAccount', state.access_token.userId);
     return accessToken;
@@ -210,7 +208,7 @@ export async function signOut({ commit, state }) {
     return;
   } catch (error) {
     loopback.removeToken();
-    socket.removeToken();
+    // socket.removeToken();
     commit('setAccount', { viewer: false, account: null });
     return;
   }
