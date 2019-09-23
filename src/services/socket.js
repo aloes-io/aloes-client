@@ -82,14 +82,16 @@ socket.initSocket = async options => {
       return socket;
     }
     socket.client = await mqtt.connectAsync(brokerUrl, options);
+    logger.publish(3, 'socket', 'onConnect', 'success');
+
     // socket.client = mqtt.connect(brokerUrl, options);
+    // socket.client.on('connect', async state => {
+    //   logger.publish(3, 'socket', 'onConnect', state);
+    //   setSocketId(options.clientId);
+    // });
+
     setSocketId(options.clientId);
-
     await PubSub.setListeners(socket.client, socket.token);
-
-    socket.client.on('connect', async state => {
-      logger.publish(3, 'socket', 'onConnect', state);
-    });
 
     socket.client.on('offline', () => {
       logger.publish(3, 'socket', 'onDisconnect', '');
