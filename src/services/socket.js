@@ -59,11 +59,12 @@ socket.setToken = token => {
 socket.removeToken = () => {
   try {
     logger.publish(3, 'socket', 'removeToken:req', socket.token);
+    delSocketId();
+    delete socket.token;
     if (socket.client) {
       PubSub.removeListeners(socket.client);
       socket.client.end();
     }
-    delete socket.token;
     logger.publish(3, 'socket', 'removeToken:res', 'success');
     // return;
   } catch (error) {
@@ -80,15 +81,11 @@ socket.initSocket = async options => {
     if (socketId && socketId !== null && socket.client) {
       return socket;
     }
-    // socket.client = await mqtt.connectAsync(brokerUrl, options);
-    socket.client = mqtt.connect(brokerUrl, options);
-
+    socket.client = await mqtt.connectAsync(brokerUrl, options);
+    // socket.client = mqtt.connect(brokerUrl, options);
     setSocketId(options.clientId);
 
-    // console.log('RESUB TOPICS', Object.keys(socket.client._client._resubscribeTopics));
     await PubSub.setListeners(socket.client, socket.token);
-    // if (Object.keys(socket.client._client._resubscribeTopics).length < 1) {
-    // }
 
     socket.client.on('connect', async state => {
       logger.publish(3, 'socket', 'onConnect', state);
