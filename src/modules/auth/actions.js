@@ -73,7 +73,7 @@ function evaluateRoute(state, to, from, next) {
       ) {
         logger.publish(4, 'Router', 'evaluateRoute:res', '1a');
         next();
-      } else if (!state.access_token  && !getCookie('access_token')) {
+      } else if (!state.access_token && !getCookie('access_token')) {
         logger.publish(4, 'Router', 'evaluateRoute:res', '1c');
         next({
           name: 'login',

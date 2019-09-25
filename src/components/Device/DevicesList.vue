@@ -169,15 +169,10 @@ export default {
           ownerId: this.$store.state.auth.account.id,
           filter,
         });
-
-        if (!devices) {
-          const error = new Error('error while looking for devices');
-          throw error;
-        } else if (devices.length < 1) {
-          const error = new Error('you have no device registered');
-          throw error;
-        }
         this.loading = false;
+        if (!devices || devices.length < 1) {
+          return [];
+        }
         logger.publish(4, 'device', 'loadDevices:res', devices.length);
         this.success = { message: 'found devices' };
         return devices;
@@ -234,8 +229,8 @@ export default {
       if (this.page + 1 > this.devicesCount / (this.devicesListLimit * this.page)) return;
       this.page += 1;
       let counter = 0;
-      if (this.devicesFilter) counter = this.filteredDevices.length - this.devicesListLimit || 0;
-      else counter = this.devicesCount - this.devicesListLimit || 0;
+      if (this.devicesFilter) return;
+      else counter = this.devicesListLimit * this.page || 0;
       if (counter < 0) counter = 0;
       if (counter !== this.devicesListCounter) {
         this.devicesListCounter = counter;

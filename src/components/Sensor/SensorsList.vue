@@ -193,22 +193,14 @@ export default {
         this.error = null;
         this.success = null;
         this.dismissCountDown = this.dismissSecs;
-        let sensors = [];
-        if (this.sensors) {
-          sensors = this.sensors.filter(
-            sensor => sensor.deviceId.toString() === deviceId.toString(),
-          );
-        }
-        if (!sensors) {
-          sensors = await this.$store.cache.dispatch('sensor/findByDevice', {
-            deviceId,
-            filter,
-          });
-        }
+        const sensors = await this.$store.cache.dispatch('sensor/findByDevice', {
+          deviceId,
+          filter,
+        });
         // logger.publish(4, 'sensor', 'loadSensors:res', sensors);
         if (!sensors || sensors === null) {
           this.loading = false;
-          return null;
+          return [];
         }
         this.loading = false;
         return sensors;
@@ -316,8 +308,9 @@ export default {
       if (this.page + 1 > this.sensorsCount / this.sensorsListLimit) return;
       this.page += 1;
       let counter = 0;
-      if (this.sensorsFilter) counter = this.filteredSensors.length - this.sensorsListLimit || 0;
-      else counter = this.sensorsCount - this.sensorsListLimit || 0;
+      if (this.sensorsFilter) return;
+      else counter = this.sensorsListLimit * this.page || 0;
+
       if (counter < 0) counter = 0;
       // console.log('onScrollBottom', counter, this.sensorsCount, this.sensorsListLimit);
       if (counter !== this.sensorsListCounter) {
