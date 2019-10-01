@@ -165,6 +165,14 @@ export default {
         this.success = null;
         this.dismissCountDown = this.dismissSecs;
         this.loading = true;
+        if (
+          this.$store.cache.has('device/findByAccount', {
+            ownerId: this.$store.state.auth.account.id,
+            filter,
+          })
+        ) {
+          return this.filteredDevices;
+        }
         const devices = await this.$store.cache.dispatch('device/findByAccount', {
           ownerId: this.$store.state.auth.account.id,
           filter,
@@ -234,7 +242,6 @@ export default {
       if (counter < 0) counter = 0;
       if (counter !== this.devicesListCounter) {
         this.devicesListCounter = counter;
-        // this.$emit('scroll-bottom', counter, this.page);
         return this.updateDevicesList(counter);
       }
       return null;

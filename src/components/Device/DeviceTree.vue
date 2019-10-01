@@ -210,7 +210,6 @@ export default {
   },
 
   beforeDestroy() {
-    //this.nodeSimulation = null;
     this.deviceTreeMounted = false;
   },
 
@@ -233,7 +232,6 @@ export default {
             device.size = 0.4;
             device.group = 1;
             device.show = true;
-
             // device.children = this.$props.sensors.filter(sensor => {sensor.deviceId.toString() === device.id.toString()})
             if (device.sensors) {
               if (this.showSensors) {

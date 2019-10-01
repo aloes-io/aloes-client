@@ -211,7 +211,7 @@ export default {
     },
   },
 
-  async mounted() {
+  mounted() {
     this.loading = false;
     this.setListeners();
   },

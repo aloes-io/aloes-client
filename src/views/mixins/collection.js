@@ -57,9 +57,6 @@ const Collection = {
             if (index > -1) {
               logger.publish(5, collectionName, `${collectionName}Updated`, index);
               collection[index] = instance;
-            } else {
-              logger.publish(5, collectionName, `${collectionName}Created`, index);
-              collection.push(instance);
             }
             break;
           case 'delete':

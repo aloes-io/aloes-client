@@ -90,7 +90,7 @@ export async function updateInstance({ state, commit }, { device }) {
     });
     return updatedDevice;
   } catch (error) {
-    await commit('setStateKV', { key: 'error', value: error });
+    commit('setStateKV', { key: 'error', value: error });
     throw error;
   }
 }

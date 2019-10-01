@@ -120,52 +120,35 @@ export default {
           this.$store.state.auth.signup.password !== this.$store.state.auth.signup.confirmPassword
         ) {
           this.error = {
-            message: 'Oups ! votre mot de passe est incorrect',
+            message: "Your password don't match",
           };
           return;
         }
 
         this.loading = true;
-        const firstName = this.$store.state.auth.account.firstName;
-        const lastName = this.$store.state.auth.account.lastName;
+        const firstName = this.$store.state.auth.signup.firstName;
+        const lastName = this.$store.state.auth.signup.lastName;
         const account = await this.$store.dispatch(`auth/signUp`, {
           email: this.$store.state.auth.signup.email,
           password: this.$store.state.auth.signup.password,
           firstName,
           lastName,
-          fullName: `${firstName} ${lastName}`,
+          // fullName: `${firstName} ${lastName}`,
         });
-        if (account.statusCode === 422) {
-          this.error = { message: account.messages };
-          return this.error;
-        } else if (account === 'LOGIN_FAILED_EMAIL_NOT_VERIFIED') {
-          this.error = {
-            code: 'NOT_VERIFIED',
-            message: 'Have you received confirmation link ?',
-          };
-          return this.error;
-        } else if (account.id) {
+        if (account.id) {
           this.account = account;
+          this.success = {
+            message: 'A confirmation link has been sent, have you received it ?',
+          };
           //  this.$store.commit('auth/setAccount', account);
           this.loading = false;
           return this.success;
         }
-        this.loading = false;
-        // this.error = {message:"Impossible de vous authentifier, le formulaire n'a pas été validée"}
-        //  this.error = account;
-        return null;
+        throw new Error('Sorry there was an error while creating your account');
       } catch (error) {
         this.loading = false;
-        if (error.message) {
-          this.error = {
-            code: 'NOT_VERIFIED',
-            message:
-              'This email address already exists in our databases, choose a new one to create an account or ask for a new confirmation link',
-          };
-        } else {
-          this.error = error;
-        }
-        return this.error;
+        this.error = error;
+        throw error;
       }
     },
 

@@ -104,6 +104,9 @@ export default {
     serverUrl() {
       return this.$store.state.serverUrl;
     },
+    userImgPlaceholder() {
+      return this.$store.state.style.pictures.team;
+    },
     headerImgUrl: {
       get() {
         if (this.viewer) {
@@ -121,9 +124,15 @@ export default {
     avatarImgUrl: {
       get() {
         if (this.viewer) {
-          return `${this.serverUrl}${this.$store.state.auth.viewed.avatarImgUrl}`;
+          if (this.$store.state.auth.viewed.avatarImgUrl) {
+            return `${this.serverUrl}${this.$store.state.auth.viewed.avatarImgUrl}`;
+          }
+          return this.userImgPlaceholder;
         }
-        return `${this.serverUrl}${this.$store.state.auth.account.avatarImgUrl}`;
+        if (this.$store.state.auth.account.avatarImgUrl) {
+          return `${this.serverUrl}${this.$store.state.auth.account.avatarImgUrl}`;
+        }
+        return this.userImgPlaceholder;
       },
       set(value) {
         this.$store.commit('auth/setModelKV', {

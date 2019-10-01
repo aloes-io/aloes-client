@@ -156,7 +156,7 @@ export default new Vuex.Store({
       { text: 'Timer', value: 'timer' },
       { text: 'Geolocator', value: 'tracker' },
       { text: 'Vehicle', value: 'vehicle' },
-      { text: 'Weather station', value: 'weather station' },
+      { text: 'Weather station', value: 'weather-station' },
     ],
     transportProtocolNames: [
       { text: 'name', value: null, disabled: true },
@@ -173,10 +173,6 @@ export default new Vuex.Store({
       email: null,
       subject: null,
       content: null,
-    },
-    coinHive: {
-      siteKey: process.env.VUE_APP_COINHIVE_SITE_KEY,
-      hashes: `${process.env.VUE_APP_COINHIVE_HASHES}` || '256',
     },
   },
   mutations: {
@@ -216,7 +212,7 @@ export default new Vuex.Store({
     deviceStorage.plugin,
     sensorStorage.plugin,
     // vuexSession.plugin,
-    vuexCache({ timeout: 10000 }),
+    vuexCache({ timeout: 5000 }),
   ],
   modules: {
     async,

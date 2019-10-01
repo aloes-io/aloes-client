@@ -107,10 +107,9 @@ export function syncRouter({ state, dispatch }, router) {
   });
 }
 
-export async function signUp({ state }, { type, email, password, firstName, lastName }) {
+export async function signUp({ state }, { email, password, firstName, lastName }) {
   try {
     const result = await loopback.post(`/${state.resources}`, {
-      type,
       email,
       password,
       firstName,

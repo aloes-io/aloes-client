@@ -193,6 +193,14 @@ export default {
         this.error = null;
         this.success = null;
         this.dismissCountDown = this.dismissSecs;
+        if (
+          this.$store.cache.has('sensor/findByDevice', {
+            deviceId,
+            filter,
+          })
+        ) {
+          return this.filteredSensors;
+        }
         const sensors = await this.$store.cache.dispatch('sensor/findByDevice', {
           deviceId,
           filter,
@@ -305,7 +313,7 @@ export default {
       if (!obs || !obs.isIntersecting || obs.intersectionRatio !== 1) return;
       // console.log('onIntersected', obs);
       this.calculateListLimit();
-      if (this.page + 1 > this.sensorsCount / this.sensorsListLimit) return;
+      if (this.page + 1 >= this.sensorsCount / this.sensorsListLimit) return;
       this.page += 1;
       let counter = 0;
       if (this.sensorsFilter) return;

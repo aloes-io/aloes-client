@@ -189,20 +189,6 @@ export default {
         this.$store.commit('auth/setEditorMode', value);
       },
     },
-    description: {
-      get() {
-        if (this.viewer) {
-          return this.$store.state.auth.viewed.model.description;
-        }
-        return this.$store.state.auth.account.description;
-      },
-      set(value) {
-        this.$store.commit('auth/setModelKV', {
-          key: 'description',
-          value,
-        });
-      },
-    },
     email: {
       get() {
         return this.$store.state.auth.account.email;
@@ -217,9 +203,9 @@ export default {
     firstName: {
       get() {
         if (this.viewer) {
-          return this.$store.state.auth.viewed.model.firstName;
+          return this.$store.state.auth.viewed.model.firstName || '';
         }
-        return this.$store.state.auth.account.firstName;
+        return this.$store.state.auth.account.firstName || '';
       },
       set(value) {
         this.$store.commit('auth/setModelKV', {
@@ -246,9 +232,9 @@ export default {
     lastName: {
       get() {
         if (this.viewer) {
-          return this.$store.state.auth.viewed.model.lastName;
+          return this.$store.state.auth.viewed.model.lastName || '';
         }
-        return this.$store.state.auth.account.lastName;
+        return this.$store.state.auth.account.lastName || '';
       },
       set(value) {
         this.$store.commit('auth/setModelKV', {

@@ -4,14 +4,9 @@
 }
 
 div.card.profile-header {
-  border-radius: $card-border-radius;
-  border: 1px solid transparent;
-  box-shadow: $card-shadow;
-  -webkit-transition: box-shadow 150ms ease;
-  transition: box-shadow 150ms ease;
-}
-
-div.card.header-card {
-  min-height: 20vh;
-  max-height: 45vh;
+	border-radius: $card-border-radius;
+	border: 1px solid transparent;
+	box-shadow: $card-shadow;
+	-webkit-transition: box-shadow 150ms ease;
+	transition: box-shadow 150ms ease;
 }
