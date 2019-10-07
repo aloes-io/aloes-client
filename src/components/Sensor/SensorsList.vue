@@ -141,7 +141,7 @@ export default {
       if (this.filteredSensors && this.filteredSensors.length > 0) {
         return `sensor-inline-${this.filteredSensors.length - 1}`;
       }
-      return `sensor-inline-0`;
+      return null;
     },
   },
 
@@ -278,9 +278,12 @@ export default {
         limit: this.sensorsListLimit,
       })
         .then(sensors => {
-          this.deviceSensors = sensors;
-          this.sensors = this.batchCollection('sensors', this.sensors, 'create', sensors);
+          this.deviceSensors = [...this.deviceSensors, ...sensors];
           this.updateFilteredSensors(this.sensorsFilter);
+          this.sensors = this.batchCollection('sensors', this.sensors, 'create', sensors);
+          // this.deviceSensors = this.sensors.filter(
+          //   sensor => sensor.deviceId.toString() === this.updatedDeviceId.toString(),
+          // );
           return sensors;
         })
         .catch(e => e);
@@ -318,7 +321,6 @@ export default {
       let counter = 0;
       if (this.sensorsFilter) return;
       else counter = this.sensorsListLimit * this.page || 0;
-
       if (counter < 0) counter = 0;
       // console.log('onScrollBottom', counter, this.sensorsCount, this.sensorsListLimit);
       if (counter !== this.sensorsListCounter) {
@@ -342,6 +344,6 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import '../../style/sensors-list.scss';
 </style>

@@ -30,6 +30,13 @@
         <b-button id="search-geolocation" @click="locationSearch">
           <fa-icon icon="map-marker" size="lg" />
         </b-button>
+        <b-button
+          id="search-export"
+          :disabled="!searchResults || searchResults === null"
+          @click="exportResults"
+        >
+          <fa-icon icon="download" size="lg" />
+        </b-button>
       </b-col>
     </b-row>
   </b-form>
@@ -243,6 +250,23 @@ export default {
           `Geolocation not supported by your browser, fill the address field in your settings.`,
         );
       }
+    },
+
+    async exportResults() {
+      try {
+        let result;
+        result = await this.$store.dispatch('search/exportResults', {});
+        console.log('export result', result);
+        if (result) {
+          const element = document.createElement('a');
+          element.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(result));
+          element.setAttribute('download', `aloes-${this.searchResults.type}-search.csv`);
+          element.style.display = 'none';
+          document.body.appendChild(element);
+          element.click();
+          document.body.removeChild(element);
+        }
+      } catch (error) {}
     },
   },
 };

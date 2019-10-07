@@ -123,7 +123,7 @@ export default {
       if (this.filteredDevices && this.filteredDevices.length > 0) {
         return `device-inline-${this.filteredDevices.length - 1}`;
       }
-      return `device-inline-0`;
+      return null;
     },
   },
 
@@ -212,8 +212,8 @@ export default {
         .then(devices => {
           const sensors = this.extractSensors(devices);
           this.devices = this.batchCollection('devices', this.devices, 'create', devices);
-          this.sensors = this.batchCollection('sensors', this.sensors, 'create', sensors);
           this.updateFilteredDevices(this.devicesFilter);
+          this.sensors = this.batchCollection('sensors', this.sensors, 'create', sensors);
           return devices;
         })
         .catch(e => e);

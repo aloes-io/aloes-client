@@ -227,7 +227,7 @@ export default {
       } catch (error) {
         this.error = error;
         logger.publish(4, 'files', 'onFileChange:err', error);
-        return error;
+        throw error;
       }
     },
 
@@ -265,7 +265,7 @@ export default {
       } catch (error) {
         this.error = error;
         logger.publish(4, 'files', 'onFileSave:err', error);
-        return error;
+        throw error;
       }
     },
   },

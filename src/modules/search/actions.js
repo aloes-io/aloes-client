@@ -69,3 +69,50 @@ export async function getDevicesByGeolocation({ state, commit }, filter) {
     throw error;
   }
 }
+
+export async function exportDevices({ state, commit }, filter) {
+  try {
+    logger.publish(4, state.collectionName, 'dispatch:exportDevices:req', filter);
+    const result = await loopback.post(`/Devices/export`, {
+      devices: state.model.results.content,
+      filter,
+    });
+    return result;
+  } catch (error) {
+    commit('setModelKV', { key: 'error', value: error });
+    throw error;
+  }
+}
+
+export async function exportSensors({ state, commit }, filter) {
+  try {
+    logger.publish(4, state.collectionName, 'dispatch:exportSensors:req', filter);
+    const result = await loopback.post(`/Sensors/export`, {
+      sensors: state.model.results.content,
+      filter,
+    });
+    return result;
+  } catch (error) {
+    commit('setModelKV', { key: 'error', value: error });
+    throw error;
+  }
+}
+
+export async function exportResults({ state, commit, dispatch }, filter) {
+  try {
+    logger.publish(4, state.collectionName, 'dispatch:exportResults:req', filter);
+    if (!state.model.results || !state.model.results.type) return null;
+    let result = null;
+    if (state.model.results.type.toLowerCase() === 'sensor') {
+      result = await dispatch('exportSensors', filter);
+    } else if (state.model.results.type.toLowerCase() === 'device') {
+      result = await dispatch('exportDevices', filter);
+    } else {
+      throw new Error('Missing export type');
+    }
+    return result;
+  } catch (error) {
+    commit('setModelKV', { key: 'error', value: error });
+    throw error;
+  }
+}

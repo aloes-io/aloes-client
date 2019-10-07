@@ -120,5 +120,4 @@ export async function unsubscribeFromSensorsUpdate({ state }, { userId }) {
 
 export async function publish({ state }, { sensor, userId }) {
   return PubSub.publishToInstance(socket.client, state.collectionName, userId, sensor.id, sensor);
-  //  return PubSub.publishToInstance(socket.client, state.outputTopic, userId, sensor.id, sensor);
 }
