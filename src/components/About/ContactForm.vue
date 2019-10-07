@@ -113,12 +113,7 @@ r<template lang="html">
 </template>
 
 <script type="text/javascript">
-import { BAlert } from 'bootstrap-vue';
-import { BButton } from 'bootstrap-vue';
-import { BForm } from 'bootstrap-vue';
-import { BFormInput } from 'bootstrap-vue';
-import { BFormGroup } from 'bootstrap-vue';
-import { BFormTextarea } from 'bootstrap-vue';
+import { BAlert, BButton, BForm, BFormInput, BFormGroup, BFormTextarea } from 'bootstrap-vue';
 
 export default {
   name: 'ContactForm',
@@ -140,15 +135,6 @@ export default {
   },
 
   computed: {
-    accountType: {
-      get() {
-        return this.$store.state.auth.accountType;
-      },
-      set(type) {
-        this.$store.commit('auth/setAccountType', type);
-      },
-    },
-
     firstName: {
       get() {
         return this.$store.state.contactForm.firstName;
@@ -226,11 +212,11 @@ export default {
           this.success = { message: 'Message sent, thanks.' };
           return this.success;
         }
-        this.error = { message: "Sorry your message couldn't be sent." };
-        return this.error;
+        const error = new Error("Sorry your message couldn't be sent.");
+        throw error;
       } catch (error) {
-        this.error = { message: "Sorry your message couldn't be sent." };
-        return this.error;
+        this.error = error;
+        throw error;
       }
     },
 

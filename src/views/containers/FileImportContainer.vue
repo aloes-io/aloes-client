@@ -1,7 +1,7 @@
 <template lang="html">
   <b-modal
-    :id="`${resourceType.toLowerCase()}${imgType}Import`"
-    :ref="`${resourceType.toLowerCase()}${imgType}Import`"
+    :id="`${rscType.toLowerCase()}${imgType}Import`"
+    :ref="`${rscType.toLowerCase()}${imgType}Import`"
     size="lg"
     hide-footer
     no-close-on-esc
@@ -11,9 +11,9 @@
     body-class="file-import-container-body"
     class="file-import-container"
     hide-backdrop
-    @hidden="onModalHidden"
-    @shown="onModalShown"
   >
+    <!--  @hidden="onModalHidden"
+    @shown="onModalShown" -->
     <file-import
       :ref="`${imgType}Import`"
       :access-token="accessToken"
@@ -40,7 +40,6 @@ export default {
       type: Object,
       default: null,
     },
-
     'resource-type': {
       type: String,
       required: false,
@@ -56,6 +55,7 @@ export default {
   data() {
     return {
       imgType: 'Avatar',
+      rscType: 'Images',
     };
   },
 
@@ -65,12 +65,12 @@ export default {
     },
     status: {
       get() {
-        return this.$store.state.files[this.$props.resourceType][this.$props.imageType].status;
+        return this.$store.state.files[this.rscType][this.imgType].status;
       },
       set(status) {
         this.$store.commit('files/setUploadStatus', {
-          resourceType: this.$props.resourceType,
-          role: this.$props.imageType,
+          resourceType: this.rscType,
+          role: this.imgType,
           status,
         });
       },
@@ -84,29 +84,21 @@ export default {
       },
       immediate: true,
     },
-    windowHeight(newHeight, oldHeight) {
-      this.txt = `it changed to ${newHeight} from ${oldHeight}`;
+    resourceType: {
+      handler(type) {
+        this.rscType = type;
+      },
+      immediate: true,
     },
   },
 
-  updated() {},
-
   methods: {
     hideModal() {
-      this.$refs[`${this.$props.resourceType.toLowerCase()}${this.imgType}Import`].hide();
+      this.$refs[`${this.rscType.toLowerCase()}${this.imgType}Import`].hide();
     },
 
     showModal() {
-      this.$refs[`${this.$props.resourceType.toLowerCase()}${this.imgType}Import`].show();
-    },
-
-    onModalHidden() {
-      this.$refs[`${this.imgType}Import`].onReset();
-      this.status = 1;
-    },
-
-    onModalShown() {
-      this.$refs[`${this.imgType}Import`].initCroppie();
+      this.$refs[`${this.rscType.toLowerCase()}${this.imgType}Import`].show();
     },
   },
 };

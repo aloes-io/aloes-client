@@ -3,7 +3,11 @@ FROM node:lts-alpine as build-stage
 
 RUN mkdir -p /home/node/$NODE_NAME
 WORKDIR /home/node/$NODE_NAME
-ENV PATH /home/node/$NODE_NAME/node_modules/.bin:$PATH
+
+# ENV NPM_CONFIG_PREFIX=/home/node/.npm-global
+# ENV PATH=$PATH:/home/node/.npm-global/bin 
+
+ENV PATH=/home/node/$NODE_NAME/node_modules/.bin:$PATH
 
 ARG VUE_APP_NAME=ALOES
 ARG VUE_APP_DOMAIN=localhost
@@ -15,7 +19,7 @@ ARG VUE_APP_LOGGER_LEVEL=1
 ARG GIT_REPO_SSH_URL=https://framagit.org/aloes/aloes-client
 
 ENV VUE_APP_NAME=$VUE_APP_NAME
-ENV VUE_APP_DOMAI=$VUE_APP_DOMAIN
+ENV VUE_APP_DOMAIN=$VUE_APP_DOMAIN
 ENV VUE_APP_SERVER_URL=$VUE_APP_SERVER_URL
 ENV VUE_APP_BROKER_URL=$VUE_APP_BROKER_URL
 ENV VUE_APP_ROOT_API=$VUE_APP_ROOT_API
@@ -23,11 +27,13 @@ ENV VUE_APP_CLIENT_URL=$VUE_APP_CLIENT_URL
 ENV VUE_APP_LOGGER_LEVEL=$VUE_APP_LOGGER_LEVEL
 ENV GIT_REPO_SSH_URL=$GIT_REPO_SSH_URL
 
-COPY package.json /home/node/$NODE_NAME/package.json
-RUN npm install --silent
-RUN npm install @vue/cli@3.7.0 -g
-# COPY . /home/node/$NODE_NAME/.
-COPY . /home/node/$NODE_NAME
+COPY package*.json /home/node/$NODE_NAME/
+COPY vue.config.js /home/node/$NODE_NAME/
+COPY src /home/node/$NODE_NAME/src
+COPY public /home/node/$NODE_NAME/public
+
+RUN npm ci 
+ 
 RUN npm run build
 
 # production stage 

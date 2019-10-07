@@ -7,7 +7,9 @@
 div.card.header-card {
   border-radius: $card-border-radius;
   border: 1px solid transparent;
-
+  min-height: 20vh;
+  max-height: 45vh;
+  
   button.header-button {
     float: right;
     right: 18px;

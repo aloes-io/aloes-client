@@ -23,8 +23,7 @@
 </template>
 
 <script type="text/javascript">
-import { BButton } from 'bootstrap-vue';
-import { BModal } from 'bootstrap-vue';
+import { BButton, BModal } from 'bootstrap-vue';
 import LoginMaster from '@/components/Account/LoginMaster.vue';
 
 export default {
@@ -77,13 +76,14 @@ export default {
       //  this.$refs.loginMaster.onReset();
     },
 
-    onModalHidden() {
-      this.$refs.loginMaster.onReset();
-    },
+    onModalHidden() {},
 
     hideModal() {
       if (this.$route.name !== 'home') {
         this.$router.push({ name: 'home' });
+      }
+      if (this.$refs.loginMaster && this.$refs.loginMaster !== null) {
+        this.$refs.loginMaster.onReset();
       }
       this.$refs.loginPopup.hide();
     },

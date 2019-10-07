@@ -1,26 +1,23 @@
 <template lang="html">
   <b-container fluid class="search-container-view">
-    <b-card title="Start your device research here" class="search-card">
-      <b-row>
-        <b-col sm="12" md="12" lg="12" xl="12">
-          <search-form v-if="$store.state.auth.account" :token="token" :user-id="userId" />
-        </b-col>
-      </b-row>
-      <hr />
-    </b-card>
     <b-row>
+      <b-col sm="12" md="12" lg="12" xl="12">
+        <search-form v-if="$store.state.auth.account" :token="token" :user-id="userId" />
+      </b-col>
+    </b-row>
+    <hr />
+    <b-row v-if="searchResults && searchResults.content">
       <b-col sm="12" md="8" lg="8" xl="8" class="search-result-profiles">
-        <search-result :token="token" :user-id="userId" :devices="searchResults" />
+        <search-result :token="token" :user-id="userId" />
       </b-col>
       <b-col sm="12" md="4" lg="4" xl="4">
-        <search-map :token="token" :user-id="userId" />
+        <search-map :token="token" :user-id="userId" :devices="searchResults.content" />
       </b-col>
     </b-row>
   </b-container>
 </template>
 
 <script type="text/javascript">
-import { BCard } from 'bootstrap-vue';
 import SearchForm from '@/components/Search/SearchForm.vue';
 import SearchMap from '@/components/Search/SearchMap.vue';
 import SearchResult from '@/components/Search/SearchResult.vue';
@@ -29,7 +26,6 @@ export default {
   name: 'SearchContainer',
 
   components: {
-    'b-card': BCard,
     'search-form': SearchForm,
     'search-map': SearchMap,
     'search-result': SearchResult,
@@ -63,15 +59,6 @@ export default {
   },
 
   mounted() {},
-
-  // beforeDestroy() {
-  //   this.searchSuccess = null;
-  //   this.searchError = null;
-  //   this.searchResults = null;
-  //   this.searchFilter = null;
-  // },
-
-  methods: {},
 };
 </script>
 

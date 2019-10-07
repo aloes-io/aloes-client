@@ -5,7 +5,7 @@ export default {
   namespaced: true,
   state: {
     collectionName: 'user',
-    resources: 'users',
+    resources: 'Users',
     authRoute: 'auth',
     // eslint-disable-next-line camelcase
     access_token: null,

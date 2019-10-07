@@ -121,9 +121,8 @@ Starting container :
 
 # TODO 
 
-- Update / improve search engine
 - Add a grid to compose views with sensor snaps ( sensors selector, add group container, draggable snaps, list of grids )
-- Add unit tests
+- Add e2e tests
 - Add docs
 - Manage teams to share devices and applications access
 

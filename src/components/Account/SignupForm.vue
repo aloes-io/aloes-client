@@ -68,27 +68,13 @@ export default {
   },
 
   computed: {
-    accountType: {
-      get() {
-        return this.$store.state.auth.accountType;
-      },
-      set(type) {
-        this.$store.commit('auth/setAccountType', type);
-      },
-    },
-    accountTypes: {
-      get() {
-        return this.$store.state.auth.accountTypes;
-      },
-    },
-
     firstName: {
       get() {
-        return this.$store.state.auth.signup.firstName;
+        return this.$store.state.auth.signup.firstName || '';
       },
       set(value) {
         this.$store.commit('auth/setCredentialsKV', {
-          key: 'lastName',
+          key: 'firstName',
           value,
         });
       },
@@ -96,7 +82,7 @@ export default {
 
     lastName: {
       get() {
-        return this.$store.state.auth.signup.lastName;
+        return this.$store.state.auth.signup.lastName || '';
       },
       set(value) {
         this.$store.commit('auth/setCredentialsKV', {

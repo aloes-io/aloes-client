@@ -10,7 +10,7 @@ const baseOptions = {
   // reschedulePings: true,
   protocolId: 'MQTT',
   protocolVersion: 4,
-  reconnectPeriod: 5000,
+  reconnectPeriod: 3000,
   connectTimeout: 30 * 1000,
   clean: true,
   clientId: null,
@@ -37,7 +37,7 @@ const getSocketId = () => {
   return socketId;
 };
 
-socket.setToken = async token => {
+socket.setToken = token => {
   try {
     logger.publish(3, 'socket', 'setToken:req', token);
     socket.token = token;
@@ -49,60 +49,62 @@ socket.setToken = async token => {
       username: token.userId.toString(),
       password: token.id.toString(),
     };
-    // if (socket.client && socket.client._client.connected) {
-    //   socket.client = mqtt.connect(brokerUrl, options);
-    //   return socket;
-    // }
-    return socket.initSocket(options);
+
+    socket.initSocket(options);
   } catch (error) {
     logger.publish(3, 'socket', 'setToken:err', error);
-    return error;
   }
 };
 
-socket.removeToken = async () => {
-  logger.publish(3, 'socket', 'removeToken:req', socket.token);
-  // if (socket.client) {
-  //   await PubSub.close(socket.client);
-  //   await socket.client.end();
-  // }
-  delete socket.token;
-  return null;
-};
-
-socket.initSocket = options => {
-  logger.publish(3, 'socket', 'initSocket', options);
-
-  let socketId = getSocketId();
-  if (socketId && socketId !== null && socket.client) {
-    return null;
-  }
-
-  socket.client = mqtt.connect(brokerUrl, options);
-
-  socket.client.on('connect', async state => {
-    logger.publish(3, 'socket', 'onConnect', state);
-    if (socket.client && socket.client._client.connected) {
-      setSocketId(options.clientId);
-      await PubSub.setListeners(socket.client, socket.token);
-    }
-    //  socket.client.publish(`${token.userId.toString()}/Authentication/POST`, "yooo");
-    return null;
-  });
-
-  socket.client.on('offline', async state => {
-    logger.publish(3, 'socket', 'onDisconnect', state);
+socket.removeToken = () => {
+  try {
+    logger.publish(3, 'socket', 'removeToken:req', socket.token);
     delSocketId();
-    await PubSub.close(socket.client);
-    return null;
-  });
+    delete socket.token;
+    if (socket.client) {
+      PubSub.removeListeners(socket.client);
+      socket.client.end();
+    }
+    logger.publish(3, 'socket', 'removeToken:res', 'success');
+    // return;
+  } catch (error) {
+    logger.publish(3, 'socket', 'removeToken:err', error);
+    // throw error;
+  }
+};
 
-  socket.client.on('message', async (topic, message) => {
-    logger.publish(3, 'socket', 'onMessage', topic);
-    return PubSub.handler(topic, message);
-  });
+socket.initSocket = async options => {
+  try {
+    logger.publish(3, 'socket', 'initSocket:req', options);
 
-  return socket;
+    let socketId = getSocketId();
+    if (socketId && socketId !== null && socket.client) {
+      return socket;
+    }
+    socket.client = await mqtt.connectAsync(brokerUrl, options);
+    logger.publish(3, 'socket', 'onConnect', 'success');
+
+    // socket.client = mqtt.connect(brokerUrl, options);
+    // socket.client.on('connect', async state => {
+    //   logger.publish(3, 'socket', 'onConnect', state);
+    //   setSocketId(options.clientId);
+    // });
+
+    setSocketId(options.clientId);
+    await PubSub.setListeners(socket.client, socket.token);
+
+    socket.client.on('offline', () => {
+      logger.publish(3, 'socket', 'onDisconnect', '');
+      delSocketId();
+    });
+
+    socket.client.on('message', PubSub.handler);
+
+    return socket;
+  } catch (error) {
+    logger.publish(3, 'socket', 'initSocket:err', error);
+    throw error;
+  }
 };
 
 export default socket;

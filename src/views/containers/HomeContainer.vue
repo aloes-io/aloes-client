@@ -68,15 +68,15 @@
           offset-xl="1"
         >
           <p class="info-subtitle">
-            Easily register your devices
+            Register your devices easily
           </p>
           <p class="info-description">
             Add context to raw devices data.
             <br />
             Powered by
-            <a href="https://framagit.org/aloes/aloes-handlers" target="_blank">aloes-handlers</a>
+            <a href="https://github.com/aloes-io/aloes-handlers" target="_blank">aloes-handlers</a>
             to encode/decode MQTT stream, and
-            <a href="https://framagit.org/aloes/device-manager" target="_blank">device-manager</a>
+            <a href="https://github.com/aloes-io/device-manager" target="_blank">device-manager</a>
             to transport and persist data.
           </p>
         </b-col>
@@ -91,9 +91,9 @@
           xl="5"
         >
           <video ref="videoPlayer" muted autoplay loop>
-            <source :src="$store.state.style.videos.createDeviceWebm" type="video/webm" />
             <source :src="$store.state.style.videos.createDeviceMp4" type="video/mp4" />
-            <source :src="$store.state.style.videos.createDeviceOgv" type="video/ogg" />
+            <!-- <source :src="$store.state.style.videos.createDeviceWebm" type="video/webm" />
+            <source :src="$store.state.style.videos.createDeviceOgv" type="video/ogg" /> -->
           </video>
         </b-col>
       </transition>
@@ -195,9 +195,9 @@
             Create actionable and meaningful data with rich semantic properties.
             <br />
             Displayed with
-            <a href="https://framagit.org/aloes/aloes-client" target="_blank">aloes-client</a>
+            <a href="https://github.com/aloes-io/aloes-client" target="_blank">aloes-client</a>
             &
-            <a href="https://framagit.org/aloes/sensor-snap" target="_blank">sensor-snap</a>
+            <a href="https://github.com/aloes-io/sensor-snap" target="_blank">sensor-snap</a>
             VueJS libraries.
           </p>
         </b-col>
@@ -220,9 +220,9 @@
         </p>
         <p class="info-description">
           Easily create new device on any Linux machine (
-          <a href="https://framagit.org/aloes/node-red-device" target="_blank">node-red-device</a>
+          <a href="https://github.com/getlarge/node-red-device" target="_blank">node-red-device</a>
           ) or on ESP8266 / ESP32 microcrontrollers (
-          <a href="https://framagit.org/aloes/arduino-device-mqtt" target="_blank"
+          <a href="https://github.com/getlarge/arduino-device-mqtt" target="_blank"
             >arduino-device-mqtt</a
           >
           ).
@@ -257,7 +257,7 @@
             </p>
             <p class="info-description">
               Use
-              <a href="https://framagit.org/aloes/node-red-bridge" target="_blank"
+              <a href="https://github.com/getlarge/node-red-bridge" target="_blank"
                 >node-red-bridge</a
               >
               to create custom scenarios where you can set interaction rules inside your network.
@@ -432,6 +432,10 @@ export default {
       sensor: null,
       showSensor: false,
       showDevice: false,
+      gaugeTimer: null,
+      mapTimer: null,
+      timer: null,
+      scenarioTimer: null,
       randomPics: [
         '/icons/aloes/dither.png',
         '/icons/aloes/camera.png',
@@ -441,6 +445,7 @@ export default {
         '/icons/aloes/arduino.png',
       ],
       randomSounds: ['/sounds/fire.mp3', '/sounds/wind.mp3'],
+      testInterval: 1,
     };
   },
 
@@ -450,8 +455,23 @@ export default {
     },
   },
 
+  watch: {
+    sensor: {
+      handler(value, oldValue) {
+        if (value && value !== null) {
+          if (oldValue && oldValue.id === value.id) {
+            return;
+          }
+          if (value.type === 3336) this.startMapTest();
+          if (value.resource === 5700) this.startGaugeTest();
+        }
+      },
+      immediate: true,
+    },
+  },
+
   created() {
-    this.debouncedUpdateSensor = debounce(this.updateSensor, 300);
+    this.debouncedUpdateSensor = debounce(this.updateSensorView, 100);
   },
 
   mounted() {
@@ -467,15 +487,19 @@ export default {
     this.sensor = null;
     this.device = null;
     this.deviceTwinSelected = false;
+    this.stopScenario();
+    this.stopGaugeTest();
+    this.stopMapTest();
+    this.stopTimerTest();
   },
 
   methods: {
-    updateSensor(sensor) {
+    updateSensorView(sensor) {
       this.sensor = sensor;
       this.$refs.deviceTree.onNodeUpdated(sensor);
     },
 
-    async onUpdateSetting(...args) {
+    onUpdateSetting(...args) {
       logger.publish(2, 'demo-device', 'onUpdateSetting:req', args);
       if (!args || !args[0].id) return null;
       let sensor = args[0];
@@ -487,27 +511,48 @@ export default {
     },
 
     async onUpdateSensor(...args) {
-      if (!args || !args[0].id) return null;
-      let sensor = args[0];
-      logger.publish(2, 'demo-device', 'onUpdateSensor:req', sensor);
-      // TESTS
-      if (args[0].type === 3349 && args[1] === 5911) {
-        const buffer = await this.cameraTest(1);
-        args[1] = 5910;
-        args[2] = buffer;
-      } else if (args[0].type === 3339 && args[1] === 5523) {
-        const buffer = await this.audioTest(2);
-        args[1] = 5522;
-        args[2] = buffer;
+      try {
+        if (!args || !args[0].id) return null;
+        let sensor = args[0];
+        logger.publish(2, 'demo-device', 'onUpdateSensor:req', {
+          type: args[0].type,
+          resource: args[1],
+          value: args[2],
+        });
+        // TESTS
+        if (args[0].type === 3349 && args[1] === 5911) {
+          const buffer = await this.cameraTest(1);
+          args[1] = 5910;
+          args[2] = buffer;
+        } else if (args[0].type === 3339 && args[1] === 5523) {
+          const buffer = await this.audioTest(1);
+          args[1] = 5522;
+          args[2] = buffer;
+        } else if (sensor.type === 3340) {
+          if (args[1] === 5523) {
+            if (args[2] === 'start') {
+              this.startTimerTest(1000, sensor.resources['5521']);
+            } else if (args[2] === 'restart') {
+              this.startTimerTest(1000, sensor.resources['5538']);
+            } else if (args[2] === 'stop') {
+              this.stopTimerTest();
+            } else if (args[2] === 'pause') {
+              this.stopTimerTest();
+            }
+          } else if (args[1] === 5850) {
+            // if (args[2] === true) {
+            //   this.startTimerTest(1000, sensor.resources['5538']);
+            // } else if (args[2] === false) {
+            //   this.stopTimerTest();
+            // }
+          }
+        }
+        sensor = updateAloesSensors(sensor, args[1], args[2]);
+        this.debouncedUpdateSensor(sensor);
+        return sensor;
+      } catch (error) {
+        throw error;
       }
-      // if (this.$refs[`sensorSnap-${this.sensor.id}`].componentsType === "gauge") {
-      //   this.measurementTest();
-      // }
-      sensor = await updateAloesSensors(sensor, args[1], args[2]);
-      this.debouncedUpdateSensor(sensor);
-      // this.sensor = sensor;
-      // this.$refs.deviceTree.onNodeUpdated(sensor);
-      return sensor;
     },
 
     onDeleteSensor(sensor) {
@@ -542,14 +587,107 @@ export default {
       }
     },
 
-    measurementTest() {
-      setInterval(() => {
+    stopGaugeTest() {
+      if (this.gaugeTimer && this.gaugeTimer !== null) {
+        logger.publish(3, 'demo-device', 'stopGaugeTest', '');
+        clearInterval(this.gaugeTimer);
+      }
+    },
+
+    startGaugeTest(interval) {
+      // if (
+      //   !this.$refs[`sensorSnap-${this.sensor.id}`] ||
+      //   this.$refs[`sensorSnap-${this.sensor.id}`].componentsType !== 'gauge'
+      // ) {
+      //   return;
+      // }
+      if (!this.sensor || this.sensor.resource !== 5700) return;
+      interval = interval || this.testInterval * 1000;
+      this.stopGaugeTest();
+      logger.publish(3, 'demo-device', 'startGaugeTest', '');
+      this.gaugeTimer = setInterval(() => {
+        if (!this.sensor || this.sensor.resource !== 5700) {
+          this.stopGaugeTest();
+          return;
+        }
         const resource = this.sensor.resource.toString();
         const sensor = JSON.parse(JSON.stringify(this.sensor));
-        sensor.value = this.sensor.resources[resource] + Math.floor(Math.random() + 10);
+        sensor.value = this.sensor.resources[resource] + Math.floor(Math.random() + 1);
         sensor.resources[resource] = sensor.value;
-        this.sensor = sensor;
-      }, 1000);
+        // console.log('GAUGE UPDATE', sensor.value);
+        this.updateSensorView(sensor);
+      }, interval);
+    },
+
+    stopMapTest() {
+      if (this.mapTimer && this.mapTimer !== null) {
+        logger.publish(3, 'demo-device', 'stopMapTest', '');
+        clearInterval(this.mapTimer);
+      }
+    },
+
+    startMapTest(interval) {
+      if (!this.sensor || this.sensor.type !== 3336) return;
+      interval = interval || this.testInterval * 1000;
+      this.stopMapTest();
+      logger.publish(3, 'demo-device', 'startMapTest', '');
+      this.mapTimer = setInterval(() => {
+        if (!this.sensor || this.sensor.type !== 3336) {
+          this.stopMapTest();
+          return;
+        }
+        const sensor = JSON.parse(JSON.stringify(this.sensor));
+        sensor.resources['5514'] = (
+          Number(sensor.resources['5514']) + Math.floor(Math.random() + 1)
+        ).toString();
+        sensor.resources['5515'] = (
+          Number(sensor.resources['5515']) + Math.floor(Math.random() + 1)
+        ).toString();
+        sensor.resources['5518'] = new Date().getTime();
+        // console.log('MAP UPDATE', sensor.resources);
+        this.updateSensorView(sensor);
+      }, interval);
+    },
+
+    stopTimerTest() {
+      if (this.timer && this.timer !== null) {
+        logger.publish(3, 'demo-device', 'stopTimerTest', '');
+        clearInterval(this.timer);
+      }
+    },
+
+    startTimerTest(interval, timeLeft) {
+      if (!this.sensor || this.sensor.type !== 3340) return null;
+      interval = interval || this.testInterval * 1000;
+      timeLeft = timeLeft || 35;
+      this.stopTimerTest();
+      logger.publish(3, 'demo-device', 'startTimerTest', '');
+      // this.sensor.resources['5521'] = timeLeft;
+      this.sensor.value = timeLeft;
+      // this.sensor.resources['5538'] = timeLeft;
+      this.sensor.resources['5850'] = 1;
+      this.sensor.resources['5543'] = 0;
+      this.sensor.resources['5526'] = 1;
+      this.sensor.resources['5523'] = 'started';
+      this.timer = setInterval(() => {
+        if (!this.sensor || this.sensor.type !== 3340) {
+          this.stopTimerTest();
+          return;
+        }
+        const resource = '5538';
+        const sensor = JSON.parse(JSON.stringify(this.sensor));
+        sensor.resource = 5538;
+        sensor.value = sensor.value - interval / 1000;
+        // console.log('TIMER UPDATE', sensor.value);
+        if (sensor.value <= 0) {
+          sensor.value = 0;
+          sensor.resources['5543'] = 1;
+          sensor.resources['5523'] = 'stopped';
+          this.stopTimerTest();
+        }
+        sensor.resources[resource] = sensor.value;
+        this.updateSensorView(sensor);
+      }, interval);
     },
 
     arrayBufferToBase64(buffer) {
@@ -561,10 +699,8 @@ export default {
 
     async audioTest(testNumber) {
       try {
-        // const sensorIsAudio = componentsList.audio.list.find(
-        //   objectId => objectId === this.sensor.type,
-        // );
-        // if (!sensorIsAudio) return null;
+        if (this.sensor.type !== 3339) return null;
+        logger.publish(3, 'demo-device', 'startAudioTest', '');
         const randomSound = this.randomSounds[Math.floor(Math.random() * this.randomSounds.length)];
         const buf = await fetch(`${randomSound}`)
           .then(response => {
@@ -579,6 +715,7 @@ export default {
             } else if (testNumber === 1) {
               return this.arrayBufferToBase64(res);
             }
+            return res;
           });
         //  console.log('audioTest, buffer', testNumber, buf);
         return buf;
@@ -592,23 +729,29 @@ export default {
     },
 
     async cameraTest(testNumber) {
-      const randomPic = this.randomPics[Math.floor(Math.random() * this.randomPics.length)];
-      const result = await fetch(`${randomPic}`)
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('HTTP error, status = ' + response.status);
-          }
-          return response.arrayBuffer();
-        })
-        .then(buffer => {
-          if (testNumber === 1) {
-            return Buffer.from(buffer);
-          } else if (testNumber === 2) {
-            return this.arrayBufferToBase64(buffer);
-          }
-          return buffer;
-        });
-      return result;
+      try {
+        if (this.sensor.type !== 3349) return null;
+        logger.publish(3, 'demo-device', 'startCameraTest', '');
+        const randomPic = this.randomPics[Math.floor(Math.random() * this.randomPics.length)];
+        const result = await fetch(`${randomPic}`)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('HTTP error, status = ' + response.status);
+            }
+            return response.arrayBuffer();
+          })
+          .then(buffer => {
+            if (testNumber === 1) {
+              return Buffer.from(buffer);
+            } else if (testNumber === 2) {
+              return this.arrayBufferToBase64(buffer);
+            }
+            return buffer;
+          });
+        return result;
+      } catch (error) {
+        throw error;
+      }
     },
 
     linkBlink(id, wait, dur) {
@@ -632,7 +775,8 @@ export default {
 
     playScenario() {
       const duration = 300;
-      setInterval(() => {
+      this.stopScenario();
+      this.scenarioTimer = setInterval(() => {
         this.linkBlink('scanner-1', 0, duration);
         this.linkBlink('switch-output-1', 50, duration);
         this.nodeBlink('scanner-1', 0, duration);
@@ -646,6 +790,12 @@ export default {
         this.nodeBlink('scanner-1', 2050, duration);
         this.nodeBlink('timer-1', 2100, duration);
       }, duration * 10);
+    },
+
+    stopScenario() {
+      if (this.scenarioTimer && this.scenarioTimer !== null) {
+        clearInterval(this.scenarioTimer);
+      }
     },
   },
 };

@@ -1,7 +1,7 @@
 <template lang="html">
   <div class="profile-img">
     <b-card
-      :img-src="headerImgUrl"
+      :img-src="header"
       overlay
       img-alt="Header image"
       text-variant="white"
@@ -10,7 +10,7 @@
       @mouseleave="displayHeaderButton = false"
     >
       <b-img
-        :src="avatarImgUrl"
+        :src="avatar"
         fluid
         class="avatar-image"
         @click.native.prevent.stop="
@@ -43,7 +43,6 @@
       v-if="!viewer && editorMode"
       ref="headerImport"
       :access-token="$store.state.auth.access_token"
-      :profile-type="profileType"
       resource-type="Images"
       image-type="Header"
     />
@@ -51,7 +50,6 @@
       v-if="!viewer && editorMode"
       ref="avatarImport"
       :access-token="$store.state.auth.access_token"
-      :profile-type="profileType"
       resource-type="Images"
       image-type="Avatar"
     />
@@ -63,6 +61,8 @@ import { BButton } from 'bootstrap-vue';
 import { BCard } from 'bootstrap-vue';
 import { BImg } from 'bootstrap-vue';
 import FileImportContainer from '@/views/containers/FileImportContainer.vue';
+import logger from '@/services/logger';
+import File from '@/views/mixins/file';
 
 export default {
   name: 'ProfileImg',
@@ -74,12 +74,9 @@ export default {
     'file-import-container': FileImportContainer,
   },
 
+  mixins: [File],
+
   props: {
-    'profile-type': {
-      type: String,
-      require: true,
-      default: null,
-    },
     'is-viewer': {
       type: Boolean,
       default: true,
@@ -96,6 +93,8 @@ export default {
       loading: false,
       displayHeaderButton: false,
       displayAvatarButton: false,
+      avatar: null,
+      header: null,
       viewer: true,
       editorMode: false,
     };
@@ -105,12 +104,14 @@ export default {
     serverUrl() {
       return this.$store.state.serverUrl;
     },
+    userImgPlaceholder() {
+      return this.$store.state.style.pictures.team;
+    },
     headerImgUrl: {
       get() {
         if (this.viewer) {
           return `${this.serverUrl}${this.$store.state.auth.viewed.headerImgUrl}`;
         }
-        //  return `${this.$store.state.auth.account.headerImgUrl}`;
         return `${this.serverUrl}${this.$store.state.auth.account.headerImgUrl}`;
       },
       set(value) {
@@ -123,10 +124,15 @@ export default {
     avatarImgUrl: {
       get() {
         if (this.viewer) {
-          return `${this.serverUrl}${this.$store.state.auth.viewed.avatarImgUrl}`;
+          if (this.$store.state.auth.viewed.avatarImgUrl) {
+            return `${this.serverUrl}${this.$store.state.auth.viewed.avatarImgUrl}`;
+          }
+          return this.userImgPlaceholder;
         }
-        //  return `${this.$store.state.auth.account.avatarImgUrl}`;
-        return `${this.serverUrl}${this.$store.state.auth.account.avatarImgUrl}`;
+        if (this.$store.state.auth.account.avatarImgUrl) {
+          return `${this.serverUrl}${this.$store.state.auth.account.avatarImgUrl}`;
+        }
+        return this.userImgPlaceholder;
       },
       set(value) {
         this.$store.commit('auth/setModelKV', {
@@ -134,6 +140,9 @@ export default {
           value,
         });
       },
+    },
+    defaultImgUrl() {
+      return this.$store.state.imgPlaceholder;
     },
   },
 
@@ -150,11 +159,44 @@ export default {
       },
       immediate: true,
     },
+    avatarImgUrl: {
+      handler(newValue, oldValue) {
+        if (newValue && newValue !== oldValue) {
+          this.getFile('avatar', newValue);
+        }
+      },
+      immediate: true,
+    },
+    headerImgUrl: {
+      handler(newValue, oldValue) {
+        if (newValue && newValue !== oldValue) {
+          this.getFile('header', newValue);
+        }
+      },
+      immediate: true,
+    },
   },
 
-  mounted() {},
-
-  methods: {},
+  methods: {
+    async getFile(type, url) {
+      try {
+        if (!url || !type) throw new Error('Missing arguments');
+        if (type !== 'avatar' && type !== 'header') throw new Error('Wrong type');
+        logger.publish(4, 'file', 'getFile:req', { type, url });
+        const file = await this.$store.dispatch('files/download', url);
+        if (file && file !== null) {
+          this[type] = await this.parseImage(file);
+        } else {
+          this[type] = this.defaultImgUrl;
+        }
+        return true;
+      } catch (error) {
+        this[type] = this.defaultImgUrl;
+        logger.publish(4, 'file', 'getFile:err', error);
+        throw error;
+      }
+    },
+  },
 };
 </script>
 

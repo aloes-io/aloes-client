@@ -9,6 +9,10 @@ module.exports = {
   productionSourceMap: undefined,
   parallel: undefined,
   css: undefined,
+  configureWebpack: {
+    // trick to avoid compile error
+    externals: { canvas: {} },
+  },
   // devServer: {
   //   proxy: {
   //     "^/api": {

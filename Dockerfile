@@ -15,9 +15,13 @@ ENV VUE_APP_LOGGER_LEVEL=4
 ENV PATH /app/node_modules/.bin:$PATH
 
 # install and cache app dependencies
-COPY package.json /app/package.json
+COPY package*.json /app
 
-COPY . /app/.
+# COPY . /app/.
+COPY vue.config.js /app/
+COPY src /app/src
+COPY public /app/public
+COPY .env /app/
 
 RUN npm install
 RUN npm install -g @vue/cli

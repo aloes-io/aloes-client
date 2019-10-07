@@ -29,7 +29,8 @@
 
 <script type="text/javascript">
 import { BFormSelect } from 'bootstrap-vue';
-import logger from '@/services/logger';
+// import logger from '@/services/logger';
+import Collection from '@/views/mixins/collection';
 
 export default {
   name: 'FilesGallery',
@@ -37,6 +38,8 @@ export default {
   components: {
     'b-form-select': BFormSelect,
   },
+
+  mixins: [Collection],
 
   props: {
     userId: {
@@ -103,7 +106,7 @@ export default {
     relationId: {
       handler(value) {
         if (value && value !== null && this.$props.userId && this.$props.userId !== null) {
-          return this.getFilesMeta(this.$props.userId, value);
+          this.getFilesMeta(this.$props.userId, value);
         } else {
           this.filesMeta = [];
           this.files = [];
@@ -114,7 +117,7 @@ export default {
     fileSelected: {
       handler(value) {
         if (value && value !== null && this.$props.userId) {
-          return this.getFile(this.$props.userId, value);
+          this.getFile(this.$props.userId, value);
         } else {
           this.file = null;
         }
@@ -124,7 +127,7 @@ export default {
     fileAssignement: {
       handler(value) {
         if (value && value !== null && this.$props.userId !== null && this.fileSelected !== null) {
-          return this.assignRoleToFile(this.$props.userId, this.fileSelected, value);
+          this.assignRoleToFile(this.$props.userId, this.fileSelected, value);
         } else {
           this.file = null;
         }
@@ -168,7 +171,7 @@ export default {
         }
         return true;
       } catch (error) {
-        return error;
+        throw error;
       }
     },
 
@@ -187,43 +190,7 @@ export default {
         }
         return true;
       } catch (error) {
-        return error;
-      }
-    },
-
-    updateCollection(collection, operation, instance) {
-      logger.publish(4, 'files', 'updateCollection:req', { collection, operation });
-
-      if (collection === 'files' || collection === 'filesMeta') {
-        let updatedCollection;
-        let index;
-        switch (operation) {
-          case 'create':
-            updatedCollection = JSON.parse(JSON.stringify(this[collection]));
-            updatedCollection.push(instance);
-            this[collection] = updatedCollection;
-            break;
-          case 'update':
-            updatedCollection = JSON.parse(JSON.stringify(this[collection]));
-            index = updatedCollection.findIndex(s => s.id === instance.id);
-            logger.publish(4, 'device', `${collection}Updated`, index);
-            if (index !== -1) {
-              updatedCollection[index] = instance;
-              this[collection] = updatedCollection;
-            }
-            break;
-          case 'delete':
-            updatedCollection = JSON.parse(JSON.stringify(this[collection]));
-            index = updatedCollection.findIndex(s => s.id === instance.id);
-            logger.publish(4, 'device', `${collection}Deleted`, index);
-            if (index !== -1) {
-              updatedCollection.splice(index, 1);
-              this[collection] = updatedCollection;
-            }
-            break;
-          default:
-            throw new Error('Wrong operation');
-        }
+        throw error;
       }
     },
 
@@ -231,20 +198,18 @@ export default {
       try {
         if (!userId || !fileMeta || !role) throw new Error('Missing params');
         fileMeta.role = role;
-
         const updatedMeta = await this.$store.dispatch('files/updateFileMeta', {
           ownerType: this.$props.userType,
           fileMeta,
         });
-
         // console.log('updatedMeta', updatedMeta);
         if (updatedMeta && updatedMeta !== null) {
           //  this.files = result.files;
-          return this.updateCollection('filesMeta', 'update', updatedMeta);
+          //  return this.updateCollection('filesMeta', 'update', updatedMeta);
         }
         return false;
       } catch (error) {
-        return error;
+        throw error;
       }
     },
   },

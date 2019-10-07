@@ -160,14 +160,23 @@ export default {
       }
     },
 
-    async goToDevice(evt) {
+    goToDevice(evt) {
       if (evt) evt.preventDefault();
       if (evt) evt.stopPropagation();
       this.error = null;
       this.success = null;
       logger.publish(4, 'device', 'goToDevice:req', this.updatedDevice.id);
-      await this.$store.commit('device/setModel', this.updatedDevice);
-      return;
+      this.$store.commit('device/setModel', this.updatedDevice);
+      // if (this.$route.name.toLowerCase() !== 'device') {
+      //   this.$router.push({
+      //     name: 'device',
+      //     query: {
+      //       'access-token': this.$props.token,
+      //       'user-id': this.updatedAccount.id,
+      //       deviceId: this.updatedDevice.id,
+      //     },
+      //   });
+      // }
     },
   },
 };

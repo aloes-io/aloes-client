@@ -25,6 +25,22 @@ input#search-name:hover {
   box-shadow: $input-shadow-selected;
 }
 
+select.custom-select#search-type {
+  margin-bottom: 2%;
+  background-color: white;
+  height: $input-height-small;
+  padding: $input-padding;
+  border-radius: $input-border-radius;
+  border: 1px solid transparent;
+  box-shadow: $input-shadow;
+  -webkit-transition: box-shadow 150ms ease;
+  transition: box-shadow 150ms ease;
+}
+
+select.custom-select#search-type:hover {
+  box-shadow: $input-shadow-selected;
+}
+
 input#search-place {
   margin-bottom: 2%;
   background-color: white;
@@ -48,6 +64,7 @@ button.btn#search-custom {
   padding: 0px;
   margin-right: 4%;
   margin-left: 4%;
+  margin-bottom: 2%;
   font-weight: $btn-font-weight;
   background-color: $btn-bg-color;
   font-family: $btn-font;
@@ -73,6 +90,7 @@ button.btn#search-custom:hover {
 button.btn#search-geolocation {
   cursor: pointer;
   margin-bottom: 2%;
+  margin-right: 2%;
   margin-left: 4%;
   height: $btn-round-radius-lg;
   width: $btn-round-radius-lg;
@@ -93,6 +111,36 @@ button.btn#search-geolocation {
 }
 
 button.btn#search-geolocation:hover {
+  background-color: $btn-bg-light-color;
+  font-family: $btn-font;
+  font-weight: $btn-font-weight;
+  color: $btn-color;
+}
+
+button.btn#search-export {
+  cursor: pointer;
+  margin-bottom: 2%;
+  margin-right: 2%;
+  margin-left: 4%;
+  height: $btn-round-radius-lg;
+  width: $btn-round-radius-lg;
+  padding: 0px;
+  font-weight: $btn-font-weight;
+  background-color: $btn-bg-color;
+  font-family: $btn-font;
+  font-weight: $btn-font-weight;
+  color: $btn-color;
+  border-radius: $btn-round-border-radius;
+  border: 1px solid transparent;
+  box-shadow: $btn-shadow;
+  -webkit-transition: box-shadow 150ms ease;
+  transition: box-shadow 150ms ease;
+  i {
+    font-size: 100%;
+  }
+}
+
+button.btn#search-export:hover {
   background-color: $btn-bg-light-color;
   font-family: $btn-font;
   font-weight: $btn-font-weight;

@@ -68,9 +68,7 @@
 </template>
 
 <script type="text/javascript">
-import { BAlert } from 'bootstrap-vue';
-import { BButton } from 'bootstrap-vue';
-import { BForm } from 'bootstrap-vue';
+import { BAlert, BButton, BForm } from 'bootstrap-vue';
 import logger from '@/services/logger';
 
 export default {
@@ -229,7 +227,7 @@ export default {
       } catch (error) {
         this.error = error;
         logger.publish(4, 'files', 'onFileChange:err', error);
-        return error;
+        throw error;
       }
     },
 
@@ -267,7 +265,7 @@ export default {
       } catch (error) {
         this.error = error;
         logger.publish(4, 'files', 'onFileSave:err', error);
-        return error;
+        throw error;
       }
     },
   },

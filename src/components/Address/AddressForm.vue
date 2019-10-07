@@ -100,7 +100,7 @@
         {{ street }} {{ postalCode }} {{ city }}
       </b-col>
     </b-row>
-    <b-modal ref="addressModal" hide-footer size="sm">
+    <b-modal ref="addressModal" hide-backdrop hide-footer size="sm">
       <p v-if="verify">
         {{ verify.message }}
       </p>
@@ -109,10 +109,7 @@
 </template>
 
 <script type="text/javascript">
-import { BModal } from 'bootstrap-vue';
-import { BButton } from 'bootstrap-vue';
-import { BFormGroup } from 'bootstrap-vue';
-import { BFormInput } from 'bootstrap-vue';
+import { BButton, BFormGroup, BFormInput, BModal } from 'bootstrap-vue';
 
 export default {
   name: 'AddressForm',
@@ -140,7 +137,7 @@ export default {
     'owner-type': {
       type: String,
       required: true,
-      default: 'users',
+      default: 'user',
     },
   },
 
@@ -157,9 +154,9 @@ export default {
   computed: {
     address: {
       get() {
-        if (this.$props.ownerType === 'Devices') {
+        if (this.$props.ownerType === 'Device') {
           return this.$store.state.address.deviceAddress;
-        } else if (this.$props.ownerType === 'users') {
+        } else if (this.$props.ownerType === 'user') {
           return this.$store.state.address.profileAddress;
         }
         return null;
@@ -307,30 +304,24 @@ export default {
     },
 
     async getCollectionAddress() {
-      return this.$store
-        .dispatch('address/findAddress', {
-          ownerType: this.$props.ownerType,
-          ownerId: this.$props.ownerId,
-          viewer: this.viewer,
-        })
-        .then(res => res)
-        .catch(err => err);
+      return this.$store.dispatch('address/findAddress', {
+        ownerType: this.$props.ownerType,
+        ownerId: this.$props.ownerId,
+        viewer: this.viewer,
+      });
     },
 
     async saveCollectionAddress() {
-      return this.$store
-        .dispatch('address/updateAddress', {
-          ownerType: this.$route.ownerType,
-          ownerId: this.$props.ownerId,
-        })
-        .then(res => res)
-        .catch(err => err);
+      return this.$store.dispatch('address/updateAddress', {
+        ownerType: this.$props.ownerType,
+        ownerId: this.$props.ownerId,
+      });
     },
 
     async verifyAddress() {
       // if (evt) evt.preventDefault();
       // if (evt) evt.stopPropagation();
-      await this.$store
+      return this.$store
         .dispatch('address/verifyAddress', this.$props.ownerType)
         .then(res => {
           if (res.message) {
@@ -356,7 +347,6 @@ export default {
           this.$refs.addressModal.show();
           return err;
         });
-      return null;
     },
   },
 };

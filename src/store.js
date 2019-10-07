@@ -21,12 +21,30 @@ const profileStorage = new VuexPersistence({
   storage: window.localStorage,
   reducer: state => ({
     account: state.auth.account,
-    // device: state.device,
-    //  devices: state.device.collection,
-    //  sensors: state.device.sensorsCollection,
-    //  address: state.address,
+    address: state.address.profileAddress,
   }),
+});
+
+const deviceStorage = new VuexPersistence({
+  key: 'devices',
+  storage: window.localStorage,
+  reducer: state => ({
+    collection: state.device.collection,
+    // instance: state.device.intance,
+    // address: state.address.deviceAddress,
+  }),
+  filter: mutation => mutation.type === 'setStateKV',
   asyncStorage: false,
+});
+
+const sensorStorage = new VuexPersistence({
+  key: 'sensors',
+  storage: window.localStorage,
+  reducer: state => ({
+    collection: state.sensor.collection,
+    // intance: state.sensor.intance,
+  }),
+  filter: mutation => mutation.type === 'setStateKV',
 });
 
 // const vuexSession = new VuexPersistence({
@@ -44,7 +62,6 @@ export default new Vuex.Store({
     serverUrl: `${process.env.VUE_APP_SERVER_URL}`,
     restApiRoot: `${process.env.VUE_APP_ROOT_API}`,
     clientUrl: `${process.env.VUE_APP_CLIENT_URL}`,
-    fileUploadUrl: `${process.env.VUE_APP_SERVER_URL}${process.env.VUE_APP_ROOT_API}/files`,
     repoUrl: 'https://github.com/aloes-io',
     style: {
       color: {
@@ -139,7 +156,7 @@ export default new Vuex.Store({
       { text: 'Timer', value: 'timer' },
       { text: 'Geolocator', value: 'tracker' },
       { text: 'Vehicle', value: 'vehicle' },
-      { text: 'Weather station', value: 'weather station' },
+      { text: 'Weather station', value: 'weather-station' },
     ],
     transportProtocolNames: [
       { text: 'name', value: null, disabled: true },
@@ -156,10 +173,6 @@ export default new Vuex.Store({
       email: null,
       subject: null,
       content: null,
-    },
-    coinHive: {
-      siteKey: process.env.VUE_APP_COINHIVE_SITE_KEY,
-      hashes: `${process.env.VUE_APP_COINHIVE_HASHES}` || '256',
     },
   },
   mutations: {
@@ -196,13 +209,14 @@ export default new Vuex.Store({
   },
   plugins: [
     profileStorage.plugin,
-    //  deviceStorage.plugin,
-    //  vuexSession.plugin,
-    vuexCache({ timeout: 2000 }),
+    deviceStorage.plugin,
+    sensorStorage.plugin,
+    // vuexSession.plugin,
+    vuexCache({ timeout: 5000 }),
   ],
   modules: {
-    async, // async namespaced
-    auth, // auth namespaced
+    async,
+    auth,
     address,
     device,
     sensor,

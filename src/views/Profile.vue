@@ -5,7 +5,7 @@
       :account="account"
       :token="$store.state.auth.access_token.id"
       :profile-id="profileId"
-      :profile-type="profileType"
+      :profile-type="account.role"
       :is-viewer="true"
     />
     <footer-container />
@@ -16,7 +16,6 @@
 <script type="text/javascript">
 import HeaderContainer from '@/views/containers/HeaderContainer.vue';
 import FooterContainer from '@/views/containers/FooterContainer.vue';
-//  import LoginPopup from "@/views/containers/LoginPopup.vue";
 import ProfileContainer from '@/views/containers/ProfileContainer.vue';
 
 export default {
@@ -25,7 +24,6 @@ export default {
   components: {
     'footer-container': FooterContainer,
     'header-container': HeaderContainer,
-    //  "login-popup": LoginPopup,
     'login-popup': () => import('@/views/containers/LoginPopup.vue'),
     'profile-container': ProfileContainer,
   },
@@ -33,11 +31,6 @@ export default {
   props: {
     'profile-id': {
       type: [String, Number],
-      required: true,
-      default: null,
-    },
-    'profile-type': {
-      type: String,
       required: true,
       default: null,
     },
@@ -51,11 +44,6 @@ export default {
     account: {
       get() {
         return this.$store.state.auth.account;
-      },
-    },
-    subscribeType: {
-      get() {
-        return this.$store.state.auth.account.subscribed;
       },
     },
   },

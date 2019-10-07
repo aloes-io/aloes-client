@@ -92,12 +92,7 @@
 </template>
 
 <script type="text/javascript">
-import { BButton } from 'bootstrap-vue';
-import { BCard } from 'bootstrap-vue';
-import { BCardBody } from 'bootstrap-vue';
-import { BCardFooter } from 'bootstrap-vue';
-import { BCardHeader } from 'bootstrap-vue';
-import { BModal } from 'bootstrap-vue';
+import { BButton, BCard, BCardBody, BCardFooter, BCardHeader, BModal } from 'bootstrap-vue';
 import qrcode from 'qrcode-generator';
 
 export default {

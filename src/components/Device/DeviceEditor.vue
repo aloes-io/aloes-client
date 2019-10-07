@@ -120,7 +120,7 @@
         :is-viewer="false"
         :edit-mode="editorMode"
         :owner-id="device.id"
-        owner-type="Devices"
+        owner-type="Device"
         class="address-form"
       />
     </b-card-body>
@@ -143,14 +143,16 @@
 
 <script type="text/javascript">
 import has from 'lodash.has';
-import { BButton } from 'bootstrap-vue';
-import { BCard } from 'bootstrap-vue';
-import { BCardBody } from 'bootstrap-vue';
-import { BCardFooter } from 'bootstrap-vue';
-import { BFormInput } from 'bootstrap-vue';
-import { BFormGroup } from 'bootstrap-vue';
-import { BFormSelect } from 'bootstrap-vue';
-import { BModal } from 'bootstrap-vue';
+import {
+  BButton,
+  BCard,
+  BCardBody,
+  BCardFooter,
+  BFormInput,
+  BFormGroup,
+  BFormSelect,
+  BModal,
+} from 'bootstrap-vue';
 
 export default {
   name: 'DeviceEditor',
@@ -347,7 +349,6 @@ export default {
       },
     },
     deviceIdExists() {
-      //  console.log(has(this.device, "id"));
       return has(this.device, 'id');
     },
     // specific device properties
@@ -462,13 +463,10 @@ export default {
     },
 
     async saveCollectionAddress() {
-      return this.$store
-        .dispatch('address/updateAddress', {
-          route: this.$route.name,
-          ownerId: this.device.id,
-        })
-        .then(res => res)
-        .catch(err => err);
+      return this.$store.dispatch('address/updateAddress', {
+        ownerType: 'Device',
+        ownerId: this.device.id,
+      });
     },
 
     onDeleteDevice(evt) {

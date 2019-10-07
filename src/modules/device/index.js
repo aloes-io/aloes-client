@@ -13,7 +13,9 @@ export default {
     dismissCountDown: 0,
     loading: null,
     outputTopic: 'IoTAgent',
+    fullCollection: [],
     collection: [],
+    collectionCount: 0,
     instance: {
       ownerId: null,
       name: null,

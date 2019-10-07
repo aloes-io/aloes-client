@@ -31,8 +31,7 @@
 </template>
 
 <script type="text/javascript">
-import { BForm } from 'bootstrap-vue';
-import { BFormInput } from 'bootstrap-vue';
+import { BForm, BFormInput } from 'bootstrap-vue';
 
 export default {
   name: 'LoginForm',
@@ -141,19 +140,9 @@ export default {
               'user-id': accessToken.userId,
             },
           });
-        } else if (accessToken === 'LOGIN_FAILED_EMAIL_NOT_VERIFIED') {
-          this.errorCounter += 1;
-          this.error = {
-            code: 'NOT_VERIFIED',
-            message: 'Have you received confirmation link ?',
-          };
-          return this.error;
         }
-        this.errorCounter += 1;
-        this.error = {
-          message: 'Your password seems incorrect',
-        };
-        return this.error;
+        const error = new Error('Your password seems incorrect');
+        throw error;
       } catch (error) {
         this.loading = false;
         this.errorCounter += 1;
@@ -163,11 +152,9 @@ export default {
             message: 'Have you received confirmation link ?',
           };
         } else {
-          this.error = {
-            message: 'Your password seems incorrect',
-          };
+          this.error = error;
         }
-        return this.error;
+        throw error;
       }
     },
   },

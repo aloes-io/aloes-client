@@ -4,7 +4,7 @@
       :is-viewer="viewer"
       :account="account"
       :profile="profile"
-      :profile-type="updatedProfileType"
+      :profile-type="updatedProfileRole"
       :profile-id="updatedProfileId"
     />
     <br />
@@ -54,9 +54,9 @@ export default {
       type: String,
       default: '',
     },
-    'profile-type': {
+    'profile-role': {
       type: String,
-      required: true,
+      required: false,
     },
     'profile-id': {
       type: [Number, String],
@@ -74,7 +74,7 @@ export default {
       success: null,
       viewer: true,
       editMode: false,
-      updatedProfileType: null,
+      updatedProfileRole: null,
       updatedProfileId: null,
     };
   },
@@ -141,9 +141,9 @@ export default {
       },
       immediate: true,
     },
-    profileType: {
+    profileRole: {
       handler(type) {
-        this.updatedProfileType = type;
+        this.updatedProfileRole = type;
       },
       immediate: true,
     },
@@ -155,11 +155,9 @@ export default {
     },
   },
 
-  created() {
-    this.checkProfile();
+  mounted() {
+    // this.checkProfile();
   },
-
-  mounted() {},
 
   updated() {
     //  this.checkProfile();
@@ -167,50 +165,50 @@ export default {
 
   methods: {
     async loadFavoriteProfiles() {
-      this.error = null;
-      this.success = null;
-      const favorites = await this.$store
-        .dispatch('teams/loadTeams', this.updatedProfileId)
-        .then(res => res)
-        .catch(err => {
-          this.error = err;
-          return this.error;
-        });
-      return favorites;
+      try {
+        this.error = null;
+        this.success = null;
+        const members = await this.$store.cache.dispatch('teams/loadTeams', this.updatedProfileId);
+        // if (members && members.length <1)
+        return members;
+      } catch (error) {
+        this.error = error;
+        throw error;
+      }
     },
 
     async checkProfile() {
-      this.error = null;
-      this.success = null;
-      const result = await this.$store
-        .dispatch('auth/findAccountById', {
+      try {
+        this.error = null;
+        this.success = null;
+        const result = await this.$store.cache.dispatch('auth/findAccountById', {
           userId: this.updatedProfileId,
           viewer: this.viewer,
-        })
-        .catch(err => {
-          logger.publish(3, this.$props.profileType, 'checkProfile:err', err);
-          this.error = {
-            message: "Sorry, this profile can't be displayed",
-          };
-          return setTimeout(() => {
-            this.$router.go(-1);
-          }, 1000);
         });
-      logger.publish(3, this.updatedProfileType, 'checkProfile:res', result);
 
-      if (result.id === this.$store.state.auth.account.id) {
-        logger.publish(3, this.$props.profileType, 'checkProfile:res', {
+        logger.publish(3, this.updatedProfileRole, 'checkProfile:res', result);
+
+        if (result.id === this.$store.state.auth.account.id) {
+          logger.publish(3, this.updatedProfileRole, 'checkProfile:res', {
+            viewer: this.isViewer,
+            editMode: this.editMode,
+          });
+          //  return this.loadFavoriteProfiles();
+          return null;
+        }
+        logger.publish(3, this.updatedProfileRole, 'checkProfile:res', {
           viewer: this.isViewer,
           editMode: this.editMode,
         });
-        //  return this.loadFavoriteProfiles();
         return null;
+      } catch (error) {
+        this.error = error;
+        logger.publish(3, this.updatedProfileRole, 'checkProfile:err', error);
+        setTimeout(() => {
+          this.$router.go(-1);
+        }, 1000);
+        throw error;
       }
-      logger.publish(3, this.$props.profileType, 'checkProfile:res', {
-        viewer: this.isViewer,
-        editMode: this.editMode,
-      });
-      return null;
     },
   },
 };

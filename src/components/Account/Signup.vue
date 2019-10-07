@@ -2,7 +2,6 @@
   <b-card class="signup-view">
     <b-form @submit="onSignup" @reset="onReset">
       <signup-form>
-        <!-- <captcha ref="captcha" /> -->
         <b-row align-h="center" class="signup-actions">
           <b-col sm="12" md="12" lg="12" xl="12">
             <b-button id="signup-button" type="submit" variant="primary">
@@ -43,11 +42,7 @@
 </template>
 
 <script type="text/javascript">
-import { BAlert } from 'bootstrap-vue';
-import { BButton } from 'bootstrap-vue';
-import { BForm } from 'bootstrap-vue';
-import { BCard } from 'bootstrap-vue';
-//  import Captcha from '@/components/Account/Captcha.vue';
+import { BAlert, BButton, BForm, BCard } from 'bootstrap-vue';
 import SignupForm from '@/components/Account/SignupForm.vue';
 import notification from '@/views/mixins/notification';
 
@@ -60,7 +55,6 @@ export default {
     'b-card': BCard,
     'b-form': BForm,
     'signup-form': SignupForm,
-    //  captcha: Captcha,
   },
 
   mixins: [notification],
@@ -86,14 +80,6 @@ export default {
   },
 
   computed: {
-    accountType: {
-      get() {
-        return this.$store.state.auth.accountType;
-      },
-      set(type) {
-        this.$store.commit('auth/setAccountType', type);
-      },
-    },
     windowWidth: {
       get() {
         return this.$store.state.windowWidth;
@@ -123,10 +109,6 @@ export default {
     },
   },
 
-  mounted() {
-    //  this.captchaBody = this.$el.querySelector('#coinhive-captcha');
-  },
-
   methods: {
     async onSignup(evt) {
       this.error = null;
@@ -134,73 +116,46 @@ export default {
       if (evt) evt.preventDefault();
       if (evt) evt.stopPropagation();
       try {
-        // const target = evt.target;
-        // const success = await this.$refs.captcha.verifyCaptcha(target);
-        // if (success !== true) {
-        //   this.error = {
-        //     message: 'Verify signup with captcha first',
-        //   };
-        //   return this.error;
-        // }
-
         if (
           this.$store.state.auth.signup.password !== this.$store.state.auth.signup.confirmPassword
         ) {
           this.error = {
-            message: 'Oups ! votre mot de passe est incorrect',
+            message: "Your password don't match",
           };
           return;
         }
 
         this.loading = true;
-        const firstName = this.$store.state.auth.account.firstName;
-        const lastName = this.$store.state.auth.account.lastName;
+        const firstName = this.$store.state.auth.signup.firstName;
+        const lastName = this.$store.state.auth.signup.lastName;
         const account = await this.$store.dispatch(`auth/signUp`, {
-          type: this.accountType,
           email: this.$store.state.auth.signup.email,
           password: this.$store.state.auth.signup.password,
           firstName,
           lastName,
-          fullName: `${firstName} ${lastName}`,
+          // fullName: `${firstName} ${lastName}`,
         });
-        if (account.statusCode === 422) {
-          this.error = { message: account.messages };
-          return this.error;
-        } else if (account === 'LOGIN_FAILED_EMAIL_NOT_VERIFIED') {
-          this.error = {
-            code: 'NOT_VERIFIED',
-            message: 'Have you received confirmation link ?',
-          };
-          return this.error;
-        } else if (account.id) {
+        if (account.id) {
           this.account = account;
+          this.success = {
+            message: 'A confirmation link has been sent, have you received it ?',
+          };
           //  this.$store.commit('auth/setAccount', account);
           this.loading = false;
           return this.success;
         }
-        this.loading = false;
-        // this.error = {message:"Impossible de vous authentifier, le formulaire n'a pas été validée"}
-        //  this.error = account;
-        return null;
+        throw new Error('Sorry there was an error while creating your account');
       } catch (error) {
         this.loading = false;
-        if (error.message) {
-          this.error = {
-            code: 'NOT_VERIFIED',
-            message:
-              'This email address already exists in our databases, choose a new one to create an account or ask for a new confirmation link',
-          };
-        } else {
-          this.error = error;
-        }
-        return this.error;
+        this.error = error;
+        throw error;
       }
     },
 
     onReset(evt) {
       if (evt) evt.preventDefault();
       if (evt) evt.stopPropagation();
-      this.$store.commit('auth/setAccountType', '');
+      // this.$store.commit('auth/setAccountType', '');
       this.error = null;
       this.loading = false;
       this.success = null;

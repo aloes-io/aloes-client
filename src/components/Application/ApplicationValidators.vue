@@ -71,12 +71,14 @@
 </template>
 
 <script type="text/javascript">
-import { BButton } from 'bootstrap-vue';
-import { BFormInput } from 'bootstrap-vue';
-import { BFormSelect } from 'bootstrap-vue';
-import { BInputGroup } from 'bootstrap-vue';
-import { BInputGroupAppend } from 'bootstrap-vue';
-import { BInputGroupPrepend } from 'bootstrap-vue';
+import {
+  BButton,
+  BFormInput,
+  BFormSelect,
+  BInputGroup,
+  BInputGroupAppend,
+  BInputGroupPrepend,
+} from 'bootstrap-vue';
 
 export default {
   name: 'ApplicationValidators',

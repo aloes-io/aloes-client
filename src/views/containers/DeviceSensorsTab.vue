@@ -1,17 +1,18 @@
 <template lang="html">
   <b-row v-if="tabsIndex === 1" class="about-header">
     <b-col v-if="device" sm="8">
-      <sensors-list
+      <!--       <sensors-list
         v-if="sensors"
         v-show="sensors.length > 0"
         :user-id="userId"
         :sensors="sensors"
         :device-type="device.type"
         :device-id="device.id"
-      />
+      /> -->
+      <sensors-list :user-id="userId" :device-type="device.type" :device-id="device.id" />
     </b-col>
     <b-col sm="4">
-      <devices-list v-if="devices" :token="token" :user-id="userId" :devices="devices" />
+      <devices-list :token="token" :user-id="userId" />
     </b-col>
   </b-row>
 </template>
@@ -81,33 +82,13 @@ export default {
         });
       },
     },
-    devices: {
-      get() {
-        return this.$store.state.device.collection;
-      },
-    },
     device: {
       get() {
         return this.$store.state.device.instance;
       },
     },
-    sensors: {
-      get() {
-        return this.$store.state.sensor.collection.filter(sensor => {
-          if (
-            this.device &&
-            this.device.id &&
-            sensor.deviceId.toString() === this.device.id.toString()
-          ) {
-            return true;
-          }
-          return false;
-        });
-      },
-    },
     errorMessageExists() {
       return has(this.error, 'message');
-      //  return _.;
     },
     successMessageExists() {
       return has(this.sucess, 'message');

@@ -28,7 +28,7 @@ export async function findApplicationById({ state, commit }, id) {
         commit('setModel', { viewer: false, app });
         return app;
       }
-      return new Error('invalid app');
+      return null;
     })
     .catch(err => err);
 }
@@ -45,16 +45,16 @@ export async function findApplicationKV({ state, commit }, { key, value }) {
     logger.publish(4, state.collectionName, 'dispatch:findApplicationKV:res', apps);
     return apps;
   } catch (error) {
-    await commit('setModelKV', { key: 'error', value: error });
+    commit('setModelKV', { key: 'error', value: error });
     logger.publish(2, state.collectionName, 'dispatch:findApplicationKV:err', error);
-    return error;
+    throw error;
   }
 }
 
 export async function subscribeToApplicationsUpdate({ state }, { userId }) {
-  await state.collection.forEach(app => {
-    return PubSub.subscribeToInstanceUpdate(socket.client, 'Application', userId, app.id);
-  });
+  await state.collection.forEach(async app =>
+    PubSub.subscribeToInstanceUpdate(socket.client, 'Application', userId, app.id),
+  );
 }
 
 export async function unsubscribeFromApplicationsUpdate({ state }, { userId }) {
@@ -107,13 +107,13 @@ export async function updateApplication({ state, commit }, { application }) {
 export async function delApplication({ state, commit }, { application }) {
   try {
     const deletedApplication = await loopback.delete(`/${state.resources}/${application.id}`);
-    await commit('setModelKV', {
+    commit('setModelKV', {
       key: 'success',
       value: { message: 'application removed' },
     });
     return deletedApplication;
   } catch (error) {
-    await commit('setModelKV', { key: 'error', value: error });
+    commit('setModelKV', { key: 'error', value: error });
     logger.publish(4, state.collectionName, 'dispatch:delApplication:err', error);
     return error;
   }

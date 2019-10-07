@@ -2,10 +2,10 @@
   <div v-if="account" class="account-view">
     <header-container :access_token="$store.state.auth.access_token" :account="account" />
     <profile-container
-      v-if="account && subscribeType !== 'new'"
+      v-if="account"
       :account="account"
       :token="accessToken"
-      :profile-type="account.type"
+      :profile-type="account.role"
       :profile-id="account.id"
       :is-viewer="false"
     />
@@ -18,7 +18,6 @@
 import HeaderContainer from '@/views/containers/HeaderContainer.vue';
 import FooterContainer from '@/views/containers/FooterContainer.vue';
 import ProfileContainer from '@/views/containers/ProfileContainer.vue';
-//  import LoginPopup from "@/views/containers/LoginPopup.vue";
 
 export default {
   name: 'Account',
@@ -27,7 +26,6 @@ export default {
     'footer-container': FooterContainer,
     'header-container': HeaderContainer,
     'login-popup': () => import('@/views/containers/LoginPopup.vue'),
-    //  "login-popup": LoginPopup,
     'profile-container': ProfileContainer,
   },
 
@@ -54,16 +52,6 @@ export default {
         return this.$store.state.auth.account;
       },
     },
-    subscribeType: {
-      get() {
-        return this.$store.state.auth.account.subscribed;
-      },
-    },
-    // profile: {
-    //   get() {
-    //     return this.$store.state[`${this.account.type.toLowerCase()}`].model;
-    //   }
-    // }
   },
 
   mounted() {

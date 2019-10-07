@@ -209,16 +209,18 @@
 
 <script type="text/javascript">
 import has from 'lodash.has';
-import { BButton } from 'bootstrap-vue';
-import { BCard } from 'bootstrap-vue';
-import { BCardBody } from 'bootstrap-vue';
-import { BCardFooter } from 'bootstrap-vue';
-import { BFormInput } from 'bootstrap-vue';
-import { BFormGroup } from 'bootstrap-vue';
-import { BFormSelect } from 'bootstrap-vue';
-import { BImg } from 'bootstrap-vue';
-import { BInputGroup } from 'bootstrap-vue';
-import { BInputGroupAppend } from 'bootstrap-vue';
+import {
+  BButton,
+  BCard,
+  BCardBody,
+  BCardFooter,
+  BFormInput,
+  BFormGroup,
+  BFormSelect,
+  BImg,
+  BInputGroup,
+  BInputGroupAppend,
+} from 'bootstrap-vue';
 // import ApplicationValidators from '@/components/Application/ApplicationValidators.vue';
 // import FileImportContainer from '@/views/containers/FileImportContainer.vue';
 import builder from '@/services/builder';

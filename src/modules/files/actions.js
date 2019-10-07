@@ -1,47 +1,46 @@
-import { FileUploadService } from 'v-file-upload';
 import loopback from '@/services/loopback';
 import logger from '@/services/logger';
 
 // Uploading audio and image files
-export async function onResetFileImport({ state, commit }, { resourceType, role }) {
+export function onResetFileImport({ state, commit }, { resourceType, role }) {
   logger.publish(4, state.collectionName, 'dispatch:onResetFileImport:req', {
     resourceType,
     role,
   });
-  await commit('setUploadedFile', {
+  commit('setUploadedFile', {
     resourceType,
     role,
     file: [],
   });
-  return commit('setUploadStatus', {
+  commit('setUploadStatus', {
     resourceType,
     role,
     status: state.STATUS_INITIAL,
   });
 }
 
-export async function onUploadSuccess({ state, commit }, { resourceType, role, res }) {
-  logger.publish(4, state.collectionName, 'dispatch:onUploadSuccess:res', res);
-  await commit('setUploadedFileUrl', {
+export function onUploadSuccess({ state, commit }, { resourceType, role, file }) {
+  logger.publish(4, state.collectionName, 'dispatch:onUploadSuccess:res', file);
+  commit('setUploadedFileUrl', {
     resourceType,
     role,
-    url: `${res.url}`,
+    url: `${file.url}`,
   });
-  await commit('setUploadStatus', {
+  commit('setUploadStatus', {
     resourceType,
     role,
     status: state.STATUS_SUCCESS,
   });
-  return res;
+  return file;
 }
 
 export function onUploadProgress(event) {
   logger.publish(4, 'files', 'onUploadProgress:res', event);
 }
 
-export async function onUploadError({ state, commit }, { resourceType, role, err }) {
+export function onUploadError({ state, commit }, { resourceType, role, err }) {
   logger.publish(2, state.collectionName, 'dispatch:onUploadError:err', err);
-  await commit('setUploadStatus', {
+  commit('setUploadStatus', {
     resourceType,
     role,
     status: state.STATUS_FAILED,
@@ -51,42 +50,32 @@ export async function onUploadError({ state, commit }, { resourceType, role, err
 
 export async function onFileImport(
   { state, commit, dispatch },
-  { accessToken, resourceType, role, files, ownerId, name },
+  { resourceType, role, file, ownerId, name },
 ) {
   try {
-    if (!resourceType || !role || !files) {
+    if (!resourceType || !role || !file || !name) {
       throw new Error('Missing arguments');
     }
-    const userId = ownerId && ownerId !== null ? ownerId : accessToken.userId;
-    logger.publish(4, state.collectionName, 'dispatch:onFileImport:req', { ownerId, userId, role });
-    await commit('setUploadStatus', {
+    ownerId = ownerId.toString();
+    logger.publish(4, state.collectionName, 'dispatch:onFileImport:req', { ownerId, role, name });
+    commit('setUploadStatus', {
       resourceType,
       role,
       status: state.STATUS_SAVING,
     });
-
-    let url = `${process.env.VUE_APP_SERVER_URL}${process.env.VUE_APP_ROOT_API}/${
-      state.collectionName
-    }/${userId}/upload`;
-    if (name && name !== null) {
-      url = `${url}/${name}`;
-    }
-
-    const fileUpload = new FileUploadService(
-      url,
-      {
-        'access-token': accessToken.id,
-        authorization: accessToken.id,
-      },
-      onUploadProgress,
-    );
-
-    return fileUpload
-      .upload(files)
-      .then(res => dispatch('onUploadSuccess', { resourceType, role, res: res.target.response }))
-      .catch(err => dispatch('onUploadError', { resourceType, role, err }));
+    const form = new FormData();
+    form.append('file', file, name);
+    const headers = {
+      'Content-Type': 'multipart/form-data',
+    };
+    const res = await loopback.post(`/${state.resources}/${ownerId}/upload/${name}`, form, {
+      headers,
+    });
+    dispatch('onUploadSuccess', { resourceType, role, file: res });
+    return res;
   } catch (error) {
-    return error;
+    dispatch('onUploadError', { resourceType, role, err: error });
+    throw error;
   }
 }
 
@@ -98,27 +87,31 @@ export async function uploadBuffer(
     if (!resourceType || !role || !buffer || !ownerId || !name) {
       throw new Error('Missing arguments');
     }
-    await commit('setUploadStatus', {
+    logger.publish(4, state.collectionName, 'dispatch:uploadBuffer:req', {
+      name,
+      ownerId,
+    });
+    commit('setUploadStatus', {
       resourceType,
       role,
       status: state.STATUS_SAVING,
     });
-    //  console.log('uploadBuffer', buffer, ownerId);
     const config = {
       headers: {
-        ['Content-Type']: `application/octet-stream`,
+        'Content-Type': 'application/octet-stream',
       },
+      responseType: 'blob',
     };
-    const res = await loopback.post(
-      `/${state.collectionName}/${ownerId}/upload-buffer/${name}`,
+    const file = await loopback.post(
+      `/${state.resources}/${ownerId}/upload-buffer/${name}`,
       buffer,
       config,
     );
-    await dispatch('onUploadSuccess', { resourceType, role, res });
-    return res;
+    dispatch('onUploadSuccess', { resourceType, role, file });
+    return file;
   } catch (error) {
     dispatch('onUploadError', { resourceType, role, error });
-    return error;
+    throw error;
   }
 }
 
@@ -137,46 +130,57 @@ export async function getFilesMetaByOwner({ state }, { ownerId, name, type }) {
       filter.where.and.push({ type: { like: `.*${type}.*`, options: 'i' } });
     }
 
-    const filesMeta = await loopback.find(`/${state.collectionName}`, filter);
-    // console.log('filesMeta', filesMeta);
+    const filesMeta = await loopback.find(`/${state.resources}`, filter);
     if (filesMeta && filesMeta.length) {
       return filesMeta;
     }
     return [];
   } catch (error) {
-    return error;
+    throw error;
   }
 }
 
-export async function getFile({ state }, { ownerId, name }) {
+export async function download({ state }, url) {
   try {
-    const file = await loopback.get(`/${state.collectionName}/${ownerId}/download/${name}`);
+    const file = await loopback.get(url, { responseType: 'blob' });
     if (file && file !== null) {
       return file;
     }
     return null;
   } catch (error) {
-    return error;
+    logger.publish(4, state.collectionName, 'dispatch:download:err', error);
+    return null;
+  }
+}
+
+export async function getFile({ state }, { ownerId, name }) {
+  try {
+    const file = await loopback.get(`/${state.resources}/${ownerId}/download/${name}`, {
+      responseType: 'blob',
+    });
+    if (file && file !== null) {
+      return file;
+    }
+    return null;
+  } catch (error) {
+    logger.publish(4, state.collectionName, 'dispatch:getFile:err', error);
+    return null;
   }
 }
 
 export async function updateFileMeta({ state }, { ownerType, fileMeta }) {
   try {
-    if (!ownerType || ownerType !== 'users' || ownerType !== 'Devices') {
-      throw new Error('mising params');
+    if (!ownerType || ownerType.toLowerCase() !== 'user' || ownerType.toLowerCase() !== 'device') {
+      throw new Error('missing params');
     }
     const fileMetaId = fileMeta.id;
     delete fileMeta.id;
-    const updatedFileMeta = await loopback.put(`/${state.collectionName}/${fileMetaId}`, fileMeta);
-    // const updatedFileMeta = await loopback.put(
-    //   `/${ownerType}/${fileMeta.ownerId}/${state.collectionName}/${fileMetaId}`,
-    //   fileMeta,
-    // );
+    const updatedFileMeta = await loopback.put(`/${state.resources}/${fileMetaId}`, fileMeta);
     if (updatedFileMeta && updatedFileMeta !== null) {
       return updatedFileMeta;
     }
     return null;
   } catch (error) {
-    return error;
+    throw error;
   }
 }

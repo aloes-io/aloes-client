@@ -467,7 +467,7 @@
           "name": "Loudness",
           "type": 3339,
           "devEui": "1456278",
-          "deviceId": "2",
+          "deviceId": "3",
           "ownerId": "1",
           "resource": 5522,
           "resources": {
@@ -512,7 +512,7 @@
           "name": "Timer",
           "type": 3340,
           "devEui": "1456278",
-          "deviceId": "2",
+          "deviceId": "3",
           "ownerId": "1",
           "resource": 5538,
           "resources": {
@@ -534,6 +534,53 @@
           "inPrefix": "-in",
           "nativeType": 3340,
           "nativeResource": 5538
+        },
+        {
+          "id": "32",
+          "group": 2,
+          "icons": [
+            "/icons/aloes/location.svg",
+            "/icons/aloes/location.png",
+            "/icons/aloes/location-white.png"
+          ],
+          "size": 0.2,
+          "colors": {
+            "5601": "#5ae2e2",
+            "5602": "#ff3535",
+            "5603": "#5ae2e2",
+            "5604": "#ff3535",
+            "5605": "#000",
+            "5700": "#000",
+            "5701": "#000",
+            "5750": "#000",
+            "5821": "#434b77"
+          },
+          "name": "Location",
+          "type": 3336,
+          "devEui": "1456278",
+          "deviceId": "3",
+          "ownerId": "1",
+          "resource": 5514,
+          "resources": {
+            "5514": "48.2092",
+            "5515": "16.3728",
+            "5516": "0",
+            "5517": "0",
+            "5518": 1566219739,
+            "5705": 180,
+            "5750": "app_name"
+          },
+          "value": 48.2092,
+          "frameCounter": 0,
+          "transportProtocol": "aloesLight",
+          "messageProtocol": "aloesLight",
+          "messageProtocolVersion": "1.0",
+          "nativeSensorId": "5",
+          "nativeNodeId": "0",
+          "outPrefix": "-out",
+          "inPrefix": "-in",
+          "nativeType": 3336,
+          "nativeResource": 5514
         }
       ]
     }

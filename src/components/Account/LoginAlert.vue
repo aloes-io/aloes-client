@@ -36,8 +36,7 @@
 </template>
 
 <script type="text/javascript">
-import { BAlert } from 'bootstrap-vue';
-import { BButton } from 'bootstrap-vue';
+import { BAlert, BButton } from 'bootstrap-vue';
 
 export default {
   name: 'Alert',

@@ -18,7 +18,7 @@
       />
     </b-col>
     <b-col sm="4">
-      <devices-list v-if="devices" :token="token" :user-id="userId" :devices="devices" />
+      <devices-list :token="token" :user-id="userId" />
     </b-col>
   </b-row>
 </template>
@@ -88,17 +88,6 @@ export default {
       set(value) {
         this.$store.commit('device/setStateKV', {
           key: 'error',
-          value,
-        });
-      },
-    },
-    devices: {
-      get() {
-        return this.$store.state.device.collection;
-      },
-      set(value) {
-        this.$store.commit('device/setStateKV', {
-          key: 'collection',
           value,
         });
       },
