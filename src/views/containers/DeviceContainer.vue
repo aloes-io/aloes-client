@@ -51,7 +51,7 @@
 import { BTab, BTabs } from 'bootstrap-vue';
 import has from 'lodash.has';
 import { EventBus } from '@/services/PubSub';
-import Collection from '@/views/mixins/collection';
+import Collection from '@/mixins/collection';
 
 export default {
   name: 'DeviceContainer',
@@ -230,11 +230,15 @@ export default {
       this.tabsIndex = tabsIndex;
     },
 
-    createDevice(device) {
+    async createDevice(device) {
       try {
         if (device && device.id) {
+          if (device.isNewInstance) {
+            this.devices = await this.updateCollection('devices', this.devices, 'create', device);
+          } else {
+            this.devices = await this.updateCollection('devices', this.devices, 'update', device);
+          }
           // this.saveInstance('device', device);
-          this.devices = this.updateCollection('devices', this.devices, 'create', device);
           if (this.deviceTree && this.deviceTree !== null) {
             this.deviceTree.onNodeCreated(device);
           }
@@ -249,11 +253,11 @@ export default {
       }
     },
 
-    updateDevice(device) {
+    async updateDevice(device) {
       try {
         if (device && device.id) {
           // this.saveInstance('device', device);
-          this.devices = this.updateCollection('devices', this.devices, 'update', device);
+          this.devices = await this.updateCollection('devices', this.devices, 'update', device);
           if (this.deviceTree && this.deviceTree !== null) {
             this.deviceTree.onNodeUpdated(device);
           }
@@ -268,11 +272,11 @@ export default {
       }
     },
 
-    deleteDevice(device) {
+    async deleteDevice(device) {
       try {
         if (device && device.id) {
           // this.delInstance('device', device);
-          this.devices = this.updateCollection('devices', this.devices, 'delete', device);
+          this.devices = await this.updateCollection('devices', this.devices, 'delete', device);
           if (this.deviceTree && this.deviceTree !== null) {
             this.deviceTree.onNodeDeleted(device);
           }
@@ -287,14 +291,14 @@ export default {
       }
     },
 
-    createSensor(sensor) {
+    async createSensor(sensor) {
       try {
         if (sensor && sensor.id) {
           // this.saveInstance('sensor', sensor);
           if (sensor.isNewInstance) {
-            this.sensors = this.updateCollection('sensors', this.sensors, 'create', sensor);
+            this.sensors = await this.updateCollection('sensors', this.sensors, 'create', sensor);
           } else {
-            this.sensors = this.updateCollection('sensors', this.sensors, 'update', sensor);
+            this.sensors = await this.updateCollection('sensors', this.sensors, 'update', sensor);
           }
           if (this.deviceTree && this.deviceTree !== null) {
             if (sensor.isNewInstance) {
@@ -311,11 +315,11 @@ export default {
       }
     },
 
-    updateSensor(sensor) {
+    async updateSensor(sensor) {
       try {
         if (sensor && sensor.id) {
           // this.saveInstance('sensor', sensor);
-          this.sensors = this.updateCollection('sensors', this.sensors, 'update', sensor);
+          this.sensors = await this.updateCollection('sensors', this.sensors, 'update', sensor);
           if (this.deviceTree && this.deviceTree !== null) {
             this.deviceTree.onNodeUpdated(sensor);
           }
@@ -327,11 +331,11 @@ export default {
       }
     },
 
-    deleteSensor(sensor) {
+    async deleteSensor(sensor) {
       try {
         if (sensor && sensor.id) {
           //  this.delInstance('sensor', sensor);
-          this.sensors = this.updateCollection('sensors', this.sensors, 'delete', sensor);
+          this.sensors = await this.updateCollection('sensors', this.sensors, 'delete', sensor);
           if (this.deviceTree && this.deviceTree !== null) {
             this.deviceTree.onNodeDeleted(sensor);
           }

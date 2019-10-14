@@ -83,10 +83,11 @@ export default {
 
   data() {
     return {
-      watchSensors: this.$props.source,
       graph: null,
       updatedWidth: null,
       updatedHeight: null,
+      updatedDevices: null,
+      updatedSource: null,
       margin: { top: 20, right: 0, bottom: 30, left: 40 },
       deviceTreeMounted: false,
       updatedNodesRadius: null,
@@ -138,8 +139,8 @@ export default {
       handler(width) {
         if (width && width !== null) {
           this.updatedWidth = width;
-          if (this.deviceTreeMounted) {
-            this.debouncedFullDeviceTreeUpdate();
+          if (this.deviceTreeMounted && !this.deviceTreeUpdating) {
+            this.fullUpdateDeviceTree();
           }
         }
       },
@@ -149,8 +150,8 @@ export default {
       handler(height) {
         if (height && height !== null) {
           this.updatedHeight = height;
-          if (this.deviceTreeMounted) {
-            this.debouncedFullDeviceTreeUpdate();
+          if (this.deviceTreeMounted && !this.deviceTreeUpdating) {
+            this.fullUpdateDeviceTree();
           }
         }
       },
@@ -160,8 +161,8 @@ export default {
       handler(value) {
         if (value && value !== null) {
           this.updatedNodesRadius = value;
-          if (this.deviceTreeMounted) {
-            this.debouncedFullDeviceTreeUpdate();
+          if (this.deviceTreeMounted && !this.deviceTreeUpdating) {
+            this.fullUpdateDeviceTree();
           }
         }
       },
@@ -171,8 +172,8 @@ export default {
       handler(value) {
         if (value && value !== null) {
           this.updatedLinksLength = value;
-          if (this.deviceTreeMounted) {
-            this.debouncedFullDeviceTreeUpdate();
+          if (this.deviceTreeMounted && !this.deviceTreeUpdating) {
+            this.fullUpdateDeviceTree();
           }
         }
       },
@@ -181,19 +182,32 @@ export default {
     device: {
       handler(value) {
         if (value && value !== null) {
+          this.updatedDevices = [value];
           //  this.initDeviceTree();
         }
       },
       immediate: true,
     },
     devices: {
-      handler(value) {
-        if (value && value !== null) {
-          //  this.initDeviceTree();
+      async handler(value) {
+        this.updatedDevices = value;
+        if (this.deviceTreeMounted && !this.deviceTreeUpdating && value) {
+          // await this.debouncedInitDeviceTree();
+          await this.initDeviceTree();
         }
       },
       immediate: true,
     },
+    source: {
+      async handler(value) {
+        if (value && value !== null) {
+          this.updatedSource = value;
+          await this.initDeviceTree();
+        }
+      },
+      immediate: true,
+    },
+
     // showSensors: {
     //   handler(value) {
     //   },
@@ -202,11 +216,19 @@ export default {
   },
 
   created() {
-    this.debouncedFullDeviceTreeUpdate = debounce(this.fullUpdateDeviceTree, 600);
+    // this.debouncedInitDeviceTree = debounce(this.initDeviceTree, 500);
+    this.debouncedFullDeviceTreeUpdate = debounce(this.fullUpdateDeviceTree, 500);
+    // this.debounceTicked = debounce(this.ticked, 50);
+    // this.debounceZoomed = debounce(this.zoomed, 100);
+    this.onNodeUpdated = debounce(this.updateNode, 150);
+    this.onNodeCreated = debounce(this.createNode, 150);
+    this.onNodeDeleted = debounce(this.deleteNode, 150);
   },
 
-  mounted() {
-    this.initDeviceTree();
+  async mounted() {
+    if (this.updatedDevices) {
+      await this.initDeviceTree();
+    }
   },
 
   beforeDestroy() {
@@ -217,52 +239,75 @@ export default {
     async generateGraph() {
       try {
         let graph = {};
-        if (this.$props.devices !== null) {
-          graph = {
-            name: 'Aloes',
-            id: this.$props.devices[0].ownerId,
-            size: 1,
-            group: 0,
-            colors: ['#29abe2'],
-            icons: ['/icons/aloes/iot.png', '/icons/aloes/iot-white.png'],
-            children: [],
-          };
-          const devices = JSON.parse(JSON.stringify(this.$props.devices));
-          devices.forEach(device => {
-            device.size = 0.4;
-            device.group = 1;
-            device.show = true;
-            // device.children = this.$props.sensors.filter(sensor => {sensor.deviceId.toString() === device.id.toString()})
-            if (device.sensors) {
-              if (this.showSensors) {
-                device.sensors.forEach(sensor => {
-                  sensor.size = 0.2;
-                  sensor.group = 2;
-                });
-                device.children = device.sensors;
-              } else {
-                delete device.children;
+        const generateDeviceTree = (devices, showSensors) => {
+          if (Array.isArray(devices)) {
+            return devices.map(device => {
+              device.size = 0.4;
+              device.group = 1;
+              device.show = true;
+              // device.children = this.$props.sensors.filter(sensor => {sensor.deviceId.toString() === device.id.toString()})
+              if (device.sensors) {
+                if (showSensors) {
+                  device.sensors.forEach(sensor => {
+                    sensor.size = 0.2;
+                    sensor.group = 2;
+                  });
+                  device.children = device.sensors;
+                } else {
+                  delete device.children;
+                }
+                delete device.sensors;
               }
-              delete device.sensors;
-            }
-          });
-          graph.children = devices;
-          // this.$store.state.device.graph = graph
-        } else if (this.$props.device && this.$props.device !== null) {
-          const device = JSON.parse(JSON.stringify(this.$props.device));
+              return device;
+            });
+          }
+          const device = devices;
           if (device.sensors) {
             device.children = device.sensors;
             delete device.sensors;
           }
-          graph = device;
-        } else {
-          graph = await json(this.watchSensors);
+          return device;
+        };
+
+        if (this.updatedDevices && Array.isArray(this.updatedDevices)) {
+          if (this.updatedDevices.length > 1) {
+            graph = {
+              name: 'Aloes',
+              id: this.$props.devices[0].ownerId,
+              size: 1,
+              group: 0,
+              colors: ['#29abe2'],
+              icons: ['/icons/aloes/iot.png', '/icons/aloes/iot-white.png'],
+              children: [],
+            };
+
+            if (this.$worker) {
+              graph.children = await this.$worker.run(generateDeviceTree, [
+                // JSON.parse(JSON.stringify(this.updatedDevices)),
+                this.updatedDevices,
+                this.showSensors,
+              ]);
+            } else {
+              graph.children = generateDeviceTree(this.updatedDevices, this.showSensors);
+            }
+          } else {
+            if (this.$worker) {
+              graph = await this.$worker.run(generateDeviceTree, [
+                JSON.parse(JSON.stringify(this.updatedDevices[0])),
+                true,
+              ]);
+            } else {
+              graph = generateDeviceTree(this.updatedDevices[0], true);
+            }
+          }
+        } else if (this.updatedSource) {
+          graph = await json(this.updatedSource);
         }
-        //  console.log("graph", graph)
+        // console.log('graph', graph);
         this.graph = graph;
         return graph;
       } catch (error) {
-        return error;
+        return null;
       }
     },
 
@@ -274,7 +319,7 @@ export default {
         tree.links = root.links(tree.nodes);
         return tree;
       } catch (error) {
-        return error;
+        return null;
       }
     },
 
@@ -310,7 +355,7 @@ export default {
         this.nodeSimulation.nodes(nodes).on('tick', this.ticked);
         return this.nodeSimulation;
       } catch (error) {
-        return error;
+        throw error;
       }
     },
 
@@ -325,6 +370,7 @@ export default {
         .translateExtent(extent)
         .extent(extent)
         .on('zoom', this.zoomed(this.svgGroup));
+      // .on('wheel', (e) => e.preventDefault());
     },
 
     deviceTreeState() {
@@ -351,6 +397,7 @@ export default {
 
     fullUpdateDeviceTree() {
       if (this.deviceTreeState()) {
+        this.deviceTreeUpdating = true;
         // size = size || this.getSize();
         this.removeDeviceTree();
         const tree = this.generateTree(this.graph);
@@ -362,11 +409,13 @@ export default {
         this.descriptions = this.initTexts(this.graphLinks);
         this.tooltip = this.initTooltip();
         this.applyForce(tree.nodes, tree.links);
+        this.deviceTreeUpdating = false;
       }
     },
 
     updateDeviceTree() {
       if (this.deviceTreeState()) {
+        this.deviceTreeUpdating = true;
         this.removeDeviceTree();
         this.links = this.initLinks(this.graphLinks);
         this.nodes = this.initNodes(this.graphNodes);
@@ -376,12 +425,14 @@ export default {
         this.nodeSimulation.nodes(this.graphNodes);
         //  this.nodeSimulation.nodes(this.graphNodes).on('tick', this.ticked);
         this.nodeSimulation.alphaTarget(0.3).restart();
+        this.deviceTreeUpdating = false;
       }
     },
 
     async initDeviceTree() {
       try {
         let graph;
+        this.deviceTreeUpdating = true;
         if (this.graph !== null) {
           this.removeDeviceTree();
           //  graph = this.graph;
@@ -398,12 +449,13 @@ export default {
         this.initZoom();
         this.svg.call(this.zoomListener);
         //  this.svg.call(this.zoomListener.transform, zoomIdentity);
-        //  this.svg.call(this.initZoom).on('wheel', () => event.preventDefault());
         this.applyForce(tree.nodes, tree.links);
         this.deviceTreeMounted = true;
+        this.deviceTreeUpdating = false;
         return tree;
       } catch (error) {
-        return error;
+        this.deviceTreeUpdating = false;
+        throw error;
       }
     },
 
@@ -896,7 +948,7 @@ export default {
       });
     },
 
-    onNodeCreated(node) {
+    createNode(node) {
       if (node.deviceId) {
         node.size = 0.2;
         node.group = 2;
@@ -924,7 +976,7 @@ export default {
       //  this.keepNodesOnTop();
     },
 
-    onNodeUpdated(node) {
+    updateNode(node) {
       try {
         if (!node || !node.id) return null;
         if (node.deviceId) {
@@ -957,7 +1009,7 @@ export default {
       }
     },
 
-    onNodeDeleted(node) {
+    deleteNode(node) {
       if (!node || !node.id) return null;
       this.removeGraphNode(node.id);
       this.updateDeviceTree();

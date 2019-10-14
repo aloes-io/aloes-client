@@ -79,8 +79,8 @@
 import { BAlert } from 'bootstrap-vue';
 import { BButton } from 'bootstrap-vue';
 import { BForm } from 'bootstrap-vue';
-import Notification from '@/views/mixins/notification';
-import File from '@/views/mixins/file';
+import Notification from '@/mixins/notification';
+import File from '@/mixins/file';
 import logger from '@/services/logger';
 
 export default {

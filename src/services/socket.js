@@ -85,10 +85,10 @@ socket.initSocket = async options => {
     logger.publish(3, 'socket', 'onConnect', 'success');
 
     // socket.client = mqtt.connect(brokerUrl, options);
-    // socket.client.on('connect', async state => {
-    //   logger.publish(3, 'socket', 'onConnect', state);
-    //   setSocketId(options.clientId);
-    // });
+    socket.client.on('connect', async state => {
+      logger.publish(3, 'socket', 'onConnect', state);
+      setSocketId(options.clientId);
+    });
 
     setSocketId(options.clientId);
     await PubSub.setListeners(socket.client, socket.token);

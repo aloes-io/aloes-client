@@ -256,7 +256,6 @@ export default {
       try {
         let result;
         result = await this.$store.dispatch('search/exportResults', {});
-        console.log('export result', result);
         if (result) {
           const element = document.createElement('a');
           element.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(result));
@@ -266,7 +265,9 @@ export default {
           element.click();
           document.body.removeChild(element);
         }
-      } catch (error) {}
+      } catch (error) {
+        // empty
+      }
     },
   },
 };

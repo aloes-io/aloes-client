@@ -58,11 +58,10 @@
 </template>
 
 <script>
-import { updateAloesSensors } from 'aloes-handlers';
 import { BModal } from 'bootstrap-vue';
-import logger from '@/services/logger';
-import Collection from '@/views/mixins/collection';
 import Observer from '@/directives/observer';
+import Collection from '@/mixins/collection';
+import logger from '@/services/logger';
 
 export default {
   name: 'SensorsList',
@@ -178,14 +177,24 @@ export default {
     sensors: {
       handler(value) {
         if (!this.updatedDeviceId) return;
-        this.deviceSensors = value.filter(
-          sensor => sensor.deviceId.toString() === this.updatedDeviceId.toString(),
-        );
-        this.updateFilteredSensors();
+        if (value && Array.isArray(value))
+          this.deviceSensors = value.filter(
+            sensor => sensor.deviceId.toString() === this.updatedDeviceId.toString(),
+          );
+        this.updateFilteredSensors(this.sensorsFilter);
+        // this.updateFilteredSensors();
       },
       immediate: true,
     },
   },
+
+  // mounted() {
+  //   this.worker = new SensorWorker();
+  // },
+
+  // beforeDestroy() {
+  //   this.worker.terminate();
+  // },
 
   methods: {
     async loadSensors(deviceId, filter) {
@@ -227,18 +236,15 @@ export default {
     async onUpdateSensor(...args) {
       try {
         logger.publish(4, 'sensor', 'onUpdateSensor:req', { key: args[1], value: args[2] });
-        if (!args || !args[0].id) return null;
-        let sensor = args[0];
-        sensor = updateAloesSensors(sensor, args[1], args[2]);
-        sensor.lastSignal = new Date();
-        sensor.method = 'PUT';
-        sensor.value = args[2];
+        if (!args || !args[0].id) return;
+        const sensor = await this.updateSensor(args[0], args[1], args[2]);
         await this.$store.dispatch('sensor/publish', {
           sensor,
           userId: this.$props.userId,
         });
-        return sensor;
+        //  return sensor;
       } catch (error) {
+        logger.publish(2, 'sensor', 'onUpdateSensor:err', error);
         throw error;
       }
     },
@@ -273,20 +279,18 @@ export default {
     },
 
     async updateSensorsList(counter) {
-      return this.loadSensors(this.updatedDeviceId, {
-        skip: counter,
-        limit: this.sensorsListLimit,
-      })
-        .then(sensors => {
-          this.deviceSensors = [...this.deviceSensors, ...sensors];
-          this.updateFilteredSensors(this.sensorsFilter);
-          this.sensors = this.batchCollection('sensors', this.sensors, 'create', sensors);
-          // this.deviceSensors = this.sensors.filter(
-          //   sensor => sensor.deviceId.toString() === this.updatedDeviceId.toString(),
-          // );
-          return sensors;
-        })
-        .catch(e => e);
+      try {
+        const sensors = await this.loadSensors(this.updatedDeviceId, {
+          skip: counter,
+          limit: this.sensorsListLimit,
+        });
+        this.deviceSensors = [...this.deviceSensors, ...sensors];
+        this.updateFilteredSensors(this.sensorsFilter);
+        this.sensors = await this.batchCollection('sensors', this.sensors, 'create', sensors);
+        return sensors;
+      } catch (error) {
+        return null;
+      }
     },
 
     calculateListLimit() {

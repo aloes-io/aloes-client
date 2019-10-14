@@ -1,14 +1,16 @@
-import { aloesClientPatternDetector, aloesClientEncoder } from 'aloes-handlers';
 import debounce from 'lodash.debounce';
+import throttle from 'lodash.throttle';
 import Vue from 'vue';
 import logger from './logger';
+import PacketWorker from '@/workers/packet.worker.js';
 
 export const EventBus = new Vue();
 
 const Storage = window.sessionStorage;
 const PubSub = { hasListeners: false };
-
+// const pubsubVersion = process.env.VUE_APP_PUBSUB_API_VERSION;
 const debounceDelay = 50;
+const throttleDelay = 150;
 
 const lastMessage = { topic: '', payload: '', timestamp: 0 };
 
@@ -27,7 +29,6 @@ const pushContainer = subscriptionName => {
     Storage.setItem('subscription-container', '[]');
   }
   const index = container.indexOf(subscriptionName);
-  //  if (container.find((name) => name === subscriptionName)) return true;
   if (index > -1) {
     return true;
   }
@@ -37,15 +38,58 @@ const pushContainer = subscriptionName => {
   return true;
 };
 
+const packetEncoder = options => {
+  return new Promise((resolve, reject) => {
+    if (!options) {
+      reject(new Error('Invalid arguments'));
+    }
+    // const packetWorker = new PacketWorker();
+    const onMessage = e => {
+      if (e.data.error) reject(new Error(e.data.error.message));
+      const topic = e.data.topic || null;
+      // packetWorker.terminate();
+      if (!topic) reject(new Error('Invalid packet encoding'));
+      logger.publish(4, 'PubSub', 'packetEncoder:res', topic);
+      resolve(e.data);
+    };
+    // packetWorker.addEventListener('message', onMessage);
+    PubSub.packetWorker.onmessage = onMessage;
+    PubSub.packetWorker.onerror = reject;
+    PubSub.packetWorker.postMessage({ options });
+  });
+};
+
+const packetHandler = (topic, payload) => {
+  return new Promise((resolve, reject) => {
+    if (!topic || !payload) {
+      reject(new Error('Invalid arguments'));
+    }
+    // const packetWorker = new PacketWorker();
+    const onMessage = e => {
+      if (e.data.error) reject(new Error(e.data.error.message));
+      const pattern = e.data.pattern || null;
+      // packetWorker.terminate();
+      if (!pattern) reject(new Error('Invalid packet handling'));
+      logger.publish(4, 'PubSub', 'packetHandler:res', e.data.topic);
+      resolve(e.data);
+    };
+    // packetWorker.addEventListener('message', onMessage);
+    PubSub.packetWorker.onmessage = onMessage;
+    PubSub.packetWorker.onerror = reject;
+    PubSub.packetWorker.postMessage({ topic, payload });
+  });
+};
+
 PubSub.subscribe = async (client, options) => {
   try {
     logger.publish(4, 'pubsub', 'subscribe:req', options);
     if (client && options) {
       options.pattern = 'aloesClient';
-      const packet = aloesClientEncoder(options);
+      const packet = await packetEncoder(options);
       if (!packet || !packet.topic || packet.topic === null) throw new Error('No topic encoded');
       //  logger.publish(4, 'pubsub', 'subscribe:res', packet.topic);
       await client.subscribe(packet.topic, { qos: 0 });
+      // await client.subscribe(`${pubsubVersion}/${packet.topic}`, { qos: 0 });
       return pushContainer(packet.topic);
     }
     throw new Error('Error: Option must be an object type');
@@ -63,9 +107,10 @@ PubSub.unSubscribeWhere = async (client, options) => {
         throw new Error('Missing options');
       }
       if (options.modelId) {
-        name = `/${options.userId}/${options.collection}/${options.method}/${options.modelId}`;
+        name = `${options.userId}/${options.collection}/${options.method}/${options.modelId}`;
+        // name = `${pubsubVersion}/${options.userId}/${options.collection}/${options.method}/${options.modelId}`;
       } else {
-        name = `/${options.userId}/${options.collection}/${options.method}`;
+        name = `${options.userId}/${options.collection}/${options.method}`;
       }
       logger.publish(4, 'pubsub', 'unSubscribeWhere:req', name);
 
@@ -82,9 +127,6 @@ PubSub.unSubscribeWhere = async (client, options) => {
       if (index !== -1) {
         container.splice(index, 1);
         await client.unsubscribe(name);
-        //  delete socket._callbacks[`$/${name}`];
-        //  EventBus.$off(`${options.method.toLowerCase()}${options.collection}`);
-        //  delete EventBus._events[`${options.method.toLowerCase()}${options.collection}`];
         Storage.setItem('subscription-container', JSON.stringify(container));
         logger.publish(
           3,
@@ -144,6 +186,8 @@ PubSub.setListeners = async (client, token) => {
     logger.publish(4, 'PubSub', 'setListeners:req', token);
     if (client && client !== null && token && token !== null) {
       if (!PubSub.hasListeners) {
+        PubSub.packetWorker = new PacketWorker();
+
         await PubSub.subscribeToCollectionPresentation(client, 'Sensor', token.userId);
         await PubSub.subscribeToCollectionPresentation(client, 'Device', token.userId);
         await PubSub.subscribeToCollectionPresentation(client, 'Scheduler', token.userId);
@@ -176,6 +220,8 @@ PubSub.removeListeners = async client => {
         } catch (e) {
           container = [];
         }
+        PubSub.packetWorker.terminate();
+
         PubSub.hasListeners = false;
         Storage.setItem('subscription-container', '[]');
         if (container && container.length > 0) {
@@ -200,43 +246,44 @@ const onCollectionPresented = (collectionName, instance) => {
   EventBus.$emit(`on${collectionName}Presented`, instance);
 };
 
-PubSub.onCollectionPresented = debounce(onCollectionPresented, debounceDelay);
+PubSub.onCollectionPresented = throttle(onCollectionPresented, throttleDelay);
 
 const onCollectionCreated = (collectionName, instance) => {
   logger.publish(4, 'PubSub', `on${collectionName}Created`, instance.name);
   EventBus.$emit(`on${collectionName}Created`, instance);
 };
 
-PubSub.onCollectionCreated = debounce(onCollectionCreated, debounceDelay);
+PubSub.onCollectionCreated = throttle(onCollectionCreated, throttleDelay);
 
 const onCollectionDeleted = (collectionName, instance) => {
   logger.publish(4, 'PubSub', `on${collectionName}Deleted`, instance.name);
   EventBus.$emit(`on${collectionName}Deleted`, instance);
 };
 
-PubSub.onCollectionDeleted = debounce(onCollectionDeleted, debounceDelay);
+PubSub.onCollectionDeleted = throttle(onCollectionDeleted, throttleDelay);
 
 const onCollectionUpdated = (collectionName, instance) => {
   logger.publish(4, 'PubSub', `on${collectionName}Updated`, instance.name);
   EventBus.$emit(`on${collectionName}Updated`, instance);
 };
 
-PubSub.onCollectionUpdated = debounce(onCollectionUpdated, debounceDelay);
+PubSub.onCollectionUpdated = throttle(onCollectionUpdated, throttleDelay);
 
-const handler = (topic, payload) => {
+const handler = async (topic, payload) => {
   try {
     if (lastMessage.topic === topic && lastMessage.timestamp > Date.now() - debounceDelay * 4) {
       // debounceDelay = 150;
       return;
     }
-    logger.publish(4, 'PubSub', 'handler:req', JSON.parse(payload));
-    const pattern = aloesClientPatternDetector({ topic, payload });
-    let method = pattern.params.method;
-    let collection = pattern.params.collection;
-    if (!method || !collection) throw new Error('Invalid protocol');
-    method = method.toUpperCase();
-    collection = collection.toLowerCase();
-    payload = JSON.parse(payload);
+    logger.publish(5, 'PubSub', 'handler:req', topic);
+    const res = await packetHandler(topic, payload.toString());
+    const pattern = res.pattern;
+    logger.publish(3, 'PubSub', 'handler:res', pattern);
+    const method = res.method;
+    const collection = res.collection;
+    if (!pattern || !method || !collection) throw new Error('Invalid protocol');
+    payload = res.payload;
+
     switch (method) {
       case 'HEAD':
         switch (collection) {
@@ -261,8 +308,11 @@ const handler = (topic, payload) => {
           case 'sensor':
             PubSub.onCollectionCreated('Sensor', payload);
             break;
-          case 'notification':
-            PubSub.onCollectionCreated('Notification', payload);
+          case 'scheduler':
+            PubSub.onCollectionPresented('Scheduler', payload);
+            break;
+          case 'measurement':
+            PubSub.onCollectionPresented('Measurement', payload);
             break;
           default:
             throw new Error('Invalid collection name');
@@ -305,16 +355,17 @@ const handler = (topic, payload) => {
   }
 };
 
-// PubSub.handler = debounce(handler, debounceDelay);
-PubSub.handler = handler;
+PubSub.handler = debounce(handler, debounceDelay);
+// PubSub.handler = handler;
 
 PubSub.publish = async (client, options) => {
   try {
     logger.publish(4, 'pubsub', 'publish:req', options);
     if (options && client) {
       options.pattern = 'aloesClient';
-      const packet = aloesClientEncoder(options);
+      const packet = await packetEncoder(options);
       if (!packet || !packet.topic || !packet.payload) throw new Error('No packet encoded');
+      // await client.publish(`${pubsubVersion}/${packet.topic}`, JSON.stringify(packet.payload), { qos: 0 });
       await client.publish(packet.topic, JSON.stringify(packet.payload), { qos: 0 });
       logger.publish(3, 'pubsub', 'publish:res', packet);
       return;

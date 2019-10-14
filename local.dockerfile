@@ -33,7 +33,6 @@ COPY src /home/node/$NODE_NAME/src
 COPY public /home/node/$NODE_NAME/public
 
 RUN npm ci 
- 
 RUN npm run build
 
 # production stage 

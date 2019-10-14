@@ -60,9 +60,10 @@
 import { BButton } from 'bootstrap-vue';
 import { BCard } from 'bootstrap-vue';
 import { BImg } from 'bootstrap-vue';
+import throttle from 'lodash.throttle';
 import FileImportContainer from '@/views/containers/FileImportContainer.vue';
 import logger from '@/services/logger';
-import File from '@/views/mixins/file';
+import File from '@/mixins/file';
 
 export default {
   name: 'ProfileImg',
@@ -160,21 +161,30 @@ export default {
       immediate: true,
     },
     avatarImgUrl: {
-      handler(newValue, oldValue) {
-        if (newValue && newValue !== oldValue) {
-          this.getFile('avatar', newValue);
+      async handler(newValue, oldValue) {
+        if (this.$el && newValue && newValue !== oldValue) {
+          await this.getFileDelayed('avatar', newValue);
         }
       },
       immediate: true,
     },
     headerImgUrl: {
-      handler(newValue, oldValue) {
-        if (newValue && newValue !== oldValue) {
-          this.getFile('header', newValue);
+      async handler(newValue, oldValue) {
+        if (this.$el && newValue && newValue !== oldValue) {
+          await this.getFileDelayed('header', newValue);
         }
       },
       immediate: true,
     },
+  },
+
+  created() {
+    this.getFileDelayed = throttle(this.getFile, 100);
+  },
+
+  async mounted() {
+    await this.getFileDelayed('avatar', this.avatarImgUrl);
+    await this.getFileDelayed('header', this.headerImgUrl);
   },
 
   methods: {

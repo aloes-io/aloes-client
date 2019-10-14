@@ -31,47 +31,47 @@ server.init = conf => {
 
     console.log('Server', 'http:listening', conf.PORT);
 
-    const options = { host: conf.TUNNEL_URL, subdomain: `${conf.NODE_NAME}-${conf.NODE_ENV}` };
-    if (tunnel && tunnel.url) {
-      return tunnel;
-      //  app.tunnel.close();
+    if (conf.TUNNEL_URL) {
+      const options = { host: conf.TUNNEL_URL, subdomain: `${conf.NODE_NAME}-${conf.NODE_ENV}` };
+      if (tunnel && tunnel.url) {
+        return tunnel;
+        //  app.tunnel.close();
+      }
+
+      // localtunnel(conf.port, options, (err, res) => {
+      //   if (err) throw err;
+      //   app.tunnel = res;
+      //   logger.publish(2, 'tunnel', 'open', app.tunnel);
+      //   app.set('url', app.tunnel.url);
+      //   return tunnel;
+      // });
+
+      localtunnel(conf.PORT, options, (err, res) => {
+        if (err) throw err;
+        tunnel = res;
+        console.log('server', 'tunnel:open', res.url);
+        // if (res.url) {
+        //   if (res.url.search(options.subdomain) === -1) {
+        //     //  console.log('tunnel', 'wrong url', res.url);
+        //     return tunnel.close();
+        //   }
+        // }
+        return tunnel;
+      });
+
+      // localtunnel events
+      //  app.tunnel.on('error', async err => {
+      //  console.log('nodered', 'tunnel:err', err);
+      ///  return app.tunnel.close();
+      //  });
+
+      tunnel.on('close', () => {
+        console.log('server', 'tunnel:close', app.tunnel.url);
+        // setTimeout restart tunnel
+      });
     }
-
-    // localtunnel(conf.port, options, (err, res) => {
-    //   if (err) throw err;
-    //   app.tunnel = res;
-    //   logger.publish(2, 'tunnel', 'open', app.tunnel);
-    //   app.set('url', app.tunnel.url);
-
-    //   return tunnel;
-    // });
-
-    localtunnel(conf.PORT, options, (err, res) => {
-      if (err) throw err;
-      tunnel = res;
-      console.log('server', 'tunnel:open', res.url);
-      // if (res.url) {
-      //   if (res.url.search(options.subdomain) === -1) {
-      //     //  console.log('tunnel', 'wrong url', res.url);
-      //     return tunnel.close();
-      //   }
-      // }
-      return tunnel;
-    });
-
-    // localtunnel events
-    //  app.tunnel.on('error', async err => {
-    //  console.log('nodered', 'tunnel:err', err);
-    ///  return app.tunnel.close();
-    //  });
-
-    tunnel.on('close', () => {
-      console.log('server', 'tunnel:close', app.tunnel.url);
-      // setTimeout restart tunnel
-    });
-    //  return tunnel;
   } catch (error) {
-    return error;
+    throw error;
   }
 };
 

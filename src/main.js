@@ -45,8 +45,8 @@ import {
   faUserPlus,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import VueWorker from 'vue-worker';
 
-//  import moment from 'moment';
 import App from '@/App.vue';
 import router from '@/router';
 import store from '@/store';
@@ -55,8 +55,10 @@ Vue.config.productionTip = false;
 
 Vue.use(LayoutPlugin);
 Vue.use(VueCroppie);
+Vue.use(VueWorker);
 
-//  Object.defineProperty(Vue.prototype, '$moment', {value: moment});
+// const EventBus = new Vue();
+// Object.defineProperty(Vue.prototype, '$EventBus', {value: EventBus});
 
 library.add(
   faBinoculars,

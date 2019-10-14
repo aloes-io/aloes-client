@@ -46,7 +46,7 @@
 <script type="text/javascript">
 import { BButton, BFormSelect } from 'bootstrap-vue';
 import logger from '@/services/logger';
-import Collection from '@/views/mixins/collection';
+import Collection from '@/mixins/collection';
 import Observer from '@/directives/observer';
 
 export default {
@@ -204,19 +204,20 @@ export default {
     },
 
     async updateDevicesList(counter) {
-      return this.loadDevices({
-        skip: counter,
-        limit: this.devicesListLimit,
-        include: ['sensors'],
-      })
-        .then(devices => {
-          const sensors = this.extractSensors(devices);
-          this.devices = this.batchCollection('devices', this.devices, 'create', devices);
-          this.updateFilteredDevices(this.devicesFilter);
-          this.sensors = this.batchCollection('sensors', this.sensors, 'create', sensors);
-          return devices;
-        })
-        .catch(e => e);
+      try {
+        const devices = await this.loadDevices({
+          skip: counter,
+          limit: this.devicesListLimit,
+          include: ['sensors'],
+        });
+        const sensors = this.extractSensors(devices);
+        this.devices = await this.batchCollection('devices', this.devices, 'create', devices);
+        this.updateFilteredDevices(this.devicesFilter);
+        this.sensors = await this.batchCollection('sensors', this.sensors, 'create', sensors);
+        return devices;
+      } catch (error) {
+        return null;
+      }
     },
 
     updateFilteredDevices(filter) {

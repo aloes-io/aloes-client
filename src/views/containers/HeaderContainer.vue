@@ -104,8 +104,8 @@ import {
   BNavbarToggle,
   BNavItem,
 } from 'bootstrap-vue';
-import File from '@/views/mixins/file';
-import Notification from '@/views/mixins/notification';
+import File from '@/mixins/file';
+import Notification from '@/mixins/notification';
 
 export default {
   components: {

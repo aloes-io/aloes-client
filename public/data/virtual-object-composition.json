@@ -54,21 +54,18 @@
       "icons": ["/icons/aloes/colors.png", "/icons/aloes/colors-white.png"],
       "size": 40,
       "colors": {
-        "5701": "#000",
+        "5701": "hex",
         "5706": "#b1b1b1",
-        "5750": "#000"
+        "5750": ""
       },
       "name": "Color",
       "type": 3335,
       "devEui": "230002",
       "deviceId": "2",
       "resources": {
-        "5514": "#fff",
-        "5515": "hex",
-        "5516": "",
-        "5517": "",
-        "5518": "time",
-        "5705": 0
+        "5701": "hex",
+        "5706": "#b1b1b1",
+        "5750": ""
       },
       "value": "#FFF",
       "frameCounter": 0,

@@ -30,7 +30,7 @@
 <script type="text/javascript">
 import { BFormSelect } from 'bootstrap-vue';
 // import logger from '@/services/logger';
-import Collection from '@/views/mixins/collection';
+import Collection from '@/mixins/collection';
 
 export default {
   name: 'FilesGallery',

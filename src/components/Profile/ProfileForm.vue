@@ -125,9 +125,7 @@
 </template>
 
 <script type="text/javascript">
-import { BButton } from 'bootstrap-vue';
-import { BForm } from 'bootstrap-vue';
-import { BFormInput } from 'bootstrap-vue';
+import { BButton, BForm, BFormInput } from 'bootstrap-vue';
 import AddressForm from '@/components/Address/AddressForm.vue';
 import ChangePassword from '@/components/Account/ChangePassword.vue';
 import { EventBus } from '@/services/PubSub';

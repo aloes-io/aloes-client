@@ -402,10 +402,10 @@
 </template>
 
 <script type="text/javascript">
-import { updateAloesSensors } from 'aloes-handlers';
 import { interpolate } from 'd3-interpolate';
 import { select } from 'd3-selection';
 import debounce from 'lodash.debounce';
+import Collection from '@/mixins/collection';
 import logger from '@/services/logger';
 
 export default {
@@ -417,6 +417,8 @@ export default {
     'object-composition': () => import('@/components/VirtualObject/ObjectComposition.vue'),
     'sensor-snap': () => import('sensor-snap'),
   },
+
+  mixins: [Collection],
 
   data() {
     return {
@@ -547,7 +549,7 @@ export default {
             // }
           }
         }
-        sensor = updateAloesSensors(sensor, args[1], args[2]);
+        sensor = await this.updateSensor(args[0], args[1], args[2]);
         this.debouncedUpdateSensor(sensor);
         return sensor;
       } catch (error) {

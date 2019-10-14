@@ -37,15 +37,15 @@ const deviceStorage = new VuexPersistence({
   asyncStorage: false,
 });
 
-const sensorStorage = new VuexPersistence({
-  key: 'sensors',
-  storage: window.localStorage,
-  reducer: state => ({
-    collection: state.sensor.collection,
-    // intance: state.sensor.intance,
-  }),
-  filter: mutation => mutation.type === 'setStateKV',
-});
+// const sensorStorage = new VuexPersistence({
+//   key: 'sensors',
+//   storage: window.localStorage,
+//   reducer: state => ({
+//     collection: state.sensor.collection,
+//     // intance: state.sensor.intance,
+//   }),
+//   filter: mutation => mutation.type === 'setStateKV',
+// });
 
 // const vuexSession = new VuexPersistence({
 //   key: 'aloes-client-token',
@@ -210,9 +210,9 @@ export default new Vuex.Store({
   plugins: [
     profileStorage.plugin,
     deviceStorage.plugin,
-    sensorStorage.plugin,
+    // sensorStorage.plugin,
     // vuexSession.plugin,
-    vuexCache({ timeout: 5000 }),
+    vuexCache({ timeout: 3000 }),
   ],
   modules: {
     async,

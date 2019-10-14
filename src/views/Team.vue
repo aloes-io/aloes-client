@@ -17,7 +17,6 @@
 import HeaderContainer from '@/views/containers/HeaderContainer.vue';
 import FooterContainer from '@/views/containers/FooterContainer.vue';
 import TeamContainer from '@/views/containers/TeamContainer.vue';
-//  import LoginPopup from "@/views/containers/LoginPopup.vue";
 
 export default {
   name: 'Team',
@@ -26,7 +25,6 @@ export default {
     'header-container': HeaderContainer,
     'footer-container': FooterContainer,
     'team-container': TeamContainer,
-    //  "login-popup": LoginPopup
     'login-popup': () => import('@/views/containers/LoginPopup.vue'),
   },
 
