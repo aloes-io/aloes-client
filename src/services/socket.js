@@ -6,16 +6,17 @@ const Storage = window.sessionStorage;
 
 const brokerUrl = process.env.VUE_APP_BROKER_URL;
 const baseOptions = {
-  //  keepalive: 60,
-  // reschedulePings: true,
+  keepalive: 60,
+  reschedulePings: true,
   protocolId: 'MQTT',
   protocolVersion: 4,
-  reconnectPeriod: 3000,
+  reconnectPeriod: 1000,
   connectTimeout: 30 * 1000,
   clean: true,
   clientId: null,
   username: null,
   password: null,
+  // will: { topic: `${clientId}/status`, payload: 'KO?', retain: false, qos: 0 },
 };
 
 const socket = {};
@@ -41,13 +42,15 @@ socket.setToken = token => {
   try {
     logger.publish(3, 'socket', 'setToken:req', token);
     socket.token = token;
+    const clientId = `${token.userId.toString()}-${Math.random()
+      .toString(16)
+      .substr(2, 8)}`;
     const options = {
       ...baseOptions,
-      clientId: `${token.userId.toString()}-${Math.random()
-        .toString(16)
-        .substr(2, 8)}`,
+      clientId,
       username: token.userId.toString(),
       password: token.id.toString(),
+      // will: { topic: `${clientId}/status`, payload: 'KO?', retain: false, qos: 0 },
     };
 
     socket.initSocket(options);

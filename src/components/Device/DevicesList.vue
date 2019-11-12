@@ -192,7 +192,7 @@ export default {
     },
 
     async countDevices() {
-      await this.$store.cache.dispatch('device/countByAccount', {
+      await this.$store.dispatch('device/countByAccount', {
         ownerId: this.$store.state.auth.account.id,
       });
     },

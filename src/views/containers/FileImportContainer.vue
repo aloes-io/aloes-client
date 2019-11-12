@@ -25,13 +25,14 @@
 
 <script type="text/javascript">
 import { BModal } from 'bootstrap-vue';
-import FileImport from '@/components/Files/FileImport.vue';
+// import FileImport from '@/components/Files/FileImport.vue';
 
 export default {
   name: 'FileImportContainer',
 
   components: {
-    'file-import': FileImport,
+    // 'file-import': FileImport,
+    'file-import': () => import('@/components/Files/FileImport.vue'),
     'b-modal': BModal,
   },
 

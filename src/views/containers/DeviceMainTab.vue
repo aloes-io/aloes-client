@@ -30,7 +30,9 @@
 
 <script type="text/javascript">
 import { BAlert } from 'bootstrap-vue';
-import has from 'lodash.has';
+//import has from 'lodash.has';
+
+const has = () => import('lodash.has');
 
 export default {
   name: 'DeviceMainTab',

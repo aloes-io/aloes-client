@@ -7,13 +7,27 @@ module.exports = {
   assetsDir: undefined,
   runtimeCompiler: true,
   productionSourceMap: undefined,
-  // parallel: undefined,
+  parallel: false,
   css: undefined,
   configureWebpack: {
-    // trick to avoid compile error
-    externals: { canvas: {} },
+    optimization: {
+      splitChunks: {
+        minSize: 10000,
+        maxSize: 250000,
+      },
+    },
   },
-  parallel: false,
+  // optimization: {
+  //   splitChunks: {
+  //     cacheGroups: {
+  //       node_vendors: {
+  //         test: /[\\/]node_modules[\\/]/,
+  //         chunks: 'async',
+  //         priority: 1,
+  //       },
+  //     },
+  //   },
+  // },
   chainWebpack: config => {
     config.module
       .rule('worker')
@@ -24,7 +38,7 @@ module.exports = {
         if (!options) options = {};
         // options.publicPath = '/workers/';
         // options.publicPath = 'src/workers';
-        options.name = '[hash].worker-test11.js';
+        options.name = '[hash].worker.js';
         options.inline = true;
         options.fallback = false;
         return options;

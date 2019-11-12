@@ -174,7 +174,7 @@
 </template>
 
 <script type="text/javascript">
-import { BButton, BFormGroup, BFormInput, BModal } from 'bootstrap-vue';
+import { BButton, BFormGroup, BFormInput, BModal } from 'bootstrap-vue'; 
 import has from 'lodash.has';
 import logger from '@/services/logger';
 import Collection from '@/mixins/collection';

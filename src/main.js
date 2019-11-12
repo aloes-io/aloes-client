@@ -47,6 +47,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import VueWorker from 'vue-worker';
 
+// import SensorSnap from 'sensor-snap';
 import App from '@/App.vue';
 import router from '@/router';
 import store from '@/store';
@@ -56,6 +57,8 @@ Vue.config.productionTip = false;
 Vue.use(LayoutPlugin);
 Vue.use(VueCroppie);
 Vue.use(VueWorker);
+
+// Vue.component('sensor-snap', SensorSnap);
 
 // const EventBus = new Vue();
 // Object.defineProperty(Vue.prototype, '$EventBus', {value: EventBus});

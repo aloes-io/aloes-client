@@ -405,8 +405,11 @@
 import { interpolate } from 'd3-interpolate';
 import { select } from 'd3-selection';
 import debounce from 'lodash.debounce';
+// import SensorSnap from 'sensor-snap';
 import Collection from '@/mixins/collection';
 import logger from '@/services/logger';
+
+// const debounce = () => import('lodash.debounce');
 
 export default {
   name: 'HomeContainer',
@@ -415,6 +418,7 @@ export default {
     'device-card': () => import('@/components/Device/DeviceCard.vue'),
     'device-tree': () => import('@/components/Device/DeviceTree.vue'),
     'object-composition': () => import('@/components/VirtualObject/ObjectComposition.vue'),
+    //  'sensor-snap': SensorSnap,
     'sensor-snap': () => import('sensor-snap'),
   },
 
@@ -473,10 +477,12 @@ export default {
   },
 
   created() {
-    this.debouncedUpdateSensor = debounce(this.updateSensorView, 100);
+    // this.debouncedUpdateSensor = debounce(this.updateSensorView, 100);
   },
 
   mounted() {
+    // console.log('debounce', debounce, deb);
+    this.debouncedUpdateSensor = debounce(this.updateSensorView, 100);
     //  console.log('sensor-snap', SensorSnap);
     this.deviceTwinSelected = false;
     this.sensor = null;
@@ -648,7 +654,7 @@ export default {
         sensor.resources['5518'] = new Date().getTime();
         // console.log('MAP UPDATE', sensor.resources);
         this.updateSensorView(sensor);
-      }, interval);
+      }, interval * 3);
     },
 
     stopTimerTest() {

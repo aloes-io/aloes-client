@@ -52,6 +52,7 @@ import { BTab, BTabs } from 'bootstrap-vue';
 import has from 'lodash.has';
 import { EventBus } from '@/services/PubSub';
 import Collection from '@/mixins/collection';
+import logger from '@/services/logger';
 
 export default {
   name: 'DeviceContainer',
@@ -242,14 +243,15 @@ export default {
           if (this.deviceTree && this.deviceTree !== null) {
             this.deviceTree.onNodeCreated(device);
           }
-          if (this.device.id === device.id) {
+          if (this.device && this.device.id.toString() === device.id.toString()) {
             this.device = device;
           }
           return device;
         }
         throw new Error('No device Id');
       } catch (error) {
-        throw error;
+        logger.publish(2, 'device', 'createDevice:err', error);
+        return null;
       }
     },
 
@@ -261,14 +263,15 @@ export default {
           if (this.deviceTree && this.deviceTree !== null) {
             this.deviceTree.onNodeUpdated(device);
           }
-          if (this.device.id === device.id) {
+          if (this.device && this.device.id.toString() === device.id.toString()) {
             this.device = device;
           }
           return device;
         }
         throw new Error('No device Id');
       } catch (error) {
-        throw error;
+        logger.publish(2, 'device', 'updateDevice:err', error);
+        return null;
       }
     },
 
@@ -287,7 +290,8 @@ export default {
         }
         throw new Error('No device Id');
       } catch (error) {
-        throw error;
+        logger.publish(2, 'device', 'deleteDevice:err', error);
+        return null;
       }
     },
 
@@ -311,7 +315,8 @@ export default {
         }
         throw new Error('No sensor Id');
       } catch (error) {
-        throw error;
+        logger.publish(2, 'sensor', 'createSensor:err', error);
+        return null;
       }
     },
 
@@ -327,7 +332,8 @@ export default {
         }
         throw new Error('No sensor Id');
       } catch (error) {
-        throw error;
+        logger.publish(2, 'sensor', 'updateSensor:err', error);
+        return null;
       }
     },
 
@@ -339,14 +345,15 @@ export default {
           if (this.deviceTree && this.deviceTree !== null) {
             this.deviceTree.onNodeDeleted(sensor);
           }
-          if (sensor.id.toString() === this.sensor.id.toString()) {
+          if (this.sensor && sensor.id.toString() === this.sensor.id.toString()) {
             this.$store.commit('sensor/cleanModel');
           }
           return sensor;
         }
         throw new Error('No sensor Id');
       } catch (error) {
-        throw error;
+        logger.publish(2, 'sensor', 'deleteSensor:err', error);
+        return null;
       }
     },
 

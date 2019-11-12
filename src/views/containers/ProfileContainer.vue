@@ -32,7 +32,7 @@
 
 <script type="text/javascript">
 import { BAlert } from 'bootstrap-vue';
-import ProfileHeader from '@/components/Profile/ProfileHeader.vue';
+// import ProfileHeader from '@/components/Profile/ProfileHeader.vue';
 //  import ProfileDescription from '@/components/Profile/ProfileDescription.vue';
 import logger from '@/services/logger';
 
@@ -41,7 +41,8 @@ export default {
 
   components: {
     'b-alert': BAlert,
-    'profile-header': ProfileHeader,
+    // 'profile-header': ProfileHeader,
+    'profile-header': () => import('@/components/Profile/ProfileHeader.vue'),
     // 'profile-description': ProfileDescription,
   },
 

@@ -155,12 +155,12 @@ export default {
       async handler(id, prevId) {
         if (this.$el && id && id !== null) {
           this.updatedDeviceId = id;
-          if (id !== prevId) {
-            this.deviceSensors = [];
-            this.filteredSensors = [];
-            this.sensorsListCounter = 0;
-            this.page = 0;
-          }
+          // if (id !== prevId) {
+          this.deviceSensors = [];
+          this.filteredSensors = [];
+          this.sensorsListCounter = 0;
+          this.page = 0;
+          // }
           this.calculateListLimit();
           await this.updateSensorsList(this.sensorsListCounter, this.page);
           await this.countSensors();
@@ -177,24 +177,16 @@ export default {
     sensors: {
       handler(value) {
         if (!this.updatedDeviceId) return;
-        if (value && Array.isArray(value))
+        if (value && Array.isArray(value)) {
           this.deviceSensors = value.filter(
-            sensor => sensor.deviceId.toString() === this.updatedDeviceId.toString(),
+            (sensor, index, self) => sensor.deviceId.toString() === this.updatedDeviceId.toString(),
           );
-        this.updateFilteredSensors(this.sensorsFilter);
-        // this.updateFilteredSensors();
+          this.updateFilteredSensors(this.sensorsFilter);
+        }
       },
       immediate: true,
     },
   },
-
-  // mounted() {
-  //   this.worker = new SensorWorker();
-  // },
-
-  // beforeDestroy() {
-  //   this.worker.terminate();
-  // },
 
   methods: {
     async loadSensors(deviceId, filter) {
@@ -228,7 +220,7 @@ export default {
     },
 
     async countSensors() {
-      await this.$store.cache.dispatch('sensor/countByDevice', {
+      await this.$store.dispatch('sensor/countByDevice', {
         deviceId: this.updatedDeviceId,
       });
     },
@@ -284,9 +276,8 @@ export default {
           skip: counter,
           limit: this.sensorsListLimit,
         });
-        this.deviceSensors = [...this.deviceSensors, ...sensors];
-        this.updateFilteredSensors(this.sensorsFilter);
         this.sensors = await this.batchCollection('sensors', this.sensors, 'create', sensors);
+        this.updateFilteredSensors(this.sensorsFilter);
         return sensors;
       } catch (error) {
         return null;
@@ -297,18 +288,16 @@ export default {
       const rowRatio = Math.round((this.$el.clientHeight / this.sensorSnapHeight) * 1.1);
       const columnRatio = Math.round(this.$el.clientWidth / (this.sensorSnapWidth * 1.5));
       const limit = rowRatio * columnRatio;
-      if (limit > 0) {
-        this.sensorsListLimit = limit;
-      }
+      if (limit > 0) this.sensorsListLimit = limit;
       // console.log('Ratios:', rowRatio, columnRatio, this.sensorsListLimit);
       return limit;
     },
 
     updateFilteredSensors(filter) {
       if (filter && filter.key && filter.value) {
-        this.filteredSensors = this.deviceSensors.filter(
-          sensor => sensor[filter.key].toLowerCase() === filter.value,
-        );
+        this.filteredSensors = this.deviceSensors.filter(sensor => {
+          sensor[filter.key].toLowerCase() === filter.value;
+        });
       } else {
         this.filteredSensors = this.deviceSensors;
       }
