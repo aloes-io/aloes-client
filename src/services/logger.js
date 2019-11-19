@@ -1,3 +1,5 @@
+/* Copyright 2019 Edouard Maleix, read LICENSE */
+
 import tiza from 'tiza';
 
 const logger = {};
@@ -82,7 +84,6 @@ logger.publish = (priority, collectionName, command, content) => {
   if (priority <= logLevel) {
     const fullContent = formatLog(collectionName, command, content);
     sendFormatedLog(collectionName, command, fullContent);
-
     // if (remoteLog === true) {
     //   // pubsub.publish(loopback, {
     //   //   accountId: 0,

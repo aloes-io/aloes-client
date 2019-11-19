@@ -1,3 +1,5 @@
+/* Copyright 2019 Edouard Maleix, read LICENSE */
+
 import { aloesClientEncoder, aloesClientPatternDetector } from 'aloes-handlers';
 
 function onMessage(event) {
@@ -8,7 +10,7 @@ function onMessage(event) {
       return postMessage(packet);
     }
     if (event.data && event.data.topic) {
-      let topic = event.data.topic;
+      const topic = event.data.topic;
       let payload = event.data.payload;
       try {
         if (typeof payload === 'string') {
@@ -23,19 +25,16 @@ function onMessage(event) {
           }
         }
       } catch (e) {
-        // JSON.parse(Buffer.from(payload).toString());
         // empty
       }
       const pattern = aloesClientPatternDetector({ topic, payload });
-      // console.log('PACKET WORKER MESSAGE : ', pattern);
-      let method = pattern.params.method;
-      let collection = pattern.params.collection;
+      let method = pattern.params && pattern.params.method;
+      let collection = pattern.params && pattern.params.collection;
       if (!method || !collection) throw new Error('Invalid protocol');
       method = method.toUpperCase();
       collection = collection.toLowerCase();
       return postMessage({ pattern, method, collection, topic, payload });
     }
-
     return postMessage({ error: { message: 'Invalid arguments' } });
   } catch (error) {
     return postMessage({ error: { message: error.message } });

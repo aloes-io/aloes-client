@@ -1,3 +1,5 @@
+# Copyright 2019 Edouard Maleix, read LICENSE
+
 # build stage
 FROM node:lts-alpine as build-stage
 

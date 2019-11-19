@@ -1,5 +1,5 @@
 // CAUTION: This file will be duplicated in every componentscss style scope
-//; HINT: Use this for global variables and mixins
+// HINT: Use this for global variables and mixins
 //
 //
 // Color system
@@ -33,11 +33,11 @@ $dark-grey: #2b2b2b;
   font-weight: normal;
   font-style: normal;
   font-display: swap;
-  src: url('/fonts/LemonMilkbold/LemonMilkbold.eot');
-  src: url('/fonts/LemonMilkbold/LemonMilkbold.woff2') format('woff2'),
-    url('/fonts/LemonMilkbold/LemonMilkbold.woff') format('woff'),
-    url('/fonts/LemonMilkbold/LemonMilkbold.ttf') format('truetype'),
-    url('/fonts/LemonMilkbold/LemonMilkbold.eot?#iefix') format('embedded-opentype');
+  src: url('~@/assets/fonts/LemonMilkbold/LemonMilkbold.eot');
+  src: url('~@/assets/fonts/LemonMilkbold/LemonMilkbold.woff2') format('woff2'),
+    url('~@/assets/fonts/LemonMilkbold/LemonMilkbold.woff') format('woff'),
+    url('~@/assets/fonts/LemonMilkbold/LemonMilkbold.ttf') format('truetype'),
+    url('~@/assets/fonts/LemonMilkbold/LemonMilkbold.eot?#iefix') format('embedded-opentype');
 }
 
 /*@font-face {
@@ -54,11 +54,12 @@ $dark-grey: #2b2b2b;
   font-weight: normal;
   font-style: normal;
   font-display: swap;
-  src: url('/fonts/Josefin-Slab/JosefinSlab-SemiBold.eot');
-  src: url('/fonts/Josefin-Slab/JosefinSlab-SemiBold.eot?#iefix') format('embedded-opentype'),
-    url('/fonts/Josefin-Slab/JosefinSlab-SemiBold.svg#JosefinSlab-SemiBold') format('svg'),
-    url('/fonts/Josefin-Slab/JosefinSlab-SemiBold.woff') format('woff'),
-    url('/fonts/Josefin-Slab/JosefinSlab-SemiBold.woff2') format('woff2');
+  src: url('~@/assets/fonts/Josefin-Slab/JosefinSlab-SemiBold.eot');
+  src: url('~@/assets/fonts/Josefin-Slab/JosefinSlab-SemiBold.eot?#iefix')
+      format('embedded-opentype'),
+    url('~@/assets/fonts/Josefin-Slab/JosefinSlab-SemiBold.svg#JosefinSlab-SemiBold') format('svg'),
+    url('~@/assets/fonts/Josefin-Slab/JosefinSlab-SemiBold.woff') format('woff'),
+    url('~@/assets/fonts/Josefin-Slab/JosefinSlab-SemiBold.woff2') format('woff2');
 }
 
 @font-face {
@@ -66,12 +67,13 @@ $dark-grey: #2b2b2b;
   font-weight: normal;
   font-style: normal;
   font-display: swap;
-  src: url('/fonts/Josefin-Slab/JosefinSlab-SemiBoldItalic.eot');
-  src: url('/fonts/Josefin-Slab/JosefinSlab-SemiBoldItalic.eot?#iefix') format('embedded-opentype'),
-    url('/fonts/Josefin-Slab/JosefinSlab-SemiBoldItalic.svg#JosefinSlab-SemiBoldItalic')
+  src: url('~@/assets/fonts/Josefin-Slab/JosefinSlab-SemiBoldItalic.eot');
+  src: url('~@/assets/fonts/Josefin-Slab/JosefinSlab-SemiBoldItalic.eot?#iefix')
+      format('embedded-opentype'),
+    url('~@/assets/fonts/Josefin-Slab/JosefinSlab-SemiBoldItalic.svg#JosefinSlab-SemiBoldItalic')
       format('svg'),
-    url('/fonts/Josefin-Slab/JosefinSlab-SemiBoldItalic.woff') format('woff'),
-    url('/fonts/Josefin-Slab/JosefinSlab-SemiBoldItalic.woff2') format('woff2');
+    url('~@/assets/fonts/Josefin-Slab/JosefinSlab-SemiBoldItalic.woff') format('woff'),
+    url('~@/assets/fonts/Josefin-Slab/JosefinSlab-SemiBoldItalic.woff2') format('woff2');
 }
 
 $font-size-base: 1rem;

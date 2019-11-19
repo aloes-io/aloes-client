@@ -1,3 +1,5 @@
+<!-- Copyright 2019 Edouard Maleix, read LICENSE -->
+
 <template lang="html">
   <div class="about-view">
     <header-container
@@ -65,14 +67,18 @@ export default {
 
   methods: {
     async getStaticPage(tab) {
-      const staticPageBlob = await fetch(`${this.$store.state.clientUrl}/html/${tab}.html`).then(
-        res => res.blob(),
-      );
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.staticPage = reader.result;
-      };
-      await reader.readAsText(staticPageBlob);
+      try {
+        const staticPageBlob = await fetch(
+          `${this.$store.state.clientUrl}/html/${tab}.html`,
+        ).then(res => res.blob());
+        const reader = new FileReader();
+        reader.onload = () => {
+          this.staticPage = reader.result;
+        };
+        await reader.readAsText(staticPageBlob);
+      } catch (error) {
+        // empty
+      }
     },
   },
 };

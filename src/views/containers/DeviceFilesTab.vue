@@ -1,3 +1,5 @@
+<!-- Copyright 2019 Edouard Maleix, read LICENSE -->
+
 <template lang="html">
   <b-row v-if="tabsIndex === 3" class="about-header">
     <b-col v-if="device" sm="8">

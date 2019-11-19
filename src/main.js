@@ -1,3 +1,22 @@
+/*  
+Aloes-client is a browser interface to manipulate Aloes device-manager API/resources.
+
+Copyright 2019 Edouard Maleix
+
+Aloes-client is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+ any later version.
+
+Aloes-client is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with Aloes-client.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
 import Vue from 'vue';
 import { LayoutPlugin } from 'bootstrap-vue';
 import VueCroppie from 'vue-croppie';
@@ -45,9 +64,6 @@ import {
   faUserPlus,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import VueWorker from 'vue-worker';
-
-// import SensorSnap from 'sensor-snap';
 import App from '@/App.vue';
 import router from '@/router';
 import store from '@/store';
@@ -56,12 +72,6 @@ Vue.config.productionTip = false;
 
 Vue.use(LayoutPlugin);
 Vue.use(VueCroppie);
-Vue.use(VueWorker);
-
-// Vue.component('sensor-snap', SensorSnap);
-
-// const EventBus = new Vue();
-// Object.defineProperty(Vue.prototype, '$EventBus', {value: EventBus});
 
 library.add(
   faBinoculars,

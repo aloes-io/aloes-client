@@ -1,3 +1,5 @@
+/* Copyright 2019 Edouard Maleix, read LICENSE */
+
 import { updateAloesSensors } from 'aloes-handlers';
 
 function onMessage(event) {

@@ -1,3 +1,5 @@
+<!-- Copyright 2019 Edouard Maleix, read LICENSE -->
+
 <template lang="html">
   <div v-show="validatorsOptions.length > 0">
     <b-row v-for="option in validatorsOptions" :key="option">

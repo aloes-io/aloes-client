@@ -1,3 +1,5 @@
+<!-- Copyright 2019 Edouard Maleix, read LICENSE -->
+
 <template lang="html">
   <b-row>
     <b-col sm="12" md="6" lg="6" xl="6">

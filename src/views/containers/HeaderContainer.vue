@@ -1,3 +1,5 @@
+<!-- Copyright 2019 Edouard Maleix, read LICENSE -->
+
 <template lang="html">
   <b-navbar :class="className" toggleable toggle-breakpoint="sm" class="header-container">
     <b-navbar-toggle target="nav_collapse" />
@@ -42,7 +44,7 @@
             },
           }"
         >
-          <b-img :src="$store.state.style.pictures.node" class="thumb-icon" />
+          <b-img :src="$store.state.style.pictures.device" class="thumb-icon" />
         </b-nav-item>
         <b-nav-item
           :to="{
@@ -53,7 +55,7 @@
             },
           }"
         >
-          <b-img :src="$store.state.style.pictures.device" class="thumb-icon" />
+          <b-img :src="$store.state.style.pictures.application" class="thumb-icon" />
         </b-nav-item>
         <b-nav-item
           :to="{
@@ -205,9 +207,7 @@ export default {
     async getUserIcon() {
       try {
         if (this.$store.state.auth.account && this.$store.state.auth.account.avatarImgUrl) {
-          const url = `${this.$store.state.serverUrl}${
-            this.$store.state.auth.account.avatarImgUrl
-          }`;
+          const url = `${this.$store.state.serverUrl}${this.$store.state.auth.account.avatarImgUrl}`;
           const file = await this.$store.cache.dispatch('files/download', url);
           if (file && file !== null) {
             this.userIcon = await this.parseImage(file);
@@ -215,10 +215,8 @@ export default {
             this.userIcon = this.$store.state.user;
           }
         }
-        return true;
       } catch (error) {
         this.userIcon = this.$store.state.user;
-        throw error;
       }
     },
 

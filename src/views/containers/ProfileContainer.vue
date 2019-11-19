@@ -1,3 +1,5 @@
+<!-- Copyright 2019 Edouard Maleix, read LICENSE -->
+
 <template lang="html">
   <b-container v-show="profile" v-if="profile !== null" fluid class="profile-container-view">
     <profile-header
@@ -32,7 +34,6 @@
 
 <script type="text/javascript">
 import { BAlert } from 'bootstrap-vue';
-// import ProfileHeader from '@/components/Profile/ProfileHeader.vue';
 //  import ProfileDescription from '@/components/Profile/ProfileDescription.vue';
 import logger from '@/services/logger';
 
@@ -41,7 +42,6 @@ export default {
 
   components: {
     'b-alert': BAlert,
-    // 'profile-header': ProfileHeader,
     'profile-header': () => import('@/components/Profile/ProfileHeader.vue'),
     // 'profile-description': ProfileDescription,
   },

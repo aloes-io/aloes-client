@@ -1,8 +1,12 @@
+# Copyright 2019 Edouard Maleix, read LICENSE
+
 # build stage
 FROM node:lts-alpine as build-stage
 
 RUN mkdir -p /home/node/$NODE_NAME
 WORKDIR /home/node/$NODE_NAME
+
+# USER node
 
 # ENV NPM_CONFIG_PREFIX=/home/node/.npm-global
 # ENV PATH=$PATH:/home/node/.npm-global/bin 
@@ -12,10 +16,10 @@ ENV PATH=/home/node/$NODE_NAME/node_modules/.bin:$PATH
 ARG VUE_APP_NAME=ALOES
 ARG VUE_APP_DOMAIN=localhost
 ARG VUE_APP_SERVER_URL=http://localhost:8000
-ARG VUE_APP_BROKER_URL=ws://localhost:8000
+ARG VUE_APP_BROKER_URL=ws://localhost:3000
 ARG VUE_APP_ROOT_API=/api
 ARG VUE_APP_CLIENT_URL=http://localhost:8080
-ARG VUE_APP_LOGGER_LEVEL=1
+ARG VUE_APP_LOGGER_LEVEL=4
 ARG GIT_REPO_SSH_URL=https://framagit.org/aloes/aloes-client
 
 ENV VUE_APP_NAME=$VUE_APP_NAME
@@ -32,14 +36,15 @@ COPY vue.config.js /home/node/$NODE_NAME/
 COPY src /home/node/$NODE_NAME/src
 COPY public /home/node/$NODE_NAME/public
 
-RUN npm ci 
-RUN npm run build
+RUN npm install -g @vue/cli
+# RUN npm install -g yarn
+
+RUN yarn install
+RUN yarn build
 
 # production stage 
 FROM nginx:1.16-alpine as production-stage
-COPY --from=build-stage /home/node/$NODE_NAME/build /usr/share/nginx/html
+COPY --from=build-stage /home/node/$NODE_NAME/dist /usr/share/nginx/html
 RUN rm /etc/nginx/conf.d/default.conf
 COPY ./config/nginx.conf /etc/nginx/conf.d
 CMD ["nginx", "-g", "daemon off;"]
-
-# USER node

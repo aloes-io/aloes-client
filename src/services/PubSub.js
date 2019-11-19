@@ -1,4 +1,5 @@
-import debounce from 'lodash.debounce';
+/* Copyright 2019 Edouard Maleix, read LICENSE */
+
 import throttle from 'lodash.throttle';
 import Vue from 'vue';
 import logger from './logger';
@@ -7,10 +8,9 @@ import PacketWorker from '@/workers/packet.worker.js';
 export const EventBus = new Vue();
 
 const Storage = window.sessionStorage;
-const PubSub = { hasListeners: false };
 // const pubsubVersion = process.env.VUE_APP_PUBSUB_API_VERSION;
-const debounceDelay = 50;
-const throttleDelay = 150;
+const PubSub = { hasListeners: false };
+const throttleDelay = 50;
 
 const lastMessage = { topic: '', payload: '', timestamp: 0 };
 
@@ -26,12 +26,9 @@ const pushContainer = subscriptionName => {
   }
   if (!container || container === null) {
     container = [];
-    Storage.setItem('subscription-container', '[]');
   }
   const index = container.indexOf(subscriptionName);
-  if (index > -1) {
-    return true;
-  }
+  if (index > -1) return true;
   container.push(subscriptionName);
   Storage.setItem('subscription-container', JSON.stringify(container));
   logger.publish(3, 'pubsub', 'pushContainer:res', container);
@@ -40,19 +37,14 @@ const pushContainer = subscriptionName => {
 
 const packetEncoder = options => {
   return new Promise((resolve, reject) => {
-    if (!options) {
-      reject(new Error('Invalid arguments'));
-    }
-    // const packetWorker = new PacketWorker();
+    if (!options) return reject(new Error('Invalid arguments'));
     const onMessage = e => {
-      if (e.data.error) reject(new Error(e.data.error.message));
+      if (e.data.error) return reject(new Error(e.data.error.message));
       const topic = e.data.topic || null;
-      // packetWorker.terminate();
-      if (!topic) reject(new Error('Invalid packet encoding'));
+      if (!topic) return reject(new Error('Invalid packet encoding'));
       logger.publish(4, 'PubSub', 'packetEncoder:res', topic);
       resolve(e.data);
     };
-    // packetWorker.addEventListener('message', onMessage);
     PubSub.packetWorker.onmessage = onMessage;
     PubSub.packetWorker.onerror = reject;
     PubSub.packetWorker.postMessage({ options });
@@ -61,19 +53,14 @@ const packetEncoder = options => {
 
 const packetHandler = (topic, payload) => {
   return new Promise((resolve, reject) => {
-    if (!topic || !payload) {
-      reject(new Error('Invalid arguments'));
-    }
-    // const packetWorker = new PacketWorker();
+    if (!topic || !payload) return reject(new Error('Invalid arguments'));
     const onMessage = e => {
-      if (e.data.error) reject(new Error(e.data.error.message));
+      if (e.data.error) return reject(new Error(e.data.error.message));
       const pattern = e.data.pattern || null;
-      // packetWorker.terminate();
-      if (!pattern) reject(new Error('Invalid packet handling'));
+      if (!pattern) return reject(new Error('Invalid packet handling'));
       logger.publish(4, 'PubSub', 'packetHandler:res', e.data.topic);
       resolve(e.data);
     };
-    // packetWorker.addEventListener('message', onMessage);
     PubSub.packetWorker.onmessage = onMessage;
     PubSub.packetWorker.onerror = reject;
     PubSub.packetWorker.postMessage({ topic, payload });
@@ -95,7 +82,7 @@ PubSub.subscribe = async (client, options) => {
     throw new Error('Error: Option must be an object type');
   } catch (error) {
     logger.publish(2, 'pubsub', 'subscribe:err', error);
-    throw error;
+    return false;
   }
 };
 
@@ -187,7 +174,6 @@ PubSub.setListeners = async (client, token) => {
     if (client && client !== null && token && token !== null) {
       if (!PubSub.hasListeners) {
         PubSub.packetWorker = new PacketWorker();
-
         await PubSub.subscribeToCollectionPresentation(client, 'Sensor', token.userId);
         await PubSub.subscribeToCollectionPresentation(client, 'Device', token.userId);
         await PubSub.subscribeToCollectionPresentation(client, 'Scheduler', token.userId);
@@ -202,7 +188,7 @@ PubSub.setListeners = async (client, token) => {
       logger.publish(4, 'PubSub', 'setListeners:res', 'success');
       return;
     }
-    throw new Error('No valid MQTT client found');
+    throw new Error('Invalid MQTT client');
   } catch (error) {
     logger.publish(2, 'pubsub', 'setListeners:err', error);
     throw error;
@@ -221,7 +207,6 @@ PubSub.removeListeners = async client => {
           container = [];
         }
         PubSub.packetWorker.terminate();
-
         PubSub.hasListeners = false;
         Storage.setItem('subscription-container', '[]');
         if (container && container.length > 0) {
@@ -271,17 +256,21 @@ PubSub.onCollectionUpdated = throttle(onCollectionUpdated, throttleDelay);
 
 const handler = async (topic, payload) => {
   try {
-    if (lastMessage.topic === topic && lastMessage.timestamp > Date.now() - debounceDelay * 4) {
-      // debounceDelay = 150;
-      return;
+    if (
+      lastMessage &&
+      lastMessage.topic === topic &&
+      lastMessage.timestamp > Date.now() - throttleDelay * 2
+    ) {
+      return lastMessage;
     }
     logger.publish(5, 'PubSub', 'handler:req', topic);
     const res = await packetHandler(topic, payload.toString());
+    // const res = await packetHandler(topic, payload);
+    if (!res || !res.pattern) throw new Error('Invalid protocol parsing');
     const pattern = res.pattern;
-    logger.publish(3, 'PubSub', 'handler:res', pattern);
     const method = res.method;
     const collection = res.collection;
-    if (!pattern || !method || !collection) throw new Error('Invalid protocol');
+    logger.publish(3, 'PubSub', 'handler:res', pattern);
     payload = res.payload;
 
     switch (method) {
@@ -348,15 +337,14 @@ const handler = async (topic, payload) => {
     lastMessage.topic = topic;
     lastMessage.payload = payload;
     lastMessage.timestamp = Date.now();
-    return;
+    return lastMessage;
   } catch (error) {
     logger.publish(2, 'pubsub', 'handler:err', error);
     throw error;
   }
 };
 
-PubSub.handler = debounce(handler, debounceDelay);
-// PubSub.handler = handler;
+PubSub.handler = throttle(handler, throttleDelay);
 
 PubSub.publish = async (client, options) => {
   try {
@@ -368,12 +356,12 @@ PubSub.publish = async (client, options) => {
       // await client.publish(`${pubsubVersion}/${packet.topic}`, JSON.stringify(packet.payload), { qos: 0 });
       await client.publish(packet.topic, JSON.stringify(packet.payload), { qos: 0 });
       logger.publish(3, 'pubsub', 'publish:res', packet);
-      return;
+      return true;
     }
     throw new Error('Option must be an object type');
   } catch (error) {
     logger.publish(2, 'pubsub', 'publish:err', error);
-    throw error;
+    return false;
   }
 };
 

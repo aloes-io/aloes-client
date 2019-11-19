@@ -1,3 +1,5 @@
+/* Copyright 2019 Edouard Maleix, read LICENSE */
+
 import axios from 'axios';
 import logger from './logger';
 

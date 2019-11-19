@@ -1,3 +1,5 @@
+<!-- Copyright 2019 Edouard Maleix, read LICENSE -->
+
 <template lang="html">
   <div class="login-alert-view">
     <b-alert v-if="loginError" :show="loginError !== null" variant="warning">

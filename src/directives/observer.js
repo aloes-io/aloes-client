@@ -1,3 +1,5 @@
+/* Copyright 2019 Edouard Maleix, read LICENSE */
+
 const buildThresholdList = () => {
   let thresholds = [];
   let numSteps = 20;

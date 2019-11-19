@@ -1,3 +1,5 @@
+<!-- Copyright 2019 Edouard Maleix, read LICENSE -->
+
 <template lang="html">
   <b-container fluid class="device-container">
     <b-tabs content-class="mt-3" justified @input="checkTabs">
@@ -49,7 +51,6 @@
 
 <script type="text/javascript">
 import { BTab, BTabs } from 'bootstrap-vue';
-import has from 'lodash.has';
 import { EventBus } from '@/services/PubSub';
 import Collection from '@/mixins/collection';
 import logger from '@/services/logger';
@@ -102,9 +103,6 @@ export default {
       zoomSlider: 0,
       nodesRadius: 20,
       linksLength: 1.7,
-      confirm: {
-        message: `Are you sure you want to delete this sensor ?`,
-      },
     };
   },
 
@@ -189,12 +187,6 @@ export default {
       }
       return null;
     },
-    errorMessageExists() {
-      return has(this.error, 'message');
-    },
-    successMessageExists() {
-      return has(this.sucess, 'message');
-    },
   },
 
   watch: {
@@ -235,11 +227,10 @@ export default {
       try {
         if (device && device.id) {
           if (device.isNewInstance) {
-            this.devices = await this.updateCollection('devices', this.devices, 'create', device);
+            this.devices = await this.updateDeviceCollection(this.devices, 'create', device, false);
           } else {
-            this.devices = await this.updateCollection('devices', this.devices, 'update', device);
+            this.devices = await this.updateDeviceCollection(this.devices, 'update', device, false);
           }
-          // this.saveInstance('device', device);
           if (this.deviceTree && this.deviceTree !== null) {
             this.deviceTree.onNodeCreated(device);
           }
@@ -258,8 +249,7 @@ export default {
     async updateDevice(device) {
       try {
         if (device && device.id) {
-          // this.saveInstance('device', device);
-          this.devices = await this.updateCollection('devices', this.devices, 'update', device);
+          this.devices = await this.updateDeviceCollection(this.devices, 'update', device, false);
           if (this.deviceTree && this.deviceTree !== null) {
             this.deviceTree.onNodeUpdated(device);
           }
@@ -278,8 +268,7 @@ export default {
     async deleteDevice(device) {
       try {
         if (device && device.id) {
-          // this.delInstance('device', device);
-          this.devices = await this.updateCollection('devices', this.devices, 'delete', device);
+          this.devices = await this.updateDeviceCollection(this.devices, 'delete', device, false);
           if (this.deviceTree && this.deviceTree !== null) {
             this.deviceTree.onNodeDeleted(device);
           }
@@ -298,11 +287,10 @@ export default {
     async createSensor(sensor) {
       try {
         if (sensor && sensor.id) {
-          // this.saveInstance('sensor', sensor);
           if (sensor.isNewInstance) {
-            this.sensors = await this.updateCollection('sensors', this.sensors, 'create', sensor);
+            this.sensors = await this.updateSensorCollection(this.sensors, 'create', sensor, false);
           } else {
-            this.sensors = await this.updateCollection('sensors', this.sensors, 'update', sensor);
+            this.sensors = await this.updateSensorCollection(this.sensors, 'update', sensor, false);
           }
           if (this.deviceTree && this.deviceTree !== null) {
             if (sensor.isNewInstance) {
@@ -323,12 +311,11 @@ export default {
     async updateSensor(sensor) {
       try {
         if (sensor && sensor.id) {
-          // this.saveInstance('sensor', sensor);
-          this.sensors = await this.updateCollection('sensors', this.sensors, 'update', sensor);
+          this.sensors = await this.updateSensorCollection(this.sensors, 'update', sensor, true);
           if (this.deviceTree && this.deviceTree !== null) {
             this.deviceTree.onNodeUpdated(sensor);
           }
-          return;
+          return sensor;
         }
         throw new Error('No sensor Id');
       } catch (error) {
@@ -340,8 +327,7 @@ export default {
     async deleteSensor(sensor) {
       try {
         if (sensor && sensor.id) {
-          //  this.delInstance('sensor', sensor);
-          this.sensors = await this.updateCollection('sensors', this.sensors, 'delete', sensor);
+          this.sensors = await this.updateSensorCollection(this.sensors, 'delete', sensor, true);
           if (this.deviceTree && this.deviceTree !== null) {
             this.deviceTree.onNodeDeleted(sensor);
           }

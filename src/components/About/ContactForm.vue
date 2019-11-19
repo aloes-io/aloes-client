@@ -1,3 +1,5 @@
+<!-- Copyright 2019 Edouard Maleix, read LICENSE -->
+
 r<template lang="html">
   <div class="contact-form-view">
     <h5 class="title">CONTACT</h5>

@@ -1,3 +1,5 @@
+<!-- Copyright 2019 Edouard Maleix, read LICENSE -->
+
 <template lang="html">
   <div v-if="tabsIndex === 2" v-show="fullDevices.length > 0">
     <div v-if="fullDevices && fullDevices !== null">
@@ -174,7 +176,7 @@
 </template>
 
 <script type="text/javascript">
-import { BButton, BFormGroup, BFormInput, BModal } from 'bootstrap-vue'; 
+import { BButton, BFormGroup, BFormInput, BModal } from 'bootstrap-vue';
 import has from 'lodash.has';
 import logger from '@/services/logger';
 import Collection from '@/mixins/collection';

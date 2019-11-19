@@ -1,3 +1,5 @@
+<!-- Copyright 2019 Edouard Maleix, read LICENSE -->
+
 <template lang="html">
   <b-navbar :class="className" class="footer-container">
     <b-navbar-nav class="w-100">

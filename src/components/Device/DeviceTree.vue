@@ -1,3 +1,5 @@
+<!-- Copyright 2019 Edouard Maleix, read LICENSE -->
+
 <template lang="html">
   <svg
     :id="`device-tree-${rootNodeId}`"
@@ -33,15 +35,14 @@
 </template>
 
 <script type="text/javascript">
-/* eslint-disable no-unused-vars */
 import { drag } from 'd3-drag';
 import { json } from 'd3-fetch';
 import { forceSimulation, forceCenter, forceCollide, forceLink, forceManyBody } from 'd3-force';
 import { hierarchy } from 'd3-hierarchy';
 import { interpolate } from 'd3-interpolate';
 import { event, select } from 'd3-selection';
-import { transition } from 'd3-transition';
-import { zoom, zoomIdentity } from 'd3-zoom';
+// import { transition } from 'd3-transition';
+import { zoom } from 'd3-zoom';
 import debounce from 'lodash.debounce';
 
 export default {
@@ -59,9 +60,9 @@ export default {
       default: 500,
     },
     source: {
-      type: String,
+      type: [Object, String],
       required: false,
-      default: '/data/device-tree.json',
+      // default: '/data/device-tree.json',
     },
     device: {
       type: Object,
@@ -301,7 +302,11 @@ export default {
             }
           }
         } else if (this.updatedSource) {
-          graph = await json(this.updatedSource);
+          if (typeof this.updatedSource === 'object') {
+            graph = this.updatedSource;
+          } else if (typeof this.updatedSource === 'string') {
+            graph = await json(this.updatedSource);
+          }
         }
         // console.log('graph', graph);
         this.graph = graph;
@@ -448,7 +453,6 @@ export default {
         this.tooltip = this.initTooltip();
         this.initZoom();
         this.svg.call(this.zoomListener);
-        //  this.svg.call(this.zoomListener.transform, zoomIdentity);
         this.applyForce(tree.nodes, tree.links);
         this.deviceTreeMounted = true;
         this.deviceTreeUpdating = false;
@@ -459,13 +463,8 @@ export default {
       }
     },
 
-    transformSvg(svg, margin, { width, height }) {
-      return svg.attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
-    },
-
-    updateTransform(transform, margin, { width, height }) {
+    updateTransform(transform, margin) {
       return transform.translate(margin.left, margin.top);
-      //  return transform.translate(width / 2, height / 2);
     },
 
     calcXCoordinate(maxNodeSize, x) {
@@ -807,7 +806,7 @@ export default {
         .text(text);
     },
 
-    hideTooltip(d) {
+    hideTooltip() {
       this.tooltip.style('display', 'none');
       [...this.$el.getElementsByClassName('tooltip-class')].map(n => n && n.remove());
     },

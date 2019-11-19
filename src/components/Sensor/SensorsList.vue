@@ -1,3 +1,5 @@
+<!-- Copyright 2019 Edouard Maleix, read LICENSE -->
+
 <template lang="html">
   <div class="device-sensors-view">
     <div class="sensors-list" v-observer:[optionsObserver]="itemId" @intersected="onIntersected">
@@ -94,7 +96,6 @@ export default {
       sensorSnapHeight: 200,
       sensorsFilter: null,
       filteredSensors: null,
-      CustomElement: null,
       updatedDeviceId: null,
       sensorsListLimit: 8,
       sensorsListCounter: 0,
@@ -155,15 +156,15 @@ export default {
       async handler(id, prevId) {
         if (this.$el && id && id !== null) {
           this.updatedDeviceId = id;
-          // if (id !== prevId) {
-          this.deviceSensors = [];
-          this.filteredSensors = [];
-          this.sensorsListCounter = 0;
-          this.page = 0;
-          // }
-          this.calculateListLimit();
-          await this.updateSensorsList(this.sensorsListCounter, this.page);
-          await this.countSensors();
+          if (!prevId || id.toString() !== prevId.toString()) {
+            this.deviceSensors = [];
+            this.filteredSensors = [];
+            this.sensorsListCounter = 0;
+            this.page = 0;
+            this.calculateListLimit();
+            await this.countSensors();
+            await this.updateSensorsList(this.sensorsListCounter);
+          }
         }
       },
       immediate: true,
@@ -179,7 +180,7 @@ export default {
         if (!this.updatedDeviceId) return;
         if (value && Array.isArray(value)) {
           this.deviceSensors = value.filter(
-            (sensor, index, self) => sensor.deviceId.toString() === this.updatedDeviceId.toString(),
+            sensor => sensor.deviceId.toString() === this.updatedDeviceId.toString(),
           );
           this.updateFilteredSensors(this.sensorsFilter);
         }
@@ -207,10 +208,6 @@ export default {
           filter,
         });
         // logger.publish(4, 'sensor', 'loadSensors:res', sensors);
-        if (!sensors || sensors === null) {
-          this.loading = false;
-          return [];
-        }
         this.loading = false;
         return sensors;
       } catch (error) {
@@ -272,11 +269,12 @@ export default {
 
     async updateSensorsList(counter) {
       try {
+        logger.publish(4, 'sensor', 'updateSensorsList:req', counter);
         const sensors = await this.loadSensors(this.updatedDeviceId, {
           skip: counter,
           limit: this.sensorsListLimit,
         });
-        this.sensors = await this.batchCollection('sensors', this.sensors, 'create', sensors);
+        this.sensors = await this.batchSensorCollection(this.sensors, 'create', sensors, false);
         this.updateFilteredSensors(this.sensorsFilter);
         return sensors;
       } catch (error) {

@@ -1,43 +1,48 @@
+/* Copyright 2019 Edouard Maleix, read LICENSE */
+
+// import throttle from 'lodash.throttle';
 import logger from '@/services/logger';
 import SensorWorker from '@/workers/sensor.worker.js';
 import CollectionWorker from '@/workers/collection.worker.js';
 
-const storePrefix = 'app_';
-
 const Collection = {
-  mounted() {
-    if (!this.sensorWorker) this.sensorWorker = new SensorWorker();
-    if (!this.collectionWorker) this.collectionWorker = new CollectionWorker();
-    this.collectionWorker2 = new CollectionWorker();
+  created() {
+    this.sensorWorker = new SensorWorker();
+    this.updateDeviceWorker = new CollectionWorker();
+    this.updateSensorWorker = new CollectionWorker();
+    this.batchDeviceWorker = new CollectionWorker();
+    this.batchSensorWorker = new CollectionWorker();
   },
 
-  beforeDestroy() {
+  destroyed() {
     this.sensorWorker.terminate();
-    this.collectionWorker.terminate();
-    this.collectionWorker2.terminate();
+    this.updateDeviceWorker.terminate();
+    this.updateSensorWorker.terminate();
+    this.batchDeviceWorker.terminate();
+    this.batchSensorWorker.terminate();
   },
 
   methods: {
-    batchCollection(collectionName, collection, operation, batch, serialize = false) {
-      logger.publish(4, collectionName, 'batchCollection:req', { collectionName, operation });
+    batchSensorCollection(collection, operation, batch, serialize = false) {
+      logger.publish(4, 'sensor', 'batchCollection:req', {
+        operation,
+        count: Array.isArray(collection) ? collection.length : 0,
+        serialize,
+      });
       return new Promise((resolve, reject) => {
-        if (!collectionName || !collection || !operation || !batch) {
-          reject(new Error('Invalid arguments'));
-        }
-        // this.collectionWorker2 = new CollectionWorker();
+        if (!operation || !batch) return reject(new Error('Invalid arguments'));
         const onMessage = e => {
-          if (e.data.error) reject(new Error(e.data.error.message));
-          const collection = e.data.collection || null;
-          // this.collectionWorker2.terminate();
-          if (!collection || collection === null) reject(new Error('Invalid collection update'));
-          logger.publish(4, collectionName, 'batchCollection:res', { count: collection.length });
+          if (e.data.error) return reject(new Error(e.data.error.message));
+          const collection = e.data.collection || [];
+          logger.publish(3, 'sensor', 'batchCollection:res', {
+            count: collection.length,
+          });
           resolve(collection);
         };
-        // this.collectionWorker.addEventListener('message', onMessage);
-        this.collectionWorker2.onmessage = onMessage;
-        this.collectionWorker2.onerror = reject;
-        this.collectionWorker2.postMessage({
-          collectionName,
+        this.batchSensorWorker.onmessage = onMessage;
+        this.batchSensorWorker.onerror = reject;
+        this.batchSensorWorker.postMessage({
+          collectionName: 'sensor',
           collection,
           operation,
           batch,
@@ -46,25 +51,86 @@ const Collection = {
       });
     },
 
-    updateCollection(collectionName, collection, operation, instance, serialize = false) {
-      logger.publish(4, collectionName, 'updateCollection:req', { collectionName, operation });
+    batchDeviceCollection(collection, operation, batch, serialize = false) {
+      logger.publish(4, 'device', 'batchCollection:req', {
+        operation,
+        count: Array.isArray(collection) ? collection.length : 0,
+        serialize,
+      });
       return new Promise((resolve, reject) => {
-        if (!collectionName || !collection || !operation || !instance) {
-          reject(new Error('Invalid arguments'));
-        }
-        // this.collectionWorker = new CollectionWorker();
+        if (!operation || !batch) return reject(new Error('Invalid arguments'));
+        // this.batchDeviceWorker = new CollectionWorker();
         const onMessage = e => {
-          if (e.data.error) reject(new Error(e.data.error.message));
-          const collection = e.data.collection || null;
-          // this.collectionWorker.terminate();
-          if (!collection || collection === null) reject(new Error('Invalid collection update'));
-          logger.publish(4, 'sensor', 'updateCollection:res', { count: collection.length });
+          if (e.data.error) return reject(new Error(e.data.error.message));
+          const collection = e.data.collection || [];
+          // this.batchDeviceWorker.terminate();
+          logger.publish(3, 'device', 'batchCollection:res', {
+            count: collection.length,
+          });
           resolve(collection);
         };
-        this.collectionWorker.onmessage = onMessage;
-        this.collectionWorker.onerror = reject;
-        this.collectionWorker.postMessage({
-          collectionName,
+        this.batchDeviceWorker.onmessage = onMessage;
+        this.batchDeviceWorker.onerror = reject;
+        this.batchDeviceWorker.postMessage({
+          collectionName: 'device',
+          collection,
+          operation,
+          batch,
+          serialize,
+        });
+      });
+    },
+
+    // throttledUpdateSensorCollection = throttle(this.updateSensorCollection, 20);
+
+    updateSensorCollection(collection, operation, instance, serialize = false) {
+      logger.publish(4, 'sensor', 'updateCollection:req', {
+        operation,
+        count: Array.isArray(collection) ? collection.length : 0,
+        serialize,
+      });
+      return new Promise((resolve, reject) => {
+        if (!operation || !instance) return reject(new Error('Invalid arguments'));
+        const onMessage = e => {
+          if (e.data.error) return reject(new Error(e.data.error.message));
+          const collection = e.data.collection || [];
+          logger.publish(3, 'sensor', 'updateCollection:res', {
+            count: collection.length,
+          });
+          resolve(collection);
+        };
+        this.updateSensorWorker.onmessage = onMessage;
+        this.updateSensorWorker.onerror = reject;
+        this.updateSensorWorker.postMessage({
+          collectionName: 'sensor',
+          collection,
+          operation,
+          instance,
+          serialize,
+        });
+      });
+    },
+
+    updateDeviceCollection(collection, operation, instance, serialize = false) {
+      logger.publish(4, 'device', 'updateCollection:req', {
+        operation,
+        count: Array.isArray(collection) ? collection.length : 0,
+        serialize,
+      });
+      return new Promise((resolve, reject) => {
+        if (!operation || !instance) return reject(new Error('Invalid arguments'));
+        const onMessage = e => {
+          if (e.data.error) return reject(new Error(e.data.error.message));
+          const collection = e.data.collection || [];
+          logger.publish(3, 'device', 'updateCollection:res', {
+            count: collection.length,
+          });
+          resolve(collection);
+        };
+        this.updateDeviceWorker.onmessage = onMessage;
+        this.updateDeviceWorker.onerror = reject;
+        this.updateDeviceWorker.postMessage({
+          collectionName: 'device',
           collection,
           operation,
           instance,
@@ -75,16 +141,12 @@ const Collection = {
 
     updateSensor(sensor, resource, value) {
       return new Promise((resolve, reject) => {
-        if (!sensor || !resource) {
-          reject(new Error('Invalid arguments'));
-        }
-        // this.sensorWorker = new SensorWorker();
+        if (!sensor || !resource) return reject(new Error('Invalid arguments'));
         const onMessage = e => {
-          if (e.data.error) reject(new Error(e.data.error.message));
+          if (e.data.error) return reject(new Error(e.data.error.message));
           const sensor = e.data.sensor || null;
-          // this.sensorWorker.terminate();
-          if (!sensor || sensor === null) reject(new Error('Invalid sensor update'));
-          logger.publish(4, 'sensor', 'updateSensor:res', { sensor });
+          if (!sensor || sensor === null) return reject(new Error('Invalid sensor update'));
+          logger.publish(3, 'sensor', 'updateSensor:res', { sensor });
           sensor.lastSignal = new Date();
           sensor.method = 'PUT';
           resolve(sensor);
@@ -93,50 +155,6 @@ const Collection = {
         this.sensorWorker.onerror = reject;
         this.sensorWorker.postMessage({ sensor, resource, value });
       });
-    },
-
-    getInstance(type, instanceId) {
-      if (type !== 'sensor' && type !== 'device') return {};
-      const instance = this.$storage.get(`${type}-${instanceId}`);
-      return instance;
-    },
-
-    saveInstance(type, instance) {
-      if (type !== 'sensor' && type !== 'device') return {};
-      // this.$storage.set(`app_${type}-${instance.id}`, instance, { ttl: 60 * 1000 });
-      this.$storage.set(`${type}-${instance.id}`, instance, { ttl: 60 * 1000 });
-      return instance;
-    },
-
-    delInstance(type, instance) {
-      if (type !== 'sensor' && type !== 'device') return {};
-      this.$storage.del(`${type}-${instance.id}`);
-      return instance;
-    },
-
-    getCollection(type) {
-      if (type !== 'sensor' && type !== 'device') return [];
-      const keys = this.$storage.keys();
-      // console.log('getCollection', type, keys, this.$storage);
-      return keys
-        .map(key => {
-          if (key.startsWith(storePrefix)) {
-            key = key.slice(storePrefix.length, key.length);
-          }
-          if (key.search(type) !== -1) {
-            const instance = this.$storage.get(key);
-            return instance;
-          }
-        })
-        .filter(val => val !== undefined);
-    },
-
-    saveCollection(type, collection) {
-      return collection.map(instance => this.saveInstance(type, instance));
-    },
-
-    delCollection(type, collection) {
-      return collection.map(instance => this.delInstance(type, instance));
     },
   },
 };

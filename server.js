@@ -1,3 +1,5 @@
+/* Copyright 2019 Edouard Maleix, read LICENSE */
+
 /* eslint-disable no-console */
 const express = require('express');
 const localtunnel = require('localtunnel');

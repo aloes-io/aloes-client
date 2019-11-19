@@ -1,3 +1,5 @@
+<!-- Copyright 2019 Edouard Maleix, read LICENSE -->
+
 <template lang="html">
   <div class="devices-list-view">
     <div
@@ -178,9 +180,6 @@ export default {
           filter,
         });
         this.loading = false;
-        if (!devices || devices.length < 1) {
-          return [];
-        }
         logger.publish(4, 'device', 'loadDevices:res', devices.length);
         this.success = { message: 'found devices' };
         return devices;
@@ -211,9 +210,9 @@ export default {
           include: ['sensors'],
         });
         const sensors = this.extractSensors(devices);
-        this.devices = await this.batchCollection('devices', this.devices, 'create', devices);
+        this.devices = await this.batchDeviceCollection(this.devices, 'create', devices, false);
         this.updateFilteredDevices(this.devicesFilter);
-        this.sensors = await this.batchCollection('sensors', this.sensors, 'create', sensors);
+        this.sensors = await this.batchSensorCollection(this.sensors, 'create', sensors, false);
         return devices;
       } catch (error) {
         return null;

@@ -1,3 +1,5 @@
+/* Copyright 2019 Edouard Maleix, read LICENSE */
+
 const getImageUrlProcess = blob => {
   return new Promise((resolve, reject) => {
     const fReader = new FileReader();

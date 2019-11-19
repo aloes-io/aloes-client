@@ -1,3 +1,5 @@
+<!-- Copyright 2019 Edouard Maleix, read LICENSE -->
+
 <template lang="html">
   <svg
     :id="`object-composition-${virtualObjectId}`"
@@ -38,7 +40,6 @@ import { json } from 'd3-fetch';
 import { forceSimulation, forceCenter, forceLink, forceManyBody, forceRadial } from 'd3-force';
 import { hierarchy } from 'd3-hierarchy';
 import { event, select } from 'd3-selection';
-//  import {active, transition} from "d3-transition";
 
 export default {
   name: 'ObjectComposition',
@@ -60,9 +61,9 @@ export default {
       default: 'http://localhost:8080',
     },
     source: {
-      type: String,
+      type: [Object, String],
       required: false,
-      default: 'data/virtual-object-composition.json',
+      // default: 'data/virtual-object-composition.json',
     },
     'virtual-object': {
       type: String,
@@ -96,7 +97,6 @@ export default {
   },
 
   beforeDestroy() {
-    // select(`#object-composition-${this.virtualObjectId}`).empty();
     select(`#object-composition-${this.virtualObjectId}`)
       .selectAll('*')
       .remove();
@@ -201,7 +201,11 @@ export default {
         graph.children = graph.sensors;
         delete graph.sensors;
       } else {
-        graph = await json(this.objectComposition);
+        if (typeof this.objectComposition === 'object') {
+          graph = this.objectComposition;
+        } else if (typeof this.objectComposition === 'string') {
+          graph = await json(this.objectComposition);
+        }
       }
       const root = hierarchy(graph);
       const nodes = root.descendants();
@@ -231,7 +235,7 @@ export default {
       const maxNodeSize = 50;
       d.x = Math.max(maxNodeSize, Math.min(this.$props.width - (d.data.size || 16), d.x));
       d.y = Math.max(maxNodeSize, Math.min(this.$props.height - (d.data.size || 16), d.y));
-      return 'translate(' + d.x + ',' + d.y + ')';
+      return `translate(${d.x},${d.y})`;
     },
 
     nodeFill(d) {
@@ -293,7 +297,6 @@ export default {
     dragged(d) {
       d.fx = event.x;
       d.fy = event.y;
-      //EventBus.$emit('mqtt-tx', "getlarge/nodes-position", d.fx + "-" + d.fy)
     },
 
     dragended(d) {

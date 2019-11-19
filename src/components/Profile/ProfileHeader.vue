@@ -1,3 +1,5 @@
+<!-- Copyright 2019 Edouard Maleix, read LICENSE -->
+
 <template lang="html">
   <b-card no-body class="profile-header">
     <profile-img :is-viewer="viewer" :edit-mode="editorMode" :profile-type="profileRole" />

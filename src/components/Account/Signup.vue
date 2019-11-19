@@ -1,3 +1,5 @@
+<!-- Copyright 2019 Edouard Maleix, read LICENSE -->
+
 <template lang="html">
   <b-card class="signup-view">
     <b-form @submit="onSignup" @reset="onReset">
