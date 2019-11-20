@@ -331,7 +331,7 @@ export default {
           if (this.deviceTree && this.deviceTree !== null) {
             this.deviceTree.onNodeDeleted(sensor);
           }
-          if (this.sensor && sensor.id.toString() === this.sensor.id.toString()) {
+          if (this.sensor && this.sensor.id && sensor.id.toString() === this.sensor.id.toString()) {
             this.$store.commit('sensor/cleanModel');
           }
           return sensor;
