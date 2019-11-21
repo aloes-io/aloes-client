@@ -5,7 +5,7 @@ const express = require('express');
 const localtunnel = require('localtunnel');
 const dotenv = require('dotenv');
 const path = require('path');
-const webRoot = path.join(__dirname, 'build');
+const webRoot = path.join(__dirname, 'dist');
 const app = express();
 
 const server = {};
@@ -73,7 +73,7 @@ server.init = conf => {
       });
     }
   } catch (error) {
-    throw error;
+    console.log('server', 'init:err', error);
   }
 };
 

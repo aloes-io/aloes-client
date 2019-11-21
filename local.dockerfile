@@ -46,5 +46,5 @@ RUN yarn build
 FROM nginx:1.16-alpine as production-stage
 COPY --from=build-stage /home/node/$NODE_NAME/dist /usr/share/nginx/html
 RUN rm /etc/nginx/conf.d/default.conf
-COPY ./config/nginx.conf /etc/nginx/conf.d
+COPY ./config/nginx/nginx.conf /etc/nginx/conf.d
 CMD ["nginx", "-g", "daemon off;"]

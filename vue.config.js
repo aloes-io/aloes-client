@@ -1,5 +1,7 @@
 /* Copyright 2019 Edouard Maleix, read LICENSE */
 
+const CompressionPlugin = require('compression-webpack-plugin');
+
 process.env.VUE_APP_VERSION = require('./package.json').version;
 
 module.exports = {
@@ -21,16 +23,21 @@ module.exports = {
     },
   },
 
-  // devServer: {
-  //   proxy: {
-  //     "^/api": {
-  //       target: "https://node.getlarge.eu",
-  //       ws: true,
-  //       changeOrigin: true
-  //     }
-  //   }
-  // }
   chainWebpack: config => {
+    config.plugins.delete('prefetch');
+
+    config.plugin('CompressionPlugin').use(
+      new CompressionPlugin({
+        filename: '[path].gz[query]',
+        cache: true,
+        algorithm: 'gzip',
+        test: new RegExp('\\.(js|css)$'),
+        threshold: 1024,
+        minRatio: 0.8,
+        compressionOptions: { level: 6 },
+      }),
+    );
+
     config.module
       .rule('worker')
       .test(/\.worker\.js$/i)
