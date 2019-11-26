@@ -60,8 +60,8 @@ socket.removeToken = () => {
     delSocketId();
     delete socket.token;
     if (socket.client) {
-      PubSub.removeListeners(socket.client);
       socket.client.end(true);
+      PubSub.removeListeners(socket.client);
       delete socket.client;
     }
     logger.publish(3, 'socket', 'removeToken:res', 'success');
@@ -93,10 +93,10 @@ socket.initSocket = async options => {
     setSocketId(options.clientId);
     await PubSub.setListeners(socket.client, socket.token);
 
-    socket.client.on('reconnect', () => {
-      logger.publish(3, 'socket', 'onReconnecting', options.clientId);
-      // setSocketId(options.clientId);
-    });
+    // socket.client.on('reconnect', () => {
+    //   logger.publish(3, 'socket', 'onReconnecting', options.clientId);
+    //   // setSocketId(options.clientId);
+    // });
 
     socket.client.once('offline', () => {
       logger.publish(3, 'socket', 'onDisconnect', options.clientId);

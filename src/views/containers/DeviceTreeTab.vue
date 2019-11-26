@@ -399,6 +399,7 @@ export default {
       if (this.devices) {
         const appendSensors = (devices, sensors) => {
           return devices.map(device => {
+            if (!device || !device.id) return null;
             if (!sensors) return device;
             device.sensors =
               sensors.filter(sensor => sensor.deviceId.toString() === device.id.toString()) || [];

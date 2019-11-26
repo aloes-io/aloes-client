@@ -3,7 +3,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import store from '@/store';
-// import Account from '@/views/Account.vue';
 
 Vue.use(Router);
 
@@ -41,7 +40,6 @@ const routes = [
     path: '/account',
     name: 'account',
     meta: { requiresAuth: true },
-    // component: Account,
     component: () => import(/* webpackChunkName: "account" */ '../views/Account.vue'),
     props: route => ({
       'access-token': route.query['access-token'],

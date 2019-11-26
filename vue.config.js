@@ -1,7 +1,9 @@
 /* Copyright 2019 Edouard Maleix, read LICENSE */
 
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
 
+const devMode = process.env.NODE_ENV !== 'production';
 process.env.VUE_APP_VERSION = require('./package.json').version;
 
 module.exports = {
@@ -9,7 +11,9 @@ module.exports = {
 
   configureWebpack: {
     optimization: {
+      // runtimeChunk: 'single',
       splitChunks: {
+        // chunks: 'all',
         minSize: 10000,
         maxSize: 250000,
         cacheGroups: {
@@ -26,17 +30,28 @@ module.exports = {
   chainWebpack: config => {
     config.plugins.delete('prefetch');
 
-    config.plugin('CompressionPlugin').use(
-      new CompressionPlugin({
-        filename: '[path].gz[query]',
-        cache: true,
-        algorithm: 'gzip',
-        test: new RegExp('\\.(js|css)$'),
-        threshold: 1024,
-        minRatio: 0.8,
-        compressionOptions: { level: 6 },
+    config.plugin('MiniCssExtractPlugin').use(
+      new MiniCssExtractPlugin({
+        // Options similar to the same options in webpackOptions.output
+        // both options are optional
+        filename: devMode ? '[name].css' : '[name].[hash].css',
+        chunkFilename: devMode ? '[id].css' : '[id].[hash].css',
       }),
     );
+
+    if (process.env.NODE_ENV !== 'development' && process.env.NODE_ENV !== 'test') {
+      config.plugin('CompressionPlugin').use(
+        new CompressionPlugin({
+          filename: '[path].gz[query]',
+          cache: true,
+          algorithm: 'gzip',
+          test: new RegExp('\\.(js|css)$'),
+          threshold: 1024,
+          minRatio: 0.8,
+          compressionOptions: { level: 6 },
+        }),
+      );
+    }
 
     config.module
       .rule('worker')

@@ -3,7 +3,7 @@
 <template lang="html">
   <b-container class="home-container" fluid>
     <p class="info-title">
-      What if your sensors could speak a common language ?
+      What if your sensors could speak a common language?
     </p>
     <b-row align-v="center" align-h="center" no-gutters>
       <b-col cols="12" sm="6" md="6" lg="5" xl="5">
@@ -77,7 +77,7 @@
             <br />
             Powered by
             <a :href="`${$store.state.repoUrl}/aloes-handlers`" target="_blank">aloes-handlers</a>
-            to encode/decode MQTT stream, and
+            to encode/decode MQTT stream and
             <a :href="`${$store.state.repoUrl}/device-manager`" target="_blank">device-manager</a>
             to transport and persist data.
           </p>
@@ -101,7 +101,17 @@
       </transition>
     </b-row>
     <b-row align-v="center" align-h="center">
-      <b-col cols="12" sm="12" md="6" lg="6" xl="6" order-md="12" order-lg="12" order-xl="12">
+      <b-col
+        cols="12"
+        sm="6"
+        md="6"
+        lg="6"
+        xl="6"
+        order-sm="12"
+        order-md="12"
+        order-lg="12"
+        order-xl="12"
+      >
         <device-tree
           key="device-tree"
           v-if="deviceTreeLoaded"
@@ -119,7 +129,7 @@
           v-if="vueElem && sensor && sensor.id && showSensor"
           key="sensorSelected"
           cols="12"
-          sm="12"
+          sm="6"
           md="6"
           lg="5"
           xl="5"
@@ -164,7 +174,7 @@
           v-else-if="device && device.id && showDevice"
           key="deviceSelected"
           cols="12"
-          sm="12"
+          sm="6"
           md="6"
           lg="5"
           xl="5"
@@ -179,7 +189,7 @@
           v-else
           key="noDeviceNoSensorSelected"
           cols="12"
-          sm="12"
+          sm="6"
           md="6"
           lg="4"
           xl="4"
@@ -205,6 +215,16 @@
       </transition>
     </b-row>
     <b-row align-v="center" align-h="center">
+      <b-col cols="12" sm="6" lg="5" xl="5">
+        <object-composition
+          key="custom-device"
+          :source="$store.state.virtualObject"
+          :client-url="$store.state.clientUrl"
+          :height="400"
+          :width="500"
+          @node-clicked="onNodeClicked"
+        />
+      </b-col>
       <b-col
         cols="12"
         sm="6"
@@ -229,51 +249,9 @@
           ).
         </p>
       </b-col>
-      <b-col cols="12" sm="6" lg="5" xl="5" order-md="1" order-lg="1" order-xl="1">
-        <object-composition
-          key="custom-device"
-          :source="$store.state.virtualObject"
-          :client-url="$store.state.clientUrl"
-          :height="400"
-          :width="500"
-          @node-clicked="onNodeClicked"
-        />
-      </b-col>
     </b-row>
     <b-row align-v="center" align-h="center">
-      <transition name="fade" mode="out-in">
-        <b-col
-          v-if="!scenarioSelected"
-          key="scenarioNotSelected"
-          cols="12"
-          sm="6"
-          lg="4"
-          xl="4"
-          offset-lg="1"
-          offset-xl="1"
-        >
-          <div>
-            <p class="info-subtitle">
-              Script devices stories
-            </p>
-            <p class="info-description">
-              Use
-              <a :href="`${$store.state.repoUrl2}/node-red-bridge`" target="_blank"
-                >node-red-bridge</a
-              >
-              to create custom scenarios where you can set interaction rules inside your network.
-            </p>
-          </div>
-        </b-col>
-        <b-col v-else-if="scenarioSelected" key="scenarioSelected" cols="12" sm="6" lg="5" xl="5">
-          <div class="info-video">
-            <video ref="videoPlayer" muted autoplay loop>
-              <source :src="$store.state.style.videos.scriptScenarioMp4" type="video/mp4" />
-            </video>
-          </div>
-        </b-col>
-      </transition>
-      <b-col cols="12" sm="6" lg="5" xl="5">
+      <b-col cols="12" sm="6" lg="5" xl="5" order-sm="12" order-md="12" order-lg="12" order-xl="12">
         <svg
           :viewBox="`0 0 ${svgSettings.width} ${svgSettings.height}`"
           pointer-events="all"
@@ -394,6 +372,38 @@
           </g>
         </svg>
       </b-col>
+      <transition name="fade" mode="out-in">
+        <b-col
+          v-if="!scenarioSelected"
+          key="scenarioNotSelected"
+          cols="12"
+          sm="6"
+          lg="4"
+          xl="4"
+          offset-lg="1"
+          offset-xl="1"
+        >
+          <div>
+            <p class="info-subtitle">
+              Script devices stories
+            </p>
+            <p class="info-description">
+              Use
+              <a :href="`${$store.state.repoUrl2}/node-red-bridge`" target="_blank"
+                >node-red-bridge</a
+              >
+              to create custom scenarios where you can set interaction rules inside your network.
+            </p>
+          </div>
+        </b-col>
+        <b-col v-else-if="scenarioSelected" key="scenarioSelected" cols="12" sm="6" lg="5" xl="5">
+          <div class="info-video">
+            <video ref="videoPlayer" muted autoplay loop>
+              <source :src="$store.state.style.videos.scriptScenarioMp4" type="video/mp4" />
+            </video>
+          </div>
+        </b-col>
+      </transition>
     </b-row>
   </b-container>
 </template>

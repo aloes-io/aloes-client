@@ -19,13 +19,17 @@ http {
   }
 
   map $sent_http_content_type $expires {
-    default                    off;
-    text/html                  epoch;
-    # text/plain                 max;
-    text/css                   max;
-    text/javascript            max;
-    application/javascript     max;
-    ~image/                    max;
+    default                       off;
+    text/html                     epoch;
+    text/css                      max;
+    text/javascript               max;
+    application/javascript        max;
+    font/ttf                      max;
+    font/otf                      max;
+    font/woff                     max;
+    font/woff2                    max;
+    application/vnd.ms-fontobject max;
+    ~image/                       max;
   }
 
   server {
@@ -35,11 +39,12 @@ http {
 
     include  mime.types;
     # sendfile on;
-
     types { 
       application/json map; 
     }
-
+    charset utf-8;
+    source_charset utf-8;
+    
     gzip on;
     gzip_buffers 16 8k;
     gzip_comp_level 6;

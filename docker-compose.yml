@@ -25,8 +25,8 @@ services:
     environment:
       - NGINX_HTTP_SERVER_PORT=${NGINX_HTTP_SERVER_PORT}
     build:
-      context: .
-      dockerfile: ./config/nginx/Dockerfile
+      context: ./config/nginx
+      dockerfile: Dockerfile
     restart: always
     volumes:
       - ./config/nginx/nginx-local.template:/etc/nginx/nginx.template
