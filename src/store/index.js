@@ -75,6 +75,7 @@ export default new Vuex.Store({
         mapMarkerAlt: require('@/assets/img/map-marker-alt.png'),
         mapMarkerWhite: require('@/assets/img/map-marker-alt.png'),
         imgPlaceholder: require('@/assets/img/image-placeholder.png'),
+        headerPlaceholder: require('@/assets/img/header-placeholder.png'),
         pencilSquare: require('@/assets/img/icon-modifier.png'),
         application: require('@/assets/img/iot.png'),
         deviceOn: require('@/assets/img/device-on.png'),

@@ -66,7 +66,7 @@
             },
           }"
         >
-          <b-img v-if="$store.state.auth.account.avatarImgUrl" :src="userIcon" class="thumb-icon" />
+          <b-img v-if="userIcon" :src="userIcon" class="thumb-icon" />
           <fa-icon v-else icon="user" size="lg" />
           <small v-show="screenIsLarge">
             {{ $store.state.auth.account.firstName }}
@@ -212,11 +212,13 @@ export default {
           if (file && file !== null) {
             this.userIcon = await this.parseImage(file);
           } else {
-            this.userIcon = this.$store.state.user;
+            this.userIcon = this.$store.state.pictures.user;
           }
+        } else {
+          this.userIcon = this.$store.state.pictures.user;
         }
       } catch (error) {
-        this.userIcon = this.$store.state.user;
+        this.userIcon = this.$store.state.pictures.user;
       }
     },
 

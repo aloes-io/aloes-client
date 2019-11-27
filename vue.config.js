@@ -13,7 +13,6 @@ module.exports = {
     optimization: {
       // runtimeChunk: 'single',
       splitChunks: {
-        // chunks: 'all',
         minSize: 10000,
         maxSize: 250000,
         cacheGroups: {
