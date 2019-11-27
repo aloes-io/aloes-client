@@ -139,10 +139,10 @@ export default {
       },
     },
     defaultImgUrl() {
-      return this.$store.state.imgPlaceholder;
+      return this.$store.state.pictures.imgPlaceholder;
     },
     defaultHeaderUrl() {
-      return this.$store.state.headerPlaceholder;
+      return this.$store.state.pictures.headerPlaceholder;
     },
   },
 
