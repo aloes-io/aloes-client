@@ -115,8 +115,7 @@ export default {
             this.error = err;
           }
           this.loading = false;
-          return this.error;
-          //  console.log('error sending mail', err);
+          return err;
         });
     },
   },

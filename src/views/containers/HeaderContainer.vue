@@ -178,6 +178,9 @@ export default {
       }
       return 'out';
     },
+    defaultUserIcon() {
+      return this.$store.state.style.pictures.user;
+    },
   },
 
   mounted() {
@@ -212,13 +215,13 @@ export default {
           if (file && file !== null) {
             this.userIcon = await this.parseImage(file);
           } else {
-            this.userIcon = this.$store.state.pictures.user;
+            this.userIcon = this.defaultUserIcon;
           }
         } else {
-          this.userIcon = this.$store.state.pictures.user;
+          this.userIcon = this.defaultUserIcon;
         }
       } catch (error) {
-        this.userIcon = this.$store.state.pictures.user;
+        this.userIcon = this.defaultUserIcon;
       }
     },
 
@@ -247,7 +250,8 @@ export default {
         );
       } catch (error) {
         this.notifyError(error);
-        throw error;
+        return null;
+        // throw error;
       }
     },
   },

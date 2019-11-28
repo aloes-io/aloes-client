@@ -142,7 +142,7 @@ export default {
         return this.loginError;
       } catch (error) {
         this.loginError = error;
-        return this.error;
+        return error;
       }
     },
   },

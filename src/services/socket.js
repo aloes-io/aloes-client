@@ -6,14 +6,15 @@ import PubSub from './PubSub';
 
 const Storage = window.sessionStorage;
 const brokerUrl = process.env.VUE_APP_BROKER_URL;
-const socket = {};
+const socket = { failureCount: 0, maxFailureCount: 10 };
+
 const baseOptions = {
   keepalive: 60,
   reschedulePings: true,
   protocolId: 'MQTT',
   protocolVersion: 4,
-  reconnectPeriod: 1000,
-  connectTimeout: 2 * 1000,
+  reconnectPeriod: 2000,
+  connectTimeout: 5 * 1000,
   clean: true,
   clientId: null,
   username: null,
@@ -60,8 +61,9 @@ socket.removeToken = () => {
     delSocketId();
     delete socket.token;
     if (socket.client) {
-      socket.client.end(true);
+      // socket.client.removeAllListeners('offline');
       PubSub.removeListeners(socket.client);
+      socket.client.end(true);
       delete socket.client;
     }
     logger.publish(3, 'socket', 'removeToken:res', 'success');
@@ -87,10 +89,11 @@ socket.initSocket = async options => {
     if (socketId && socketId !== null && socket.client) {
       return socket;
     }
-
-    socket.client = await mqtt.connectAsync(brokerUrl, options);
-    logger.publish(3, 'socket', 'onConnect', 'success');
     setSocketId(options.clientId);
+    socket.client = await mqtt.connectAsync(brokerUrl, options);
+    socket.failureCount = 0;
+    logger.publish(3, 'socket', 'onConnect', 'success');
+    // socket.client.setMaxListeners()
     await PubSub.setListeners(socket.client, socket.token);
 
     // socket.client.on('reconnect', () => {
@@ -108,7 +111,13 @@ socket.initSocket = async options => {
     return socket;
   } catch (error) {
     logger.publish(3, 'socket', 'initSocket:err', error);
-    throw error;
+    delSocketId();
+    if (socket.failureCount < socket.maxFailureCount) {
+      socket.failureCount += 1;
+      return setTimeout(() => socket.initSocket(options), baseOptions.reconnectPeriod);
+    }
+    // delete socket.token;
+    return null;
   }
 };
 

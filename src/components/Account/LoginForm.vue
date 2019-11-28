@@ -156,7 +156,7 @@ export default {
         } else {
           this.error = error;
         }
-        throw error;
+        return error;
       }
     },
   },

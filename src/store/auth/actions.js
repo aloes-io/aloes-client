@@ -157,7 +157,6 @@ export async function signIn({ state, commit, dispatch }, { email, password, sav
       password,
     });
     logger.publish(3, state.collectionName, 'dispatch:signIn:res', accessToken);
-
     if (!accessToken || accessToken === null || accessToken instanceof Error) {
       throw new Error('Invalid token');
     }
