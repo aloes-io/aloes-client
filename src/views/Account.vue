@@ -1,3 +1,5 @@
+<!-- Copyright 2019 Edouard Maleix, read LICENSE -->
+
 <template lang="html">
   <div v-if="account" class="account-view">
     <header-container :access_token="$store.state.auth.access_token" :account="account" />

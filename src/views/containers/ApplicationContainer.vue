@@ -1,3 +1,5 @@
+<!-- Copyright 2019 Edouard Maleix, read LICENSE -->
+
 <template lang="html">
   <b-container fluid class="application-container">
     <b-tabs content-class="mt-3" justified>

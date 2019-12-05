@@ -1,3 +1,5 @@
+<!-- Copyright 2019 Edouard Maleix, read LICENSE -->
+
 <template lang="html">
   <b-row v-if="tabsIndex === 1" class="about-header">
     <b-col v-if="device" sm="8">
@@ -18,8 +20,6 @@
 </template>
 
 <script type="text/javascript">
-import has from 'lodash.has';
-
 export default {
   name: 'DeviceSensorsTab',
 
@@ -86,12 +86,6 @@ export default {
       get() {
         return this.$store.state.device.instance;
       },
-    },
-    errorMessageExists() {
-      return has(this.error, 'message');
-    },
-    successMessageExists() {
-      return has(this.sucess, 'message');
     },
   },
 

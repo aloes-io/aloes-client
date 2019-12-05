@@ -1,3 +1,5 @@
+<!-- Copyright 2019 Edouard Maleix, read LICENSE -->
+
 <template lang="html">
   <b-card
     v-show="updatedProfile"
@@ -57,31 +59,6 @@
                 :src="$store.state.style.pictures.teamAlt"
               />
             </b-button>
-          </b-col>
-        </b-row>
-        <b-row>
-          <b-col class="profile-inline-status" cols="10" sm="10">
-            <div v-if="!account.role === 'admin'" class="profile-inline-status-off">
-              <img :src="$store.state.style.pictures.statusAlt" />
-            </div>
-            <div
-              v-else-if="!updatedProfile.status && account.role === 'admin'"
-              class="profile-inline-status-off"
-            >
-              <img :src="$store.state.style.pictures.statusOff" />
-              <small>
-                A l'écoute
-              </small>
-            </div>
-            <div
-              v-else-if="updatedProfile.status && account.role === 'admin'"
-              class="profile-inline-status-on"
-            >
-              <img :src="$store.state.style.pictures.statusOn" />
-              <small>
-                Disponible
-              </small>
-            </div>
           </b-col>
         </b-row>
       </b-col>

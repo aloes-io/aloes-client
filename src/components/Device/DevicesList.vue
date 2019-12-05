@@ -1,3 +1,5 @@
+<!-- Copyright 2019 Edouard Maleix, read LICENSE -->
+
 <template lang="html">
   <div class="devices-list-view">
     <div
@@ -46,7 +48,7 @@
 <script type="text/javascript">
 import { BButton, BFormSelect } from 'bootstrap-vue';
 import logger from '@/services/logger';
-import Collection from '@/views/mixins/collection';
+import Collection from '@/mixins/collection';
 import Observer from '@/directives/observer';
 
 export default {
@@ -178,9 +180,6 @@ export default {
           filter,
         });
         this.loading = false;
-        if (!devices || devices.length < 1) {
-          return [];
-        }
         logger.publish(4, 'device', 'loadDevices:res', devices.length);
         this.success = { message: 'found devices' };
         return devices;
@@ -192,7 +191,7 @@ export default {
     },
 
     async countDevices() {
-      await this.$store.cache.dispatch('device/countByAccount', {
+      await this.$store.dispatch('device/countByAccount', {
         ownerId: this.$store.state.auth.account.id,
       });
     },
@@ -204,19 +203,20 @@ export default {
     },
 
     async updateDevicesList(counter) {
-      return this.loadDevices({
-        skip: counter,
-        limit: this.devicesListLimit,
-        include: ['sensors'],
-      })
-        .then(devices => {
-          const sensors = this.extractSensors(devices);
-          this.devices = this.batchCollection('devices', this.devices, 'create', devices);
-          this.updateFilteredDevices(this.devicesFilter);
-          this.sensors = this.batchCollection('sensors', this.sensors, 'create', sensors);
-          return devices;
-        })
-        .catch(e => e);
+      try {
+        const devices = await this.loadDevices({
+          skip: counter,
+          limit: this.devicesListLimit,
+          include: ['sensors'],
+        });
+        const sensors = this.extractSensors(devices);
+        this.devices = await this.batchDeviceCollection(this.devices, 'create', devices, false);
+        this.updateFilteredDevices(this.devicesFilter);
+        this.sensors = await this.batchSensorCollection(this.sensors, 'create', sensors, false);
+        return devices;
+      } catch (error) {
+        return null;
+      }
     },
 
     updateFilteredDevices(filter) {

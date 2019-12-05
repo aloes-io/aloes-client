@@ -1,3 +1,5 @@
+<!-- Copyright 2019 Edouard Maleix, read LICENSE -->
+
 <template lang="html">
   <b-navbar :class="className" toggleable toggle-breakpoint="sm" class="header-container">
     <b-navbar-toggle target="nav_collapse" />
@@ -42,7 +44,7 @@
             },
           }"
         >
-          <b-img :src="$store.state.style.pictures.node" class="thumb-icon" />
+          <b-img :src="$store.state.style.pictures.device" class="thumb-icon" />
         </b-nav-item>
         <b-nav-item
           :to="{
@@ -53,7 +55,7 @@
             },
           }"
         >
-          <b-img :src="$store.state.style.pictures.device" class="thumb-icon" />
+          <b-img :src="$store.state.style.pictures.application" class="thumb-icon" />
         </b-nav-item>
         <b-nav-item
           :to="{
@@ -64,7 +66,7 @@
             },
           }"
         >
-          <b-img v-if="$store.state.auth.account.avatarImgUrl" :src="userIcon" class="thumb-icon" />
+          <b-img v-if="userIcon" :src="userIcon" class="thumb-icon" />
           <fa-icon v-else icon="user" size="lg" />
           <small v-show="screenIsLarge">
             {{ $store.state.auth.account.firstName }}
@@ -104,8 +106,8 @@ import {
   BNavbarToggle,
   BNavItem,
 } from 'bootstrap-vue';
-import File from '@/views/mixins/file';
-import Notification from '@/views/mixins/notification';
+import File from '@/mixins/file';
+import Notification from '@/mixins/notification';
 
 export default {
   components: {
@@ -176,6 +178,9 @@ export default {
       }
       return 'out';
     },
+    defaultUserIcon() {
+      return this.$store.state.style.pictures.user;
+    },
   },
 
   mounted() {
@@ -205,20 +210,18 @@ export default {
     async getUserIcon() {
       try {
         if (this.$store.state.auth.account && this.$store.state.auth.account.avatarImgUrl) {
-          const url = `${this.$store.state.serverUrl}${
-            this.$store.state.auth.account.avatarImgUrl
-          }`;
+          const url = `${this.$store.state.serverUrl}${this.$store.state.auth.account.avatarImgUrl}`;
           const file = await this.$store.cache.dispatch('files/download', url);
           if (file && file !== null) {
             this.userIcon = await this.parseImage(file);
           } else {
-            this.userIcon = this.$store.state.user;
+            this.userIcon = this.defaultUserIcon;
           }
+        } else {
+          this.userIcon = this.defaultUserIcon;
         }
-        return true;
       } catch (error) {
-        this.userIcon = this.$store.state.user;
-        throw error;
+        this.userIcon = this.defaultUserIcon;
       }
     },
 
@@ -247,7 +250,8 @@ export default {
         );
       } catch (error) {
         this.notifyError(error);
-        throw error;
+        return null;
+        // throw error;
       }
     },
   },

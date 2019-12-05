@@ -1,3 +1,5 @@
+<!-- Copyright 2019 Edouard Maleix, read LICENSE -->
+
 <template lang="html">
   <div class="profile-img">
     <b-card
@@ -60,9 +62,10 @@
 import { BButton } from 'bootstrap-vue';
 import { BCard } from 'bootstrap-vue';
 import { BImg } from 'bootstrap-vue';
+import throttle from 'lodash.throttle';
 import FileImportContainer from '@/views/containers/FileImportContainer.vue';
 import logger from '@/services/logger';
-import File from '@/views/mixins/file';
+import File from '@/mixins/file';
 
 export default {
   name: 'ProfileImg',
@@ -124,15 +127,9 @@ export default {
     avatarImgUrl: {
       get() {
         if (this.viewer) {
-          if (this.$store.state.auth.viewed.avatarImgUrl) {
-            return `${this.serverUrl}${this.$store.state.auth.viewed.avatarImgUrl}`;
-          }
-          return this.userImgPlaceholder;
+          return `${this.serverUrl}${this.$store.state.auth.viewed.avatarImgUrl}`;
         }
-        if (this.$store.state.auth.account.avatarImgUrl) {
-          return `${this.serverUrl}${this.$store.state.auth.account.avatarImgUrl}`;
-        }
-        return this.userImgPlaceholder;
+        return `${this.serverUrl}${this.$store.state.auth.account.avatarImgUrl}`;
       },
       set(value) {
         this.$store.commit('auth/setModelKV', {
@@ -142,7 +139,10 @@ export default {
       },
     },
     defaultImgUrl() {
-      return this.$store.state.imgPlaceholder;
+      return this.$store.state.pictures.imgPlaceholder;
+    },
+    defaultHeaderUrl() {
+      return this.$store.state.pictures.headerPlaceholder;
     },
   },
 
@@ -160,21 +160,30 @@ export default {
       immediate: true,
     },
     avatarImgUrl: {
-      handler(newValue, oldValue) {
-        if (newValue && newValue !== oldValue) {
-          this.getFile('avatar', newValue);
+      async handler(newValue, oldValue) {
+        if (this.$el && newValue && newValue !== oldValue) {
+          await this.getFileDelayed('avatar', newValue);
         }
       },
       immediate: true,
     },
     headerImgUrl: {
-      handler(newValue, oldValue) {
-        if (newValue && newValue !== oldValue) {
-          this.getFile('header', newValue);
+      async handler(newValue, oldValue) {
+        if (this.$el && newValue && newValue !== oldValue) {
+          await this.getFileDelayed('header', newValue);
         }
       },
       immediate: true,
     },
+  },
+
+  created() {
+    this.getFileDelayed = throttle(this.getFile, 100);
+  },
+
+  async mounted() {
+    await this.getFileDelayed('avatar', this.avatarImgUrl);
+    await this.getFileDelayed('header', this.headerImgUrl);
   },
 
   methods: {
@@ -186,14 +195,22 @@ export default {
         const file = await this.$store.dispatch('files/download', url);
         if (file && file !== null) {
           this[type] = await this.parseImage(file);
-        } else {
-          this[type] = this.defaultImgUrl;
+        } else if (type === 'avatar') {
+          this.avatar = this.defaultImgUrl;
+        } else if (type === 'header') {
+          this.header = this.defaultHeaderUrl;
         }
-        return true;
+        return null;
       } catch (error) {
-        this[type] = this.defaultImgUrl;
+        if (error.message !== 'Wrong type') {
+          if (type === 'avatar') {
+            this.avatar = this.defaultImgUrl;
+          } else if (type === 'header') {
+            this.header = this.defaultHeaderUrl;
+          }
+        }
         logger.publish(4, 'file', 'getFile:err', error);
-        throw error;
+        return null;
       }
     },
   },

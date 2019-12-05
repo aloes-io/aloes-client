@@ -1,3 +1,5 @@
+<!-- Copyright 2019 Edouard Maleix, read LICENSE -->
+
 <template lang="html">
   <b-container fluid class="teams-container-view">
     <p class="teams-container-subtitle">

@@ -1,3 +1,5 @@
+<!-- Copyright 2019 Edouard Maleix, read LICENSE -->
+
 <template lang="html">
   <div v-if="tabsIndex === 2" v-show="fullDevices.length > 0">
     <div v-if="fullDevices && fullDevices !== null">
@@ -174,10 +176,10 @@
 </template>
 
 <script type="text/javascript">
-import { updateAloesSensors } from 'aloes-handlers';
 import { BButton, BFormGroup, BFormInput, BModal } from 'bootstrap-vue';
 import has from 'lodash.has';
 import logger from '@/services/logger';
+import Collection from '@/mixins/collection';
 
 export default {
   name: 'DeviceTreeTab',
@@ -191,6 +193,8 @@ export default {
     'device-tree': () => import('@/components/Device/DeviceTree.vue'),
     'sensor-snap': () => import('sensor-snap'),
   },
+
+  mixins: [Collection],
 
   props: {
     token: {
@@ -356,9 +360,17 @@ export default {
       immediate: true,
     },
     tabsIndex: {
-      handler(index) {
+      async handler(index) {
         if (index && index === 2) {
-          this.appendSensorsToDevices();
+          await this.appendSensorsToDevices();
+        }
+      },
+      immediate: true,
+    },
+    devices: {
+      async handler(val) {
+        if (val && val !== null) {
+          await this.appendSensorsToDevices();
         }
       },
       immediate: true,
@@ -372,7 +384,6 @@ export default {
 
   updated() {
     this.deviceTree = this.$refs.deviceTree;
-    // this.appendSensorsToDevices();
   },
 
   beforeDestroy() {
@@ -384,14 +395,24 @@ export default {
       this.dismissCountDown = dismissCountDown;
     },
 
-    appendSensorsToDevices() {
+    async appendSensorsToDevices() {
       if (this.devices) {
-        this.fullDevices = this.devices.map(device => {
-          if (!this.sensors) return device;
-          const sensors = this.sensors.filter(sensor => sensor.deviceId === device.id) || [];
-          device.sensors = sensors;
-          return device;
-        });
+        const appendSensors = (devices, sensors) => {
+          return devices.map(device => {
+            if (!device || !device.id) return null;
+            if (!sensors) return device;
+            device.sensors =
+              sensors.filter(sensor => sensor.deviceId.toString() === device.id.toString()) || [];
+            return device;
+          });
+        };
+
+        const args = [this.devices, this.sensors];
+        if (this.$worker) {
+          this.fullDevices = await this.$worker.run(appendSensors, args);
+        } else {
+          this.fullDevices = appendSensors(this.devices, this.sensors);
+        }
       } else {
         this.fullDevices = [];
       }
@@ -452,16 +473,18 @@ export default {
     },
 
     async onUpdateSensor(...args) {
-      logger.publish(4, 'device', 'onUpdateSensor:req', args);
-      if (!args || !args[0].id) return null;
-      let sensor = args[0];
-      sensor = await updateAloesSensors(sensor, args[1], args[2]);
-      sensor.lastSignal = new Date();
-      await this.$store.dispatch('sensor/publish', {
-        sensor,
-        userId: this.$props.userId,
-      });
-      return sensor;
+      try {
+        logger.publish(4, 'device', 'onUpdateSensor:req', args);
+        if (!args || !args[0].id) return null;
+        const sensor = await this.updateSensor(args[0], args[1], args[2]);
+        await this.$store.dispatch('sensor/publish', {
+          sensor,
+          userId: this.$props.userId,
+        });
+        return sensor;
+      } catch (error) {
+        throw error;
+      }
     },
 
     async onUpdateSetting(...args) {

@@ -1,3 +1,5 @@
+<!-- Copyright 2019 Edouard Maleix, read LICENSE -->
+
 <template lang="html">
   <b-form ref="form" class="login-form-view" @submit.prevent="onLogin">
     <b-form-input
@@ -154,7 +156,7 @@ export default {
         } else {
           this.error = error;
         }
-        throw error;
+        return error;
       }
     },
   },

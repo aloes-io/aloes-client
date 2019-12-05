@@ -1,3 +1,5 @@
+<!-- Copyright 2019 Edouard Maleix, read LICENSE -->
+
 <template lang="html">
   <b-card class="device-editor" no-body>
     <b-card-body>
@@ -444,9 +446,7 @@ export default {
         delete this.device.children;
       }
       if (this.address && this.address.street !== null && this.address.city !== null) {
-        this.device.fullAddress = `${this.address.street} ${this.address.postalCode} ${
-          this.address.city
-        }`;
+        this.device.fullAddress = `${this.address.street} ${this.address.postalCode} ${this.address.city}`;
       } else {
         this.device.fullAddress = null;
       }

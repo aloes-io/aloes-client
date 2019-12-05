@@ -1,3 +1,5 @@
+<!-- Copyright 2019 Edouard Maleix, read LICENSE -->
+
 <template lang="html">
   <b-form ref="form" class="forgot-form-view" @submit.prevent="sendRecoverEmail">
     <b-form-group
@@ -113,8 +115,7 @@ export default {
             this.error = err;
           }
           this.loading = false;
-          return this.error;
-          //  console.log('error sending mail', err);
+          return err;
         });
     },
   },

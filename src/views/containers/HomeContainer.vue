@@ -1,7 +1,9 @@
+<!-- Copyright 2019 Edouard Maleix, read LICENSE -->
+
 <template lang="html">
   <b-container class="home-container" fluid>
     <p class="info-title">
-      What if your sensors could speak a common language ?
+      What if your sensors could speak a common language?
     </p>
     <b-row align-v="center" align-h="center" no-gutters>
       <b-col cols="12" sm="6" md="6" lg="5" xl="5">
@@ -38,7 +40,7 @@
               y="-40"
               height="80"
               width="80"
-              v-bind="{ 'xlink:href': $store.state.style.pictures.nodeOff }"
+              v-bind="{ 'xlink:href': $store.state.style.pictures.deviceAlt }"
               class="sensor-icon"
               @click="deviceTwinSelected = !deviceTwinSelected"
             />
@@ -48,7 +50,7 @@
               y="-40"
               height="80"
               width="80"
-              v-bind="{ 'xlink:href': $store.state.style.pictures.node }"
+              v-bind="{ 'xlink:href': $store.state.style.pictures.device }"
               class="sensor-icon"
               @click="deviceTwinSelected = !deviceTwinSelected"
             />
@@ -74,9 +76,9 @@
             Add context to raw devices data.
             <br />
             Powered by
-            <a href="https://github.com/aloes-io/aloes-handlers" target="_blank">aloes-handlers</a>
-            to encode/decode MQTT stream, and
-            <a href="https://github.com/aloes-io/device-manager" target="_blank">device-manager</a>
+            <a :href="`${$store.state.repoUrl}/aloes-handlers`" target="_blank">aloes-handlers</a>
+            to encode/decode MQTT stream and
+            <a :href="`${$store.state.repoUrl}/device-manager`" target="_blank">device-manager</a>
             to transport and persist data.
           </p>
         </b-col>
@@ -99,12 +101,22 @@
       </transition>
     </b-row>
     <b-row align-v="center" align-h="center">
-      <b-col cols="12" sm="12" md="6" lg="6" xl="6" order-md="12" order-lg="12" order-xl="12">
+      <b-col
+        cols="12"
+        sm="6"
+        md="6"
+        lg="6"
+        xl="6"
+        order-sm="12"
+        order-md="12"
+        order-lg="12"
+        order-xl="12"
+      >
         <device-tree
           key="device-tree"
           v-if="deviceTreeLoaded"
           ref="deviceTree"
-          :source="`/data/device-tree.json`"
+          :source="$store.state.deviceNetwork"
           :height="400"
           :width="600"
           :nodes-radius="10"
@@ -117,7 +129,7 @@
           v-if="vueElem && sensor && sensor.id && showSensor"
           key="sensorSelected"
           cols="12"
-          sm="12"
+          sm="6"
           md="6"
           lg="5"
           xl="5"
@@ -131,7 +143,6 @@
             :owner-id="sensor.ownerId"
             :device-id="sensor.deviceId"
             :dev-eui="sensor.devEui"
-            :dev-addr="sensor.devAddr"
             :name="sensor.name"
             :type="sensor.type"
             :value="JSON.stringify(sensor.value)"
@@ -163,7 +174,7 @@
           v-else-if="device && device.id && showDevice"
           key="deviceSelected"
           cols="12"
-          sm="12"
+          sm="6"
           md="6"
           lg="5"
           xl="5"
@@ -178,7 +189,7 @@
           v-else
           key="noDeviceNoSensorSelected"
           cols="12"
-          sm="12"
+          sm="6"
           md="6"
           lg="4"
           xl="4"
@@ -195,15 +206,25 @@
             Create actionable and meaningful data with rich semantic properties.
             <br />
             Displayed with
-            <a href="https://github.com/aloes-io/aloes-client" target="_blank">aloes-client</a>
+            <a :href="`${$store.state.repoUrl}/aloes-client`" target="_blank">aloes-client</a>
             &
-            <a href="https://github.com/aloes-io/sensor-snap" target="_blank">sensor-snap</a>
+            <a :href="`${$store.state.repoUrl}/sensor-snap`" target="_blank">sensor-snap</a>
             VueJS libraries.
           </p>
         </b-col>
       </transition>
     </b-row>
     <b-row align-v="center" align-h="center">
+      <b-col cols="12" sm="6" lg="5" xl="5">
+        <object-composition
+          key="custom-device"
+          :source="$store.state.virtualObject"
+          :client-url="$store.state.clientUrl"
+          :height="400"
+          :width="500"
+          @node-clicked="onNodeClicked"
+        />
+      </b-col>
       <b-col
         cols="12"
         sm="6"
@@ -220,61 +241,17 @@
         </p>
         <p class="info-description">
           Easily create new device on any Linux machine (
-          <a href="https://github.com/getlarge/node-red-device" target="_blank">node-red-device</a>
+          <a :href="`${$store.state.repoUrl2}/node-red-device`" target="_blank">node-red-device</a>
           ) or on ESP8266 / ESP32 microcrontrollers (
-          <a href="https://github.com/getlarge/arduino-device-mqtt" target="_blank"
+          <a :href="`${$store.state.repoUrl2}/arduino-device-mqtt`" target="_blank"
             >arduino-device-mqtt</a
           >
           ).
         </p>
       </b-col>
-      <b-col cols="12" sm="6" lg="5" xl="5" order-md="1" order-lg="1" order-xl="1">
-        <object-composition
-          key="custom-device"
-          :source="`/data/virtual-object-composition.json`"
-          :client-url="$store.state.clientUrl"
-          :height="400"
-          :width="500"
-          @node-clicked="onNodeClicked"
-        />
-      </b-col>
     </b-row>
     <b-row align-v="center" align-h="center">
-      <transition name="fade" mode="out-in">
-        <b-col
-          v-if="!scenarioSelected"
-          key="scenarioNotSelected"
-          cols="12"
-          sm="6"
-          lg="4"
-          xl="4"
-          offset-lg="1"
-          offset-xl="1"
-        >
-          <div>
-            <p class="info-subtitle">
-              Script devices stories
-            </p>
-            <p class="info-description">
-              Use
-              <a href="https://github.com/getlarge/node-red-bridge" target="_blank"
-                >node-red-bridge</a
-              >
-              to create custom scenarios where you can set interaction rules inside your network.
-            </p>
-          </div>
-        </b-col>
-        <b-col v-else-if="scenarioSelected" key="scenarioSelected" cols="12" sm="6" lg="5" xl="5">
-          <div class="info-video">
-            <video ref="videoPlayer" muted autoplay loop>
-              <!-- <source :src="$store.state.style.videos.scriptScenarioWebm" type="video/webm" /> -->
-              <source :src="$store.state.style.videos.scriptScenarioMp4" type="video/mp4" />
-              <!-- <source :src="$store.state.style.videos.scriptScenarioOgv" type="video/ogg" /> -->
-            </video>
-          </div>
-        </b-col>
-      </transition>
-      <b-col cols="12" sm="6" lg="5" xl="5">
+      <b-col cols="12" sm="6" lg="5" xl="5" order-sm="12" order-md="12" order-lg="12" order-xl="12">
         <svg
           :viewBox="`0 0 ${svgSettings.width} ${svgSettings.height}`"
           pointer-events="all"
@@ -357,7 +334,6 @@
               :stroke="$store.state.style.palette.lightblue"
               d="M0,0 C90,0 90,0 115,0"
             />
-            <!-- d="M0,0 C75,25 85,15 115,15" -->
           </g>
           <g transform="translate(320,200)">
             <circle id="node-timer-1" cx="50" cy="0" r="50" class="device-circle twin" />
@@ -381,7 +357,6 @@
               :stroke="$store.state.style.palette.lightblue"
               d="M0,0 C30,30 95,95 115,115"
             />
-            <!--  d="M0,0 C35,15 85,125 115,125" -->
           </g>
           <g transform="translate(320,315)">
             <circle id="node-light-1" cx="50" cy="0" r="50" class="device-circle twin" />
@@ -397,16 +372,51 @@
           </g>
         </svg>
       </b-col>
+      <transition name="fade" mode="out-in">
+        <b-col
+          v-if="!scenarioSelected"
+          key="scenarioNotSelected"
+          cols="12"
+          sm="6"
+          lg="4"
+          xl="4"
+          offset-lg="1"
+          offset-xl="1"
+        >
+          <div>
+            <p class="info-subtitle">
+              Script devices stories
+            </p>
+            <p class="info-description">
+              Use
+              <a :href="`${$store.state.repoUrl2}/node-red-bridge`" target="_blank"
+                >node-red-bridge</a
+              >
+              to create custom scenarios where you can set interaction rules inside your network.
+            </p>
+          </div>
+        </b-col>
+        <b-col v-else-if="scenarioSelected" key="scenarioSelected" cols="12" sm="6" lg="5" xl="5">
+          <div class="info-video">
+            <video ref="videoPlayer" muted autoplay loop>
+              <source :src="$store.state.style.videos.scriptScenarioMp4" type="video/mp4" />
+            </video>
+          </div>
+        </b-col>
+      </transition>
     </b-row>
   </b-container>
 </template>
 
 <script type="text/javascript">
-import { updateAloesSensors } from 'aloes-handlers';
 import { interpolate } from 'd3-interpolate';
 import { select } from 'd3-selection';
+// import { transition } from 'd3-transition';
 import debounce from 'lodash.debounce';
+import Collection from '@/mixins/collection';
 import logger from '@/services/logger';
+
+// const debounce = () => import('lodash.debounce');
 
 export default {
   name: 'HomeContainer',
@@ -417,6 +427,8 @@ export default {
     'object-composition': () => import('@/components/VirtualObject/ObjectComposition.vue'),
     'sensor-snap': () => import('sensor-snap'),
   },
+
+  mixins: [Collection],
 
   data() {
     return {
@@ -471,11 +483,11 @@ export default {
   },
 
   created() {
-    this.debouncedUpdateSensor = debounce(this.updateSensorView, 100);
+    // this.debouncedUpdateSensor = debounce(this.updateSensorView, 100);
   },
 
   mounted() {
-    //  console.log('sensor-snap', SensorSnap);
+    this.debouncedUpdateSensor = debounce(this.updateSensorView, 100);
     this.deviceTwinSelected = false;
     this.sensor = null;
     this.device = null;
@@ -547,7 +559,7 @@ export default {
             // }
           }
         }
-        sensor = updateAloesSensors(sensor, args[1], args[2]);
+        sensor = await this.updateSensor(args[0], args[1], args[2]);
         this.debouncedUpdateSensor(sensor);
         return sensor;
       } catch (error) {
@@ -644,9 +656,8 @@ export default {
           Number(sensor.resources['5515']) + Math.floor(Math.random() + 1)
         ).toString();
         sensor.resources['5518'] = new Date().getTime();
-        // console.log('MAP UPDATE', sensor.resources);
         this.updateSensorView(sensor);
-      }, interval);
+      }, interval * 3);
     },
 
     stopTimerTest() {
@@ -702,7 +713,7 @@ export default {
         if (this.sensor.type !== 3339) return null;
         logger.publish(3, 'demo-device', 'startAudioTest', '');
         const randomSound = this.randomSounds[Math.floor(Math.random() * this.randomSounds.length)];
-        const buf = await fetch(`${randomSound}`)
+        return fetch(`${randomSound}`)
           .then(response => {
             if (!response.ok) {
               throw new Error('HTTP error, status = ' + response.status);
@@ -717,8 +728,6 @@ export default {
             }
             return res;
           });
-        //  console.log('audioTest, buffer', testNumber, buf);
-        return buf;
         // return this.$refs[`sensorSnap-${this.updatedSensor.id}`].sendCommand(
         //   'playSound',
         //   result,
@@ -733,7 +742,7 @@ export default {
         if (this.sensor.type !== 3349) return null;
         logger.publish(3, 'demo-device', 'startCameraTest', '');
         const randomPic = this.randomPics[Math.floor(Math.random() * this.randomPics.length)];
-        const result = await fetch(`${randomPic}`)
+        return fetch(`${randomPic}`)
           .then(response => {
             if (!response.ok) {
               throw new Error('HTTP error, status = ' + response.status);
@@ -748,15 +757,13 @@ export default {
             }
             return buffer;
           });
-        return result;
       } catch (error) {
         throw error;
       }
     },
 
     linkBlink(id, wait, dur) {
-      const nodeLink = select(`#link-${id}`);
-      nodeLink
+      select(`#link-${id}`)
         .transition()
         .delay(wait)
         .duration(dur)
@@ -765,8 +772,7 @@ export default {
     },
 
     nodeBlink(id, wait, dur) {
-      const nodeLabel = select(`#node-${id}`);
-      nodeLabel
+      select(`#node-${id}`)
         .transition()
         .delay(wait)
         .duration(dur)
@@ -776,6 +782,7 @@ export default {
     playScenario() {
       const duration = 300;
       this.stopScenario();
+
       this.scenarioTimer = setInterval(() => {
         this.linkBlink('scanner-1', 0, duration);
         this.linkBlink('switch-output-1', 50, duration);

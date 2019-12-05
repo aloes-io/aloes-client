@@ -1,3 +1,5 @@
+<!-- Copyright 2019 Edouard Maleix, read LICENSE -->
+
 <template lang="html">
   <div class="profile-view">
     <header-container :access_token="$store.state.auth.access_token" :account="account" />

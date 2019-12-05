@@ -1,3 +1,5 @@
+<!-- Copyright 2019 Edouard Maleix, read LICENSE -->
+
 <template lang="html">
   <div class="address-form-view">
     <b-row v-if="!viewer || editorMode" :class="complete" class="address-editor">

@@ -1,3 +1,5 @@
+<!-- Copyright 2019 Edouard Maleix, read LICENSE -->
+
 <template lang="html">
   <div class="not-found-view">
     <header-container :access_token="acces_token" :account="account" />

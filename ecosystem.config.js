@@ -1,3 +1,5 @@
+/* Copyright 2019 Edouard Maleix, read LICENSE */
+
 const dotenv = require('dotenv');
 
 const result = dotenv.config();
@@ -39,11 +41,7 @@ module.exports = {
       repo: result.parsed.GIT_REPO_SSH_URL,
       path: `/home/${result.parsed.VPS_USER}/${result.parsed.NODE_NAME}-${result.parsed.NODE_ENV}`,
       'pre-setup': '',
-      'pre-deploy-local': `scp -P 22 deploy/.env_${result.parsed.NODE_ENV} ${
-        result.parsed.VPS_USER
-      }@${result.parsed.VPS_HOST}:/home/${result.parsed.VPS_USER}/${
-        result.parsed.NODE_NAME
-      }/source/.env`,
+      'pre-deploy-local': `scp -P 22 deploy/.env_${result.parsed.NODE_ENV} ${result.parsed.VPS_USER}@${result.parsed.VPS_HOST}:/home/${result.parsed.VPS_USER}/${result.parsed.NODE_NAME}/source/.env`,
       'post-deploy': 'npm install && npm run deploy:stage',
     },
     production: {
@@ -55,11 +53,7 @@ module.exports = {
       repo: result.parsed.GIT_REPO_SSH_URL,
       path: `/home/${result.parsed.VPS_USER}/${result.parsed.NODE_NAME}-${result.parsed.NODE_ENV}`,
       'pre-setup': '',
-      'pre-deploy-local': `scp -P 22 deploy/.env_${result.parsed.NODE_ENV} ${
-        result.parsed.VPS_USER
-      }@${result.parsed.VPS_HOST}:/home/${result.parsed.VPS_USER}/${result.parsed.NODE_NAME}-${
-        result.parsed.NODE_ENV
-      }/source/.env`,
+      'pre-deploy-local': `scp -P 22 deploy/.env_${result.parsed.NODE_ENV} ${result.parsed.VPS_USER}@${result.parsed.VPS_HOST}:/home/${result.parsed.VPS_USER}/${result.parsed.NODE_NAME}-${result.parsed.NODE_ENV}/source/.env`,
       'post-deploy': 'npm install && npm run deploy && exit 0',
     },
   },

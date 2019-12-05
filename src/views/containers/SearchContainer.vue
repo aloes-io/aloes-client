@@ -1,3 +1,5 @@
+<!-- Copyright 2019 Edouard Maleix, read LICENSE -->
+
 <template lang="html">
   <b-container fluid class="search-container-view">
     <b-row>
@@ -18,17 +20,13 @@
 </template>
 
 <script type="text/javascript">
-import SearchForm from '@/components/Search/SearchForm.vue';
-import SearchMap from '@/components/Search/SearchMap.vue';
-import SearchResult from '@/components/Search/SearchResult.vue';
-
 export default {
   name: 'SearchContainer',
 
   components: {
-    'search-form': SearchForm,
-    'search-map': SearchMap,
-    'search-result': SearchResult,
+    'search-form': () => import('@/components/Search/SearchForm.vue'),
+    'search-map': () => import('@/components/Search/SearchMap.vue'),
+    'search-result': () => import('@/components/Search/SearchResult.vue'),
   },
 
   props: {

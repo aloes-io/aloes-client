@@ -1,12 +1,14 @@
 # Aloes - Frontend Client
 
 Cient application based on :
+
 - [VueJS](https://vuejs.org/) view framework
+
 - [Bootstrap](http://getbootstrap.com/) component library
+
 - [Vue-cli](https://cli.vuejs.org/) application builder
 
 ---
-
 
 ## Folder structure
 
@@ -22,47 +24,35 @@ Cient application based on :
 	- /modules --> scripts used to handle data flow into the web application
 	- /services --> scripts to handle connections with the backend
 	- /styles --> css files for every components
-	- /views --> landing pages 
-		- /containers --> main components called by landing pages
-	
+	- /views --> landing pages and main components
 
 ## Project setup
-
-```bash
-	$ npm install
 ```
-
-
-### Customize configuration
-
-```bash
-	$ npm install -g @vue/cli
-	$ vue ui
+yarn install
 ```
-See vue/cli [Configuration Reference](https://cli.vuejs.org/config/).
-
 
 ### Compiles and hot-reloads for development
-
-```bash
-	$ npm run serve
 ```
-
+yarn serve
+```
 
 ### Compiles and minifies for production
-
-Edit your config in .env_sample and save it as `.env`.
-
-```bash
-	$ npm run build
+```
+yarn build
 ```
 
+### Run your unit tests
+```
+yarn test:unit
+```
 
 ### Lints and fixes files
-
-```bash
-	$ npm run lint
 ```
+yarn lint
+```
+
+### Customize configuration
+See [Configuration Reference](https://cli.vuejs.org/config/).
 
 
 ## Deploying project
@@ -109,20 +99,20 @@ Remember to update `*.dockerfile` to match your enviroment.
 Creating environment :
 
 ```bash
-	$  docker-compose build
+	$  yarn build:docker
 ```
 
 Starting container :
 
 ```bash
-	$  docker-compose up
+	$  yarn start:docker
 ```
 
 
 # TODO 
 
 - Add a grid to compose views with sensor snaps ( sensors selector, add group container, draggable snaps, list of grids )
-- Add e2e tests
+- Add unit and e2e tests
 - Add docs
 - Manage teams to share devices and applications access
 

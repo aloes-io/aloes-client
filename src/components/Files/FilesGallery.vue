@@ -1,3 +1,5 @@
+<!-- Copyright 2019 Edouard Maleix, read LICENSE -->
+
 <template lang="html">
   <b-row class="files-gallery">
     <b-col cols="6" sm="6">
@@ -30,7 +32,7 @@
 <script type="text/javascript">
 import { BFormSelect } from 'bootstrap-vue';
 // import logger from '@/services/logger';
-import Collection from '@/views/mixins/collection';
+import Collection from '@/mixins/collection';
 
 export default {
   name: 'FilesGallery',

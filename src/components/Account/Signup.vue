@@ -1,3 +1,5 @@
+<!-- Copyright 2019 Edouard Maleix, read LICENSE -->
+
 <template lang="html">
   <b-card class="signup-view">
     <b-form @submit="onSignup" @reset="onReset">
@@ -44,7 +46,7 @@
 <script type="text/javascript">
 import { BAlert, BButton, BForm, BCard } from 'bootstrap-vue';
 import SignupForm from '@/components/Account/SignupForm.vue';
-import notification from '@/views/mixins/notification';
+import Notification from '@/mixins/notification';
 
 export default {
   name: 'Signup',
@@ -57,7 +59,7 @@ export default {
     'signup-form': SignupForm,
   },
 
-  mixins: [notification],
+  mixins: [Notification],
 
   props: {
     sessionError: {

@@ -1,3 +1,5 @@
+<!-- Copyright 2019 Edouard Maleix, read LICENSE -->
+
 <template lang="html">
   <div class="device-sensors-view">
     <div class="sensors-list" v-observer:[optionsObserver]="itemId" @intersected="onIntersected">
@@ -58,11 +60,10 @@
 </template>
 
 <script>
-import { updateAloesSensors } from 'aloes-handlers';
 import { BModal } from 'bootstrap-vue';
-import logger from '@/services/logger';
-import Collection from '@/views/mixins/collection';
 import Observer from '@/directives/observer';
+import Collection from '@/mixins/collection';
+import logger from '@/services/logger';
 
 export default {
   name: 'SensorsList',
@@ -95,7 +96,6 @@ export default {
       sensorSnapHeight: 200,
       sensorsFilter: null,
       filteredSensors: null,
-      CustomElement: null,
       updatedDeviceId: null,
       sensorsListLimit: 8,
       sensorsListCounter: 0,
@@ -156,15 +156,15 @@ export default {
       async handler(id, prevId) {
         if (this.$el && id && id !== null) {
           this.updatedDeviceId = id;
-          if (id !== prevId) {
+          if (!prevId || id.toString() !== prevId.toString()) {
             this.deviceSensors = [];
             this.filteredSensors = [];
             this.sensorsListCounter = 0;
             this.page = 0;
+            this.calculateListLimit();
+            await this.countSensors();
+            await this.updateSensorsList(this.sensorsListCounter);
           }
-          this.calculateListLimit();
-          await this.updateSensorsList(this.sensorsListCounter, this.page);
-          await this.countSensors();
         }
       },
       immediate: true,
@@ -178,10 +178,12 @@ export default {
     sensors: {
       handler(value) {
         if (!this.updatedDeviceId) return;
-        this.deviceSensors = value.filter(
-          sensor => sensor.deviceId.toString() === this.updatedDeviceId.toString(),
-        );
-        this.updateFilteredSensors();
+        if (value && Array.isArray(value)) {
+          this.deviceSensors = value.filter(
+            sensor => sensor.deviceId.toString() === this.updatedDeviceId.toString(),
+          );
+          this.updateFilteredSensors(this.sensorsFilter);
+        }
       },
       immediate: true,
     },
@@ -206,10 +208,6 @@ export default {
           filter,
         });
         // logger.publish(4, 'sensor', 'loadSensors:res', sensors);
-        if (!sensors || sensors === null) {
-          this.loading = false;
-          return [];
-        }
         this.loading = false;
         return sensors;
       } catch (error) {
@@ -219,7 +217,7 @@ export default {
     },
 
     async countSensors() {
-      await this.$store.cache.dispatch('sensor/countByDevice', {
+      await this.$store.dispatch('sensor/countByDevice', {
         deviceId: this.updatedDeviceId,
       });
     },
@@ -227,18 +225,15 @@ export default {
     async onUpdateSensor(...args) {
       try {
         logger.publish(4, 'sensor', 'onUpdateSensor:req', { key: args[1], value: args[2] });
-        if (!args || !args[0].id) return null;
-        let sensor = args[0];
-        sensor = updateAloesSensors(sensor, args[1], args[2]);
-        sensor.lastSignal = new Date();
-        sensor.method = 'PUT';
-        sensor.value = args[2];
+        if (!args || !args[0].id) return;
+        const sensor = await this.updateSensor(args[0], args[1], args[2]);
         await this.$store.dispatch('sensor/publish', {
           sensor,
           userId: this.$props.userId,
         });
-        return sensor;
+        //  return sensor;
       } catch (error) {
+        logger.publish(2, 'sensor', 'onUpdateSensor:err', error);
         throw error;
       }
     },
@@ -273,38 +268,34 @@ export default {
     },
 
     async updateSensorsList(counter) {
-      return this.loadSensors(this.updatedDeviceId, {
-        skip: counter,
-        limit: this.sensorsListLimit,
-      })
-        .then(sensors => {
-          this.deviceSensors = [...this.deviceSensors, ...sensors];
-          this.updateFilteredSensors(this.sensorsFilter);
-          this.sensors = this.batchCollection('sensors', this.sensors, 'create', sensors);
-          // this.deviceSensors = this.sensors.filter(
-          //   sensor => sensor.deviceId.toString() === this.updatedDeviceId.toString(),
-          // );
-          return sensors;
-        })
-        .catch(e => e);
+      try {
+        logger.publish(4, 'sensor', 'updateSensorsList:req', counter);
+        const sensors = await this.loadSensors(this.updatedDeviceId, {
+          skip: counter,
+          limit: this.sensorsListLimit,
+        });
+        this.sensors = await this.batchSensorCollection(this.sensors, 'create', sensors, false);
+        this.updateFilteredSensors(this.sensorsFilter);
+        return sensors;
+      } catch (error) {
+        return null;
+      }
     },
 
     calculateListLimit() {
       const rowRatio = Math.round((this.$el.clientHeight / this.sensorSnapHeight) * 1.1);
       const columnRatio = Math.round(this.$el.clientWidth / (this.sensorSnapWidth * 1.5));
       const limit = rowRatio * columnRatio;
-      if (limit > 0) {
-        this.sensorsListLimit = limit;
-      }
+      if (limit > 0) this.sensorsListLimit = limit;
       // console.log('Ratios:', rowRatio, columnRatio, this.sensorsListLimit);
       return limit;
     },
 
     updateFilteredSensors(filter) {
       if (filter && filter.key && filter.value) {
-        this.filteredSensors = this.deviceSensors.filter(
-          sensor => sensor[filter.key].toLowerCase() === filter.value,
-        );
+        this.filteredSensors = this.deviceSensors.filter(sensor => {
+          sensor[filter.key].toLowerCase() === filter.value;
+        });
       } else {
         this.filteredSensors = this.deviceSensors;
       }

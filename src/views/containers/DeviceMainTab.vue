@@ -1,3 +1,5 @@
+<!-- Copyright 2019 Edouard Maleix, read LICENSE -->
+
 <template lang="html">
   <b-row v-if="tabsIndex === 0" class="about-header">
     <b-col v-if="device" sm="8">
@@ -11,8 +13,8 @@
     <b-row v-if="!viewer && editorMode" align-h="center">
       <b-col sm="8">
         <b-alert
-          v-if="error"
-          :show="dismissCountDown && errorMessageExists"
+          v-if="error && error.message"
+          :show="dismissCountDown"
           dismissible
           variant="warning"
           @dismissed="dismissCountDown = 0"
@@ -20,7 +22,7 @@
         >
           {{ error.message }}
         </b-alert>
-        <b-alert v-if="success" :show="successMessageExists" dismissible variant="success">
+        <b-alert v-if="success && success.message" dismissible variant="success">
           {{ success.message }}
         </b-alert>
       </b-col>
@@ -30,7 +32,6 @@
 
 <script type="text/javascript">
 import { BAlert } from 'bootstrap-vue';
-import has from 'lodash.has';
 
 export default {
   name: 'DeviceMainTab',
@@ -70,9 +71,6 @@ export default {
       viewer: false,
       editorMode: true,
       loading: false,
-      confirm: {
-        message: `Are you sure you want to delete this sensor ?`,
-      },
     };
   },
 
@@ -102,12 +100,12 @@ export default {
     device: {
       get() {
         // if (this.$props.deviceId)
-        if (this.$store.state.device.instance.sensors) {
-          const device = this.$store.state.device.instance;
+        const device = this.$store.state.device.instance;
+        if (device.sensors) {
           delete device.sensors;
           return device;
         }
-        return this.$store.state.device.instance;
+        return device;
       },
       set(value) {
         this.$store.commit('device/setModel', value);
@@ -123,12 +121,6 @@ export default {
           value,
         });
       },
-    },
-    errorMessageExists() {
-      return has(this.error, 'message');
-    },
-    successMessageExists() {
-      return has(this.sucess, 'message');
     },
   },
 
