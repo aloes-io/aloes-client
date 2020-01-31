@@ -256,13 +256,13 @@ PubSub.onCollectionUpdated = throttle(onCollectionUpdated, throttleDelay);
 
 const handler = async (topic, payload) => {
   try {
-    if (
-      lastMessage &&
-      lastMessage.topic === topic &&
-      lastMessage.timestamp > Date.now() - throttleDelay * 2
-    ) {
-      return lastMessage;
-    }
+    // if (
+    //   lastMessage &&
+    //   lastMessage.topic === topic &&
+    //   lastMessage.timestamp > Date.now() - throttleDelay * 2
+    // ) {
+    //   return lastMessage;
+    // }
     logger.publish(5, 'PubSub', 'handler:req', topic);
     const res = await packetHandler(topic, payload.toString());
     // const res = await packetHandler(topic, payload);

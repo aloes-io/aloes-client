@@ -3,7 +3,8 @@
 import axios from 'axios';
 import logger from './logger';
 
-const Storage = window.localStorage;
+// const Storage = window.localStorage;
+const Storage = window.sessionStorage;
 const serverUrl = process.env.VUE_APP_SERVER_URL;
 const restApiRoot = process.env.VUE_APP_ROOT_API;
 
@@ -15,7 +16,7 @@ const exportTokenToLocalStorage = token => {
 
 const removeTokenFromLocalStorage = () => {
   if (Storage) {
-    Storage.removeItem('profile');
+    // Storage.removeItem('profile');
     Storage.removeItem('loopback-token');
   }
 };
