@@ -5,7 +5,9 @@ import socket from '@/services/socket';
 import PubSub from '@/services/PubSub';
 import logger from '@/services/logger';
 
-export async function findByAccount({ state, commit }, { ownerId, filter }) {
+const sensorResources = 'resources';
+
+export async function findByAccount({ state, commit, dispatch }, { ownerId, filter }) {
   try {
     let sensors = await loopback.find(`/${state.resources}`, {
       where: { ownerId },
@@ -15,6 +17,9 @@ export async function findByAccount({ state, commit }, { ownerId, filter }) {
     });
     logger.publish(4, state.collectionName, 'dispatch:findByAccount:req', filter);
     if (!sensors || sensors === null) sensors = [];
+    // forEach sensor get resources ?
+    await dispatch('attachResourcesToSensors', { sensors });
+
     // else sensors = JSON.parse(JSON.stringify(sensors));
     logger.publish(3, state.collectionName, 'dispatch:findByAccount:res', sensors.length);
     return sensors;
@@ -38,7 +43,7 @@ export async function countByAccount({ state, commit }, { ownerId }) {
   }
 }
 
-export async function findByDevice({ state }, { deviceId, filter }) {
+export async function findByDevice({ state, dispatch }, { deviceId, filter }) {
   try {
     logger.publish(3, state.collectionName, 'dispatch:findByDevice:req', filter);
     let sensors = await loopback.find(`/Devices/${deviceId}/${state.resources}`, {
@@ -47,6 +52,9 @@ export async function findByDevice({ state }, { deviceId, filter }) {
       skip: filter.skip || 0,
     });
     if (!sensors || sensors === null) sensors = [];
+    // forEach sensor get resources ?
+    await dispatch('attachResourcesToSensors', { sensors });
+
     // else sensors = JSON.parse(JSON.stringify(sensors));
     logger.publish(3, state.collectionName, 'dispatch:findByDevice:res', sensors.length);
     return sensors;
@@ -95,12 +103,51 @@ export async function deleteInstance({ state, commit }, { sensor }) {
       key: 'success',
       value: { message: 'sensor removed' },
     });
+    logger.publish(3, state.collectionName, 'dispatch:deleteInstance:res', deletedSensor);
     return deletedSensor;
   } catch (error) {
     logger.publish(4, state.collectionName, 'dispatch:deleteInstance:err', error);
     commit('setStateKV', { key: 'error', value: error });
     throw error;
   }
+}
+
+export async function attachResourcesToSensors({ dispatch }, { sensors }) {
+  return Promise.all(
+    sensors.map(async sensor => {
+      sensor.resources = await dispatch('findResources', { sensorId: sensor.id });
+      return sensor.resources;
+    }),
+  );
+}
+
+export async function findResources({ state, commit }, { sensorId }) {
+  try {
+    const resources = await loopback.get(`/${state.resources}/${sensorId}/${sensorResources}`);
+    // where to store resources ?
+    return resources;
+  } catch (error) {
+    logger.publish(4, state.collectionName, 'dispatch:findResources:err', error);
+    commit('setStateKV', { key: 'error', value: error });
+    throw error;
+  }
+}
+
+export async function updateResources({ state }, { sensorId, resources }) {
+  const updatedResources = await loopback.put(
+    `/${state.resources}/${sensorId}/${sensorResources}`,
+    resources,
+  );
+
+  return updatedResources;
+}
+
+export async function deleteResources({ state }, { sensorId }) {
+  const deletedResources = await loopback.delete(
+    `/${state.resources}/${sensorId}/${sensorResources}`,
+  );
+  logger.publish(3, state.collectionName, 'dispatch:deleteResources:res', deletedResources);
+  return deletedResources;
 }
 
 export async function subscribeToSensorsUpdate({ state }, { userId }) {
