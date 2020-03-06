@@ -15,7 +15,7 @@
         :src="avatar"
         fluid
         class="avatar-image"
-        @click.native.prevent.stop="
+        @click.prevent.stop="
           displayAvatarButton ? (displayAvatarButton = false) : (displayAvatarButton = true)
         "
         @mouseover="displayAvatarButton = true"

@@ -133,7 +133,7 @@ export async function findResources({ state, commit }, { sensorId }) {
   }
 }
 
-export async function updateResources({ state, commit }, { sensorId, resources }) {
+export async function updateResources({ state }, { sensorId, resources }) {
   const updatedResources = await loopback.put(
     `/${state.resources}/${sensorId}/${sensorResources}`,
     resources,
@@ -142,7 +142,7 @@ export async function updateResources({ state, commit }, { sensorId, resources }
   return updatedResources;
 }
 
-export async function deleteResources({ state, commit }, { sensorId }) {
+export async function deleteResources({ state }, { sensorId }) {
   const deletedResources = await loopback.delete(
     `/${state.resources}/${sensorId}/${sensorResources}`,
   );
