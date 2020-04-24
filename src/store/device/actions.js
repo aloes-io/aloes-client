@@ -1,4 +1,4 @@
-/* Copyright 2019 Edouard Maleix, read LICENSE */
+/* Copyright 2020 Edouard Maleix, read LICENSE */
 
 import loopback from '@/services/loopback';
 import socket from '@/services/socket';
@@ -25,17 +25,13 @@ export async function findByAccount({ state, commit }, { ownerId, filter }) {
 }
 
 export async function countByAccount({ state, commit }, { ownerId }) {
-  try {
-    const res = await loopback.find(`/${state.resources}/count`, {
-      where: { ownerId },
-    });
-    const count = res.count || 0;
-    logger.publish(3, state.collectionName, 'dispatch:countByAccount:res', count);
-    commit('setStateKV', { key: 'collectionCount', value: count });
-    return count;
-  } catch (error) {
-    throw error;
-  }
+  const res = await loopback.find(`/${state.resources}/count`, {
+    where: { ownerId },
+  });
+  const count = res.count || 0;
+  logger.publish(3, state.collectionName, 'dispatch:countByAccount:res', count);
+  commit('setStateKV', { key: 'collectionCount', value: count });
+  return count;
 }
 
 export async function findDeviceKV({ state, commit }, { key, value }) {

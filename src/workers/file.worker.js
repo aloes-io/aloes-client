@@ -1,41 +1,34 @@
-/* Copyright 2019 Edouard Maleix, read LICENSE */
+/* Copyright 2020 Edouard Maleix, read LICENSE */
 
-const getImageUrlProcess = blob => {
-  return new Promise((resolve, reject) => {
+const getImageUrlProcess = blob =>
+  new Promise((resolve, reject) => {
     const fReader = new FileReader();
     fReader.onload = () => {
-      if (!fReader.result) reject(new Error('no result from file reader'));
-      resolve(fReader.result);
+      if (!fReader.result) return reject(new Error('no result from file reader'));
+      return resolve(fReader.result);
     };
     fReader.onerror = e => {
       reject(e);
     };
     fReader.readAsDataURL(blob);
   });
-};
 
 const parseImageProcess = value => {
   try {
-    let blob = null;
     if (value && typeof value === 'string') {
-      // console.log('parseImageProcess : string');
       const base64Flag = `data:image/png;base64,`;
       return fetch(`${base64Flag}${value}`)
         .then(res => res.blob())
         .catch(e => e);
     } else if (value.type && value.type === 'Buffer') {
-      // console.log('parseImageProcess : JSON buffer');
-      blob = new Blob([Buffer.from(value.data).buffer]);
+      return new Blob([Buffer.from(value.data).buffer]);
     } else if (value instanceof Blob) {
-      // console.log('parseImageProcess : blob');
-      blob = value;
+      return value;
     } else if (value instanceof ArrayBuffer) {
-      // console.log('parseImageProcess : ArrayBuffer');
-      blob = new Blob([value.buffer]);
-    } else {
-      // console.log('parseImageProcess : unknown : ', value);
+      return new Blob([value.buffer]);
     }
-    return blob;
+
+    return null;
   } catch (error) {
     return null;
   }
@@ -45,7 +38,7 @@ async function onMessage(event) {
   try {
     // console.log('FILE WORKER MESSAGE : ', event.data);
     if (event.data && event.data.value) {
-      const blob = parseImageProcess(event.data.value);
+      const blob = await parseImageProcess(event.data.value);
       return postMessage({ blob });
     }
     if (event.data && event.data.blob) {
@@ -60,4 +53,3 @@ async function onMessage(event) {
 }
 
 onmessage = onMessage;
-// self.addEventListener('message', onMessage);

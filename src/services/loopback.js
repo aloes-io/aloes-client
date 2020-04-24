@@ -1,4 +1,4 @@
-/* Copyright 2019 Edouard Maleix, read LICENSE */
+/* Copyright 2020 Edouard Maleix, read LICENSE */
 
 import axios from 'axios';
 import logger from './logger';
@@ -9,16 +9,11 @@ const serverUrl = process.env.VUE_APP_SERVER_URL;
 const restApiRoot = process.env.VUE_APP_ROOT_API;
 
 const exportTokenToLocalStorage = token => {
-  if (Storage) {
-    Storage.setItem('loopback-token', JSON.stringify(token));
-  }
+  if (Storage) Storage.setItem('loopback-token', JSON.stringify(token));
 };
 
 const removeTokenFromLocalStorage = () => {
-  if (Storage) {
-    // Storage.removeItem('profile');
-    Storage.removeItem('loopback-token');
-  }
+  if (Storage) Storage.removeItem('loopback-token');
 };
 
 const addTokenFromLocalStorage = http => {
@@ -74,17 +69,20 @@ const interceptResponse = res => {
     return res;
   }
 };
+
 http.interceptors.response.use(interceptResponse, interceptResErrors);
 
 // Set storage Token in http if exists
 addTokenFromLocalStorage(http);
 
 const interceptReqErrors = err => Promise.reject(err);
+
 const interceptRequest = config => {
   config.uid = setLoading(true, config.uid);
   logger.publish(5, 'loopback', 'listener:interceptRequest', config);
   return config;
 };
+
 http.interceptors.request.use(interceptRequest, interceptReqErrors);
 
 export default http;

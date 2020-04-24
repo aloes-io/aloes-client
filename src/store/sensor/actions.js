@@ -1,4 +1,4 @@
-/* Copyright 2019 Edouard Maleix, read LICENSE */
+/* Copyright 2020 Edouard Maleix, read LICENSE */
 
 import loopback from '@/services/loopback';
 import socket from '@/services/socket';
@@ -30,49 +30,37 @@ export async function findByAccount({ state, commit, dispatch }, { ownerId, filt
 }
 
 export async function countByAccount({ state, commit }, { ownerId }) {
-  try {
-    const res = await loopback.find(`/${state.resources}/count`, {
-      where: { ownerId },
-    });
-    const count = res.count || 0;
-    logger.publish(3, state.collectionName, 'dispatch:countByAccount:res', count);
-    commit('setStateKV', { key: 'collectionCount', value: count });
-    return count;
-  } catch (error) {
-    throw error;
-  }
+  const res = await loopback.find(`/${state.resources}/count`, {
+    where: { ownerId },
+  });
+  const count = res.count || 0;
+  logger.publish(3, state.collectionName, 'dispatch:countByAccount:res', count);
+  commit('setStateKV', { key: 'collectionCount', value: count });
+  return count;
 }
 
 export async function findByDevice({ state, dispatch }, { deviceId, filter }) {
-  try {
-    logger.publish(3, state.collectionName, 'dispatch:findByDevice:req', filter);
-    let sensors = await loopback.find(`/Devices/${deviceId}/${state.resources}`, {
-      // include: ['measurement'],
-      limit: filter.limit || 50,
-      skip: filter.skip || 0,
-    });
-    if (!sensors || sensors === null) sensors = [];
-    // forEach sensor get resources ?
-    await dispatch('attachResourcesToSensors', { sensors });
+  logger.publish(3, state.collectionName, 'dispatch:findByDevice:req', filter);
+  let sensors = await loopback.find(`/Devices/${deviceId}/${state.resources}`, {
+    // include: ['measurement'],
+    limit: filter.limit || 50,
+    skip: filter.skip || 0,
+  });
+  if (!sensors || sensors === null) sensors = [];
+  // forEach sensor get resources ?
+  await dispatch('attachResourcesToSensors', { sensors });
 
-    // else sensors = JSON.parse(JSON.stringify(sensors));
-    logger.publish(3, state.collectionName, 'dispatch:findByDevice:res', sensors.length);
-    return sensors;
-  } catch (error) {
-    throw error;
-  }
+  // else sensors = JSON.parse(JSON.stringify(sensors));
+  logger.publish(3, state.collectionName, 'dispatch:findByDevice:res', sensors.length);
+  return sensors;
 }
 
 export async function countByDevice({ state, commit }, { deviceId }) {
-  try {
-    const res = await loopback.find(`/Devices/${deviceId}/${state.resources}/count`);
-    const count = res.count || 0;
-    logger.publish(3, state.collectionName, 'dispatch:countByDevice:res', count);
-    commit('setStateKV', { key: 'deviceSensorsCount', value: count });
-    return count;
-  } catch (error) {
-    throw error;
-  }
+  const res = await loopback.find(`/Devices/${deviceId}/${state.resources}/count`);
+  const count = res.count || 0;
+  logger.publish(3, state.collectionName, 'dispatch:countByDevice:res', count);
+  commit('setStateKV', { key: 'deviceSensorsCount', value: count });
+  return count;
 }
 
 export async function updateInstance({ state, commit }, { sensor }) {
