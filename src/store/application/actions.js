@@ -1,4 +1,4 @@
-/* Copyright 2019 Edouard Maleix, read LICENSE */
+/* Copyright 2020 Edouard Maleix, read LICENSE */
 
 import loopback from '@/services/loopback';
 import socket from '@/services/socket';
@@ -86,7 +86,6 @@ export async function createApplication({ state, commit }, { application }) {
       return res;
     })
     .catch(err => err);
-  //  return result;
 }
 
 export async function updateApplication({ state, commit }, { application }) {
@@ -103,7 +102,6 @@ export async function updateApplication({ state, commit }, { application }) {
       })
       .catch(err => err)
   );
-  //  return result;
 }
 
 export async function delApplication({ state, commit }, { application }) {
@@ -117,7 +115,7 @@ export async function delApplication({ state, commit }, { application }) {
   } catch (error) {
     commit('setModelKV', { key: 'error', value: error });
     logger.publish(4, state.collectionName, 'dispatch:delApplication:err', error);
-    return error;
+    throw error;
   }
 }
 
@@ -130,5 +128,4 @@ export async function refreshToken({ state, commit }, application) {
       return res;
     })
     .catch(err => err);
-  //  return result;
 }

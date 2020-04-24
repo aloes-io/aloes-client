@@ -1,4 +1,8 @@
-/* Copyright 2019 Edouard Maleix, read LICENSE */
+/* Copyright 2020 Edouard Maleix, read LICENSE */
+
+const collectionNames = ['device', 'sensor', 'files', 'filesMeta'];
+
+const operations = ['create', 'update', 'delete'];
 
 const updateCollectionProcess = (
   collectionName,
@@ -23,24 +27,20 @@ const updateCollectionProcess = (
         case 'create':
           index = getCollectionIndex(instance);
           if (index === -1) {
-            // console.log(collectionName, `${collectionName}Created`, index);
             collection.push(instance);
           } else {
-            // console.log(collectionName, `${collectionName}Updated`, index);
             collection[index] = instance;
           }
           break;
         case 'update':
           index = getCollectionIndex(instance);
           if (index > -1) {
-            // console.log(collectionName, `${collectionName}Updated`, index);
             collection[index] = instance;
           }
           break;
         case 'delete':
           index = getCollectionIndex(instance);
           if (index > -1) {
-            // console.log(collectionName, `${collectionName}Deleted`, index);
             collection.splice(index, 1);
           }
           break;
@@ -64,14 +64,9 @@ function onMessage(event) {
     const collectionName = event.data.collectionName;
     let collection = event.data.collection || [];
     // console.log('COLLECTION WORKER', collectionName, args, collection, event.data[args[3]]);
-    if (
-      collectionName === 'device' ||
-      collectionName === 'sensor' ||
-      collectionName === 'files' ||
-      collectionName === 'filesMeta'
-    ) {
+    if (collectionNames.includes(collectionName)) {
       const operation = event.data.operation;
-      if (operation === 'create' || operation === 'update' || operation === 'delete') {
+      if (operations.includes(operation)) {
         const serialize = event.data.serialize || false;
         collection = updateCollectionProcess(
           collectionName,

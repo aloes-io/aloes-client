@@ -1,4 +1,4 @@
-/* Copyright 2019 Edouard Maleix, read LICENSE */
+/* Copyright 2020 Edouard Maleix, read LICENSE */
 
 import loopback from '@/services/loopback';
 import logger from '@/services/logger';
@@ -118,28 +118,24 @@ export async function uploadBuffer(
 }
 
 export async function getFilesMetaByOwner({ state }, { ownerId, name, type }) {
-  try {
-    const filter = {
-      where: {
-        and: [{ ownerId }],
-      },
-      limit: 40,
-    };
-    if (name && name !== null) {
-      filter.where.and.push({ name: { like: `.*${name}.*`, options: 'i' } });
-    }
-    if (type && type !== null) {
-      filter.where.and.push({ type: { like: `.*${type}.*`, options: 'i' } });
-    }
-
-    const filesMeta = await loopback.find(`/${state.resources}`, filter);
-    if (filesMeta && filesMeta.length) {
-      return filesMeta;
-    }
-    return [];
-  } catch (error) {
-    throw error;
+  const filter = {
+    where: {
+      and: [{ ownerId }],
+    },
+    limit: 40,
+  };
+  if (name && name !== null) {
+    filter.where.and.push({ name: { like: `.*${name}.*`, options: 'i' } });
   }
+  if (type && type !== null) {
+    filter.where.and.push({ type: { like: `.*${type}.*`, options: 'i' } });
+  }
+
+  const filesMeta = await loopback.find(`/${state.resources}`, filter);
+  if (filesMeta && filesMeta.length) {
+    return filesMeta;
+  }
+  return [];
 }
 
 export async function download({ state }, url) {
@@ -171,18 +167,14 @@ export async function getFile({ state }, { ownerId, name }) {
 }
 
 export async function updateFileMeta({ state }, { ownerType, fileMeta }) {
-  try {
-    if (!ownerType || ownerType.toLowerCase() !== 'user' || ownerType.toLowerCase() !== 'device') {
-      throw new Error('missing params');
-    }
-    const fileMetaId = fileMeta.id;
-    delete fileMeta.id;
-    const updatedFileMeta = await loopback.put(`/${state.resources}/${fileMetaId}`, fileMeta);
-    if (updatedFileMeta && updatedFileMeta !== null) {
-      return updatedFileMeta;
-    }
-    return null;
-  } catch (error) {
-    throw error;
+  if (!ownerType || ownerType.toLowerCase() !== 'user' || ownerType.toLowerCase() !== 'device') {
+    throw new Error('missing params');
   }
+  const fileMetaId = fileMeta.id;
+  delete fileMeta.id;
+  const updatedFileMeta = await loopback.put(`/${state.resources}/${fileMetaId}`, fileMeta);
+  if (updatedFileMeta && updatedFileMeta !== null) {
+    return updatedFileMeta;
+  }
+  return null;
 }

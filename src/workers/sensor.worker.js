@@ -1,4 +1,4 @@
-/* Copyright 2019 Edouard Maleix, read LICENSE */
+/* Copyright 2020 Edouard Maleix, read LICENSE */
 
 import { updateAloesSensors } from 'aloes-handlers';
 
@@ -19,4 +19,3 @@ function onMessage(event) {
 }
 
 onmessage = onMessage;
-// self.addEventListener('message', onMessage;

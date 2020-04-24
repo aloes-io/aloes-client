@@ -1,4 +1,4 @@
-/* Copyright 2019 Edouard Maleix, read LICENSE */
+/* Copyright 2020 Edouard Maleix, read LICENSE */
 
 import mqtt from 'async-mqtt';
 import logger from './logger';
@@ -29,10 +29,7 @@ const delSocketId = () => {
   if (Storage) Storage.removeItem('socket-id');
 };
 
-const getSocketId = () => {
-  const socketId = Storage && Storage.getItem('socket-id');
-  return socketId;
-};
+const getSocketId = () => Storage && Storage.getItem('socket-id');
 
 socket.setToken = token => {
   try {
@@ -74,12 +71,8 @@ socket.removeToken = () => {
 
 const handleMessage = (packet, cb) => {
   PubSub.handler(packet.topic, packet.payload)
-    .then(() => {
-      cb();
-    })
-    .catch(() => {
-      cb();
-    });
+    .then(() => cb())
+    .catch(() => cb());
 };
 
 socket.initSocket = async options => {

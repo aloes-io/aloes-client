@@ -1,4 +1,4 @@
-/* Copyright 2019 Edouard Maleix, read LICENSE */
+/* Copyright 2020 Edouard Maleix, read LICENSE */
 
 import loopback from '@/services/loopback';
 import socket from '@/services/socket';
@@ -240,7 +240,9 @@ export async function findAccountByEmail({ state }, email) {
     logger.publish(3, state.collectionName, 'dispatch:findAccountByEmail:res', res);
     if (res && res.email) {
       logger.publish(3, state.collectionName, 'dispatch:findAccountByEmail:res', res.email);
-      if (res.email.accepted && res.email.accepted[0] === email) return true;
+      if (res.email.accepted && res.email.accepted[0] === email) {
+        return true;
+      }
       //  if (res.result.email.rejected === [`${email}`]) return false; // please try again
       return false;
     }
@@ -301,5 +303,4 @@ export async function updateAccount({ commit, state }, user) {
       return res;
     })
     .catch(err => err);
-  //  return result;
 }
