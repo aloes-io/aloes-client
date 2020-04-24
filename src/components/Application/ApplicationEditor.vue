@@ -9,7 +9,7 @@
             :src="icon"
             fluid
             class="avatar-image"
-            @click.native.prevent.stop="
+            @click.prevent.stop="
               displayIconButton ? (displayIconButton = false) : (displayIconButton = true)
             "
             @mouseover="displayIconButton = true"
