@@ -1,6 +1,5 @@
-/* Copyright 2019 Edouard Maleix, read LICENSE */
+/* Copyright 2020 Edouard Maleix, read LICENSE */
 
-import throttle from 'lodash.throttle';
 import Vue from 'vue';
 import logger from './logger';
 import PacketWorker from '@/workers/packet.worker.js';
@@ -10,9 +9,6 @@ export const EventBus = new Vue();
 const Storage = window.sessionStorage;
 // const pubsubVersion = process.env.VUE_APP_PUBSUB_API_VERSION;
 const PubSub = { hasListeners: false };
-const throttleDelay = 50;
-
-const lastMessage = { topic: '', payload: '', timestamp: 0 };
 
 const pushContainer = subscriptionName => {
   if (!subscriptionName || subscriptionName === null) return false;
@@ -35,8 +31,8 @@ const pushContainer = subscriptionName => {
   return true;
 };
 
-const packetEncoder = options => {
-  return new Promise((resolve, reject) => {
+const packetEncoder = options =>
+  new Promise((resolve, reject) => {
     if (!options) return reject(new Error('Invalid arguments'));
     const onMessage = e => {
       if (e.data.error) return reject(new Error(e.data.error.message));
@@ -49,10 +45,9 @@ const packetEncoder = options => {
     PubSub.packetWorker.onerror = reject;
     PubSub.packetWorker.postMessage({ options });
   });
-};
 
-const packetHandler = (topic, payload) => {
-  return new Promise((resolve, reject) => {
+const packetHandler = (topic, payload) =>
+  new Promise((resolve, reject) => {
     if (!topic || !payload) return reject(new Error('Invalid arguments'));
     const onMessage = e => {
       if (e.data.error) return reject(new Error(e.data.error.message));
@@ -65,7 +60,6 @@ const packetHandler = (topic, payload) => {
     PubSub.packetWorker.onerror = reject;
     PubSub.packetWorker.postMessage({ topic, payload });
   });
-};
 
 PubSub.subscribe = async (client, options) => {
   try {
@@ -73,7 +67,9 @@ PubSub.subscribe = async (client, options) => {
     if (client && options) {
       options.pattern = 'aloesClient';
       const packet = await packetEncoder(options);
-      if (!packet || !packet.topic || packet.topic === null) throw new Error('No topic encoded');
+      if (!packet || !packet.topic || packet.topic === null) {
+        throw new Error('No topic encoded');
+      }
       //  logger.publish(4, 'pubsub', 'subscribe:res', packet.topic);
       await client.subscribe(packet.topic, { qos: 0 });
       // await client.subscribe(`${pubsubVersion}/${packet.topic}`, { qos: 0 });
@@ -103,13 +99,11 @@ PubSub.unSubscribeWhere = async (client, options) => {
 
       let container;
       try {
-        container = JSON.parse(Storage.getItem('subscription-container'));
+        container = JSON.parse(Storage.getItem('subscription-container')) || [];
       } catch (e) {
         container = [];
       }
-      if (!container || container === null) {
-        container = [];
-      }
+
       const index = container.indexOf(name);
       if (index !== -1) {
         container.splice(index, 1);
@@ -211,7 +205,7 @@ PubSub.removeListeners = async client => {
         Storage.setItem('subscription-container', '[]');
         if (container && container.length > 0) {
           // container.map(async route => client.unsubscribe(route));
-          Promise.all(container.map(route => client.unsubscribe(route)));
+          Promise.all(container.map(client.unsubscribe));
         }
         logger.publish(3, 'pubsub', 'removeListeners:res', 'success');
         return;
@@ -231,59 +225,48 @@ const onCollectionPresented = (collectionName, instance) => {
   EventBus.$emit(`on${collectionName}Presented`, instance);
 };
 
-PubSub.onCollectionPresented = throttle(onCollectionPresented, throttleDelay);
+PubSub.onCollectionPresented = onCollectionPresented;
 
 const onCollectionCreated = (collectionName, instance) => {
   logger.publish(4, 'PubSub', `on${collectionName}Created`, instance.name);
   EventBus.$emit(`on${collectionName}Created`, instance);
 };
 
-PubSub.onCollectionCreated = throttle(onCollectionCreated, throttleDelay);
+PubSub.onCollectionCreated = onCollectionCreated;
 
 const onCollectionDeleted = (collectionName, instance) => {
   logger.publish(4, 'PubSub', `on${collectionName}Deleted`, instance.name);
   EventBus.$emit(`on${collectionName}Deleted`, instance);
 };
 
-PubSub.onCollectionDeleted = throttle(onCollectionDeleted, throttleDelay);
+PubSub.onCollectionDeleted = onCollectionDeleted;
 
 const onCollectionUpdated = (collectionName, instance) => {
   logger.publish(4, 'PubSub', `on${collectionName}Updated`, instance.name);
   EventBus.$emit(`on${collectionName}Updated`, instance);
 };
 
-PubSub.onCollectionUpdated = throttle(onCollectionUpdated, throttleDelay);
+PubSub.onCollectionUpdated = onCollectionUpdated;
 
-const handler = async (topic, payload) => {
+PubSub.handler = async (topic, payload) => {
   try {
-    // if (
-    //   lastMessage &&
-    //   lastMessage.topic === topic &&
-    //   lastMessage.timestamp > Date.now() - throttleDelay * 2
-    // ) {
-    //   return lastMessage;
-    // }
     logger.publish(5, 'PubSub', 'handler:req', topic);
-    const res = await packetHandler(topic, payload.toString());
-    // const res = await packetHandler(topic, payload);
-    if (!res || !res.pattern) throw new Error('Invalid protocol parsing');
-    const pattern = res.pattern;
-    const method = res.method;
-    const collection = res.collection;
+    const decoded = await packetHandler(topic, payload.toString());
+    if (!decoded || !decoded.pattern) throw new Error('Invalid protocol parsing');
+    const { pattern, method, collection, payload: decodedPayload } = decoded;
     logger.publish(3, 'PubSub', 'handler:res', pattern);
-    payload = res.payload;
 
     switch (method) {
       case 'HEAD':
         switch (collection) {
           case 'device':
-            PubSub.onCollectionPresented('Device', payload);
+            PubSub.onCollectionPresented('Device', decodedPayload);
             break;
           case 'sensor':
-            PubSub.onCollectionPresented('Sensor', payload);
+            PubSub.onCollectionPresented('Sensor', decodedPayload);
             break;
           case 'scheduler':
-            PubSub.onCollectionPresented('Scheduler', payload);
+            PubSub.onCollectionPresented('Scheduler', decodedPayload);
             break;
           default:
             throw new Error('Invalid collection name');
@@ -292,16 +275,16 @@ const handler = async (topic, payload) => {
       case 'POST':
         switch (collection) {
           case 'device':
-            PubSub.onCollectionCreated('Device', payload);
+            PubSub.onCollectionCreated('Device', decodedPayload);
             break;
           case 'sensor':
-            PubSub.onCollectionCreated('Sensor', payload);
+            PubSub.onCollectionCreated('Sensor', decodedPayload);
             break;
           case 'scheduler':
-            PubSub.onCollectionPresented('Scheduler', payload);
+            PubSub.onCollectionPresented('Scheduler', decodedPayload);
             break;
           case 'measurement':
-            PubSub.onCollectionPresented('Measurement', payload);
+            PubSub.onCollectionPresented('Measurement', decodedPayload);
             break;
           default:
             throw new Error('Invalid collection name');
@@ -310,10 +293,10 @@ const handler = async (topic, payload) => {
       case 'DELETE':
         switch (collection) {
           case 'device':
-            PubSub.onCollectionDeleted('Device', payload);
+            PubSub.onCollectionDeleted('Device', decodedPayload);
             break;
           case 'sensor':
-            PubSub.onCollectionDeleted('Sensor', payload);
+            PubSub.onCollectionDeleted('Sensor', decodedPayload);
             break;
           default:
             throw new Error('Invalid collection name');
@@ -322,10 +305,10 @@ const handler = async (topic, payload) => {
       case 'PUT':
         switch (collection) {
           case 'device':
-            PubSub.onCollectionUpdated('Device', payload);
+            PubSub.onCollectionUpdated('Device', decodedPayload);
             break;
           case 'sensor':
-            PubSub.onCollectionUpdated('Sensor', payload);
+            PubSub.onCollectionUpdated('Sensor', decodedPayload);
             break;
           default:
             throw new Error('Invalid collection name');
@@ -334,25 +317,24 @@ const handler = async (topic, payload) => {
       default:
         throw new Error('Invalid method');
     }
-    lastMessage.topic = topic;
-    lastMessage.payload = payload;
-    lastMessage.timestamp = Date.now();
-    return lastMessage;
+    return decoded;
   } catch (error) {
     logger.publish(2, 'pubsub', 'handler:err', error);
     throw error;
   }
 };
 
-PubSub.handler = throttle(handler, throttleDelay);
-
 PubSub.publish = async (client, options) => {
   try {
     logger.publish(4, 'pubsub', 'publish:req', options);
     if (options && client) {
       options.pattern = 'aloesClient';
+      options.userId = `${options.userId}-out`;
+
       const packet = await packetEncoder(options);
-      if (!packet || !packet.topic || !packet.payload) throw new Error('No packet encoded');
+      if (!packet || !packet.topic || !packet.payload) {
+        throw new Error('No packet encoded');
+      }
       // await client.publish(`${pubsubVersion}/${packet.topic}`, JSON.stringify(packet.payload), { qos: 0 });
       await client.publish(packet.topic, JSON.stringify(packet.payload), { qos: 0 });
       logger.publish(3, 'pubsub', 'publish:res', packet);
