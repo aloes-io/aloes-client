@@ -1,6 +1,6 @@
 {
   "name": "aloes-client",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "private": false,
   "main": "src/main.js",
   "engines": {
@@ -15,7 +15,7 @@
     "build:local": "cp deploy/.env_local .env && vue-cli-service build",
     "build:stage": "cp deploy/.env_staging .env && vue-cli-service build --dest build --modern",
     "build:prod": "cp deploy/.env_production .env && vue-cli-service build --dest build --modern",
-    "build:docker": "docker build -t getlarge/aloes-client:latest .",
+    "build:docker": "docker build -t getlarge/aloes-client:staging .",
     "build:docker:local": "cp deploy/.env_docker .env && docker-compose build",
     "serve": "vue-cli-service serve",
     "serve:local": "cp deploy/.env_local .env; node ./server.js",
@@ -23,12 +23,12 @@
     "start:dev": "cp deploy/.env_development .env && vue-cli-service serve",
     "start:local": "cp deploy/.env_local .env && vue-cli-service serve",
     "start:stage": "cp deploy/.env_staging .env && vue-cli-service serve",
-    "start:docker": "docker run -d -p 8080:8080 getlarge/aloes-client:latest",
+    "start:docker": "docker run -p 8080:8080 --rm --name aloes-client getlarge/aloes-client:staging",
     "start:docker:local": "cp deploy/.env_docker .env && docker-compose up",
     "deploy:local": "pm2 startOrRestart ecosystem.config.js --env local --update-env",
-    "stop:docker": "cp deploy/.env_docker .env && docker stop getlarge/aloes-client:latest",
+    "stop:docker": "docker kill aloes-client",
     "stop:docker:local": "cp deploy/.env_docker .env && docker-compose down",
-    "publish:docker": "docker push getlarge/aloes-client:latest"
+    "publish:docker": "docker push getlarge/aloes-client:staging"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.28",
