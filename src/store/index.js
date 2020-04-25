@@ -40,13 +40,12 @@ const deviceStorage = new VuexPersistence({
 export default new Vuex.Store({
   state: {
     env: `${process.env.NODE_ENV}`,
-    serverUrl: `${process.env.VUE_APP_SERVER_URL}`,
-    restApiRoot: `${process.env.VUE_APP_ROOT_API}`,
-    clientUrl: `${process.env.VUE_APP_CLIENT_URL}`,
+    serverUrl: window.settings.VUE_APP_SERVER_URL,
+    restApiRoot: `${window.settings.VUE_APP_ROOT_API}`,
+    clientUrl: `${window.settings.VUE_APP_CLIENT_URL}`,
     repoUrl: 'https://github.com/aloes-io',
     repoUrl2: 'https://github.com/getlarge',
     deviceNetwork: require('@/assets/data/device-tree.json'),
-    // deviceNetwork: '@/assets/data/device-tree.json',
     virtualObject: require('@/assets/data/virtual-object-composition.json'),
     style: {
       color: {

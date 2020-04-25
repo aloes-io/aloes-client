@@ -5,8 +5,8 @@ import logger from './logger';
 
 // const Storage = window.localStorage;
 const Storage = window.sessionStorage;
-const serverUrl = process.env.VUE_APP_SERVER_URL;
-const restApiRoot = process.env.VUE_APP_ROOT_API;
+const serverUrl = window.settings.VUE_APP_SERVER_URL;
+const restApiRoot = `${window.settings.VUE_APP_ROOT_API}`;
 
 const exportTokenToLocalStorage = token => {
   if (Storage) Storage.setItem('loopback-token', JSON.stringify(token));

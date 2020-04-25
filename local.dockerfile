@@ -2,6 +2,7 @@
 
 # build stage
 FROM node:lts-alpine as build-stage
+LABEL maintainer="getlarge <ed@getlarge.eu>"
 
 RUN mkdir -p /home/node/$NODE_NAME
 WORKDIR /home/node/$NODE_NAME
