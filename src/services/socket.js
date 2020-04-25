@@ -5,7 +5,8 @@ import logger from './logger';
 import PubSub from './PubSub';
 
 const Storage = window.sessionStorage;
-const brokerUrl = process.env.VUE_APP_BROKER_URL;
+const brokerUrl = window.settings.VUE_APP_BROKER_URL;
+
 const socket = { failureCount: 0, maxFailureCount: 10 };
 
 const baseOptions = {

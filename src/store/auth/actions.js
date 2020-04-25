@@ -24,7 +24,7 @@ function getCookie(cname) {
 
 function deleteCookie(name) {
   //  Cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-  Cookie = `${name}=; Path=/; Domain=.${process.env.VUE_APP_DOMAIN}; Expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
+  Cookie = `${name}=; Path=/; Domain=.${window.settings.VUE_APP_DOMAIN}; Expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
 }
 
 function importTokenFromCookies() {
