@@ -4,9 +4,6 @@ LABEL maintainer="getlarge <ed@getlarge.eu>"
 
 RUN apt-get update && apt-get install gettext -y
 
-
-# ENV NPM_CONFIG_PREFIX=/home/node/.npm-global
-# ENV PATH=$PATH:/home/node/.npm-global/bin 
 ENV VUE_APP_NAME=Aloes
 ENV PORT=8080
 ENV VUE_APP_DOMAIN=localhost
@@ -23,11 +20,6 @@ USER node
 RUN mkdir -p /home/node/$VUE_APP_NAME
 WORKDIR /home/node/$VUE_APP_NAME
 
-# COPY package*.json /home/node/$VUE_APP_NAME/
-# COPY vue.config.js /home/node/$VUE_APP_NAME/
-# COPY src /home/node/$VUE_APP_NAME/src
-# COPY public /home/node/$VUE_APP_NAME/public
-
 COPY --chown=node package*.json ./
 COPY --chown=node vue.config.js ./
 COPY --chown=node src ./src
@@ -35,10 +27,9 @@ COPY --chown=node public ./public
 
 RUN npm install && npm run build
 RUN npm install light-server
-# RUN npm install -g light-server
 
 # EXPOSE ${PORT}
 
 CMD ["/bin/bash", "-c", "cat ./dist/env.template.js | \
   envsubst '$$VUE_APP_SERVER_URL $$VUE_APP_BROKER_URL $$VUE_APP_ROOT_API $$VUE_APP_DOMAIN $$VUE_APP_CLIENT_URL' > ./dist/env.js && \
-  light-server -s ./dist -p $PORT --historyindex '/index.html' -q"]
+  light-server -s ./dist -p $PORT --no-reload --historyindex '/index.html' -q"]
