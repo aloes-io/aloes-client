@@ -1,9 +1,7 @@
-FROM node:10-slim
-
+FROM node:12-slim
 LABEL maintainer="getlarge <ed@getlarge.eu>"
 
-RUN apt-get update && apt-get install gettext -y
-
+ENV BUILD=dist
 ENV VUE_APP_NAME=Aloes
 ENV PORT=8080
 ENV VUE_APP_DOMAIN=localhost
@@ -26,10 +24,9 @@ COPY --chown=node src ./src
 COPY --chown=node public ./public
 
 RUN npm install && npm run build
-RUN npm install light-server
 
-# EXPOSE ${PORT}
-
-CMD ["/bin/bash", "-c", "cat ./dist/env.template.js | \
-  envsubst '$$VUE_APP_SERVER_URL $$VUE_APP_BROKER_URL $$VUE_APP_ROOT_API $$VUE_APP_DOMAIN $$VUE_APP_CLIENT_URL' > ./dist/env.js && \
-  light-server -s ./dist -p $PORT --no-reload --historyindex '/index.html' -q"]
+CMD ["/bin/bash", "-c", "envsub -e VUE_APP_SERVER_URL=$VUE_APP_SERVER_URL -e VUE_APP_BROKER_URL=$VUE_APP_BROKER_URL  \ 
+  -e VUE_APP_ROOT_API=$VUE_APP_ROOT_API -e VUE_APP_CLIENT_URL=$VUE_APP_CLIENT_URL -e VUE_APP_LOGGER_LEVEL=$VUE_APP_LOGGER_LEVEL \
+  -e VUE_APP_DOMAIN=$VUE_APP_DOMAIN ./$BUILD/env.template.js ./$BUILD/env.js && \
+  envsub --diff ./$BUILD/env.template.js ./$BUILD/env.js && \
+  light-server -s ./$BUILD -p $PORT --no-reload --historyindex '/index.html' -q"]

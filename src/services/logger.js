@@ -79,7 +79,6 @@ const sendFormatedLog = (collectionName, command, fullContent) => {
 };
 
 logger.publish = (priority, collectionName, command, content) => {
-  // const logLevel = Number(process.env.VUE_APP_LOGGER_LEVEL) || 4;
   const logLevel = Number(window.settings.VUE_APP_LOGGER_LEVEL) || 4;
 
   if (priority <= logLevel) {
