@@ -1,6 +1,5 @@
-/* Copyright 2019 Edouard Maleix, read LICENSE */
+/* Copyright 2020 Edouard Maleix, read LICENSE */
 
-// import throttle from 'lodash.throttle';
 import logger from '@/services/logger';
 import SensorWorker from '@/workers/sensor.worker.js';
 import CollectionWorker from '@/workers/collection.worker.js';
@@ -80,8 +79,6 @@ const Collection = {
         });
       });
     },
-
-    // throttledUpdateSensorCollection = throttle(this.updateSensorCollection, 20);
 
     updateSensorCollection(collection, operation, instance, serialize = false) {
       logger.publish(4, 'sensor', 'updateCollection:req', {
