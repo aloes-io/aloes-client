@@ -345,11 +345,11 @@ export default {
 
     setListeners() {
       EventBus.$on('onDeviceDeleted', this.deleteDevice);
-      EventBus.$on('onDevicePresented', device => EventBus.$emit('onDeviceUpdated', device));
+      EventBus.$on('onDevicePresented', (device) => EventBus.$emit('onDeviceUpdated', device));
       EventBus.$on('onDeviceCreated', this.createDevice);
       EventBus.$on('onDeviceUpdated', this.updateDevice);
       EventBus.$on('onSensorDeleted', this.deleteSensor);
-      EventBus.$on('onSensorPresented', sensor => EventBus.$emit('onSensorCreated', sensor));
+      EventBus.$on('onSensorPresented', (sensor) => EventBus.$emit('onSensorCreated', sensor));
       EventBus.$on('onSensorCreated', this.createSensor);
       EventBus.$on('onSensorUpdated', this.updateSensor);
     },

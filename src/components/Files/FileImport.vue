@@ -14,8 +14,7 @@
           :boundary="{ width: maxBoundaryWidth, height: maxBoundaryHeight }"
           :enableOrientation="false"
           :enableResize="false"
-        >
-        </vue-croppie>
+        />
         <!-- <img :src="imageUrl" /> -->
       </b-col>
     </b-row>
@@ -402,7 +401,7 @@ export default {
         if (output instanceof Blob) {
           blob = output;
         } else {
-          blob = await fetch(output).then(res => res.blob());
+          blob = await fetch(output).then((res) => res.blob());
         }
         if (!blob || !blob.type) {
           const error = new Error('Error while creating Blob');

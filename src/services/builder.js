@@ -11,10 +11,7 @@ builder.generateKeys = (howMany, chars) => {
   for (let i = 0; i < howMany; i++) {
     value[i] = chars[Math.floor(rnd[i] / d)];
   }
-  return value
-    .join('')
-    .toString()
-    .toUpperCase();
+  return value.join('').toString().toUpperCase();
 };
 
 export default builder;

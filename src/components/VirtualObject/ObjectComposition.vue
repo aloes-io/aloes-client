@@ -97,9 +97,7 @@ export default {
   },
 
   beforeDestroy() {
-    select(`#object-composition-${this.virtualObjectId}`)
-      .selectAll('*')
-      .remove();
+    select(`#object-composition-${this.virtualObjectId}`).selectAll('*').remove();
   },
 
   computed: {
@@ -125,25 +123,22 @@ export default {
           .append('g')
           .attr('class', 'nodes')
           .selectAll('circle')
-          .data(self.objectCompositionGraph.nodes, d => d.data.id)
+          .data(self.objectCompositionGraph.nodes, (d) => d.data.id)
           .enter()
           .append('circle')
           .attr('class', 'object-cirle')
-          .attr('r', d => d.data.size || 4.5)
+          .attr('r', (d) => d.data.size || 4.5)
           .attr('filter', 'url(#circle-shadow)')
           .style('fill', this.nodeFill)
-          .on('mouseenter', function() {
+          .on('mouseenter', function () {
             select(this).attr('filter', 'url(#circle-shadow-selected)');
           })
-          .on('mouseleave', function() {
+          .on('mouseleave', function () {
             select(this).attr('filter', 'url(#circle-shadow)');
           })
           .on('click', this.mouseClick)
           .call(
-            drag()
-              .on('start', this.dragstarted)
-              .on('drag', this.dragged)
-              .on('end', this.dragended),
+            drag().on('start', this.dragstarted).on('drag', this.dragged).on('end', this.dragended),
           );
       }
       return null;
@@ -155,12 +150,12 @@ export default {
           .append('g')
           .attr('class', 'links')
           .selectAll('path.link')
-          .data(self.objectCompositionGraph.links, d => d.target.id)
+          .data(self.objectCompositionGraph.links, (d) => d.target.id)
           .enter()
           .insert('path')
           .style(
             'stroke-width',
-            d => ((d.source.data.size / d.source.data.group) * 0.05).toString() + 'px',
+            (d) => ((d.source.data.size / d.source.data.group) * 0.05).toString() + 'px',
           )
           .style('stroke', 'black')
           .style('fill', 'none');
@@ -174,15 +169,15 @@ export default {
           .append('g')
           .attr('class', 'images')
           .selectAll('image')
-          .data(self.objectCompositionGraph.nodes, d => d.data.id)
+          .data(self.objectCompositionGraph.nodes, (d) => d.data.id)
           .enter()
           .append('image')
-          .attr('xlink:href', d => `${d.data.icons[1]}`)
+          .attr('xlink:href', (d) => `${d.data.icons[1]}`)
           .attr('crossOrigin', 'anonymous')
-          .attr('x', d => (-1 * d.data.size) / 2)
-          .attr('y', d => (-1 * d.data.size) / 2)
-          .attr('height', d => d.data.size)
-          .attr('width', d => d.data.size)
+          .attr('x', (d) => (-1 * d.data.size) / 2)
+          .attr('y', (d) => (-1 * d.data.size) / 2)
+          .attr('height', (d) => d.data.size)
+          .attr('width', (d) => d.data.size)
           .style('cursor', 'pointer')
           .on('click', this.mouseClick);
         // .on("mouseenter", this.mouseEnter)
@@ -220,8 +215,8 @@ export default {
         .force(
           'link',
           forceLink(this.objectCompositionGraph.links)
-            .id(d => d.id)
-            .distance(d => d.source.data.size / 1.5)
+            .id((d) => d.id)
+            .distance((d) => d.source.data.size / 1.5)
             .strength(0.7)
             .iterations(2),
         )
@@ -253,7 +248,7 @@ export default {
     },
 
     objectCompositionTicked() {
-      this.objectCompositionLinks.attr('d', d => {
+      this.objectCompositionLinks.attr('d', (d) => {
         const dx = d.target.x - d.source.x;
         const dy = d.target.y - d.source.y;
         const dr = Math.sqrt(dx * dx + dy * dy);

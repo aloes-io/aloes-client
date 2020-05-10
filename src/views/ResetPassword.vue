@@ -112,7 +112,7 @@ export default {
           this.loading = false;
           this.success = { message: 'Le mot de passe a été mis à jour' };
         })
-        .catch(err => {
+        .catch((err) => {
           this.error = err;
           this.loading = false;
         });

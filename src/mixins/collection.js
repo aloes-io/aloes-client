@@ -30,7 +30,7 @@ const Collection = {
       });
       return new Promise((resolve, reject) => {
         if (!operation || !batch) return reject(new Error('Invalid arguments'));
-        const onMessage = e => {
+        const onMessage = (e) => {
           if (e.data.error) return reject(new Error(e.data.error.message));
           const collection = e.data.collection || [];
           logger.publish(3, 'sensor', 'batchCollection:res', {
@@ -59,7 +59,7 @@ const Collection = {
       return new Promise((resolve, reject) => {
         if (!operation || !batch) return reject(new Error('Invalid arguments'));
         // this.batchDeviceWorker = new CollectionWorker();
-        const onMessage = e => {
+        const onMessage = (e) => {
           if (e.data.error) return reject(new Error(e.data.error.message));
           const collection = e.data.collection || [];
           // this.batchDeviceWorker.terminate();
@@ -88,7 +88,7 @@ const Collection = {
       });
       return new Promise((resolve, reject) => {
         if (!operation || !instance) return reject(new Error('Invalid arguments'));
-        const onMessage = e => {
+        const onMessage = (e) => {
           if (e.data.error) return reject(new Error(e.data.error.message));
           const collection = e.data.collection || [];
           logger.publish(3, 'sensor', 'updateCollection:res', {
@@ -116,7 +116,7 @@ const Collection = {
       });
       return new Promise((resolve, reject) => {
         if (!operation || !instance) return reject(new Error('Invalid arguments'));
-        const onMessage = e => {
+        const onMessage = (e) => {
           if (e.data.error) return reject(new Error(e.data.error.message));
           const collection = e.data.collection || [];
           logger.publish(3, 'device', 'updateCollection:res', {
@@ -139,7 +139,7 @@ const Collection = {
     updateSensor(sensor, resource, value) {
       return new Promise((resolve, reject) => {
         if (!sensor || !resource) return reject(new Error('Invalid arguments'));
-        const onMessage = e => {
+        const onMessage = (e) => {
           if (e.data.error) return reject(new Error(e.data.error.message));
           const sensor = e.data.sensor || null;
           if (!sensor || sensor === null) return reject(new Error('Invalid sensor update'));

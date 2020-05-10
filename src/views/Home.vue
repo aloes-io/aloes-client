@@ -16,8 +16,8 @@
     <search-container
       v-if="
         $store.state.auth.access_token &&
-          $store.state.auth.account &&
-          $store.state.auth.account !== null
+        $store.state.auth.account &&
+        $store.state.auth.account !== null
       "
       :user-id="$store.state.auth.access_token.userId"
       :token="$store.state.auth.access_token.id"

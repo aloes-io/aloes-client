@@ -180,7 +180,7 @@ export default {
         if (!this.updatedDeviceId) return;
         if (value && Array.isArray(value)) {
           this.deviceSensors = value.filter(
-            sensor => sensor.deviceId.toString() === this.updatedDeviceId.toString(),
+            (sensor) => sensor.deviceId.toString() === this.updatedDeviceId.toString(),
           );
           this.updateFilteredSensors(this.sensorsFilter);
         }
@@ -239,24 +239,20 @@ export default {
     },
 
     async onUpdateSetting(...args) {
-      try {
-        logger.publish(4, 'sensor', 'onUpdateSetting:req', { key: args[1], value: args[2] });
-        if (!args || !args[0].id) return null;
-        let sensor = args[0];
-        sensor.resources[args[1].toString()] = args[2];
-        sensor.resource = args[1];
-        sensor.value = args[2];
-        sensor.method = 'PUT';
-        sensor.lastSignal = new Date();
-        //  const updatedSensor = await this.$store.dispatch('sensor/updateInstance', { sensor });
-        await this.$store.dispatch('sensor/publish', {
-          sensor,
-          userId: this.$props.userId,
-        });
-        return sensor;
-      } catch (error) {
-        throw error;
-      }
+      logger.publish(4, 'sensor', 'onUpdateSetting:req', { key: args[1], value: args[2] });
+      if (!args || !args[0].id) return null;
+      let sensor = args[0];
+      sensor.resources[args[1].toString()] = args[2];
+      sensor.resource = args[1];
+      sensor.value = args[2];
+      sensor.method = 'PUT';
+      sensor.lastSignal = new Date();
+      //  const updatedSensor = await this.$store.dispatch('sensor/updateInstance', { sensor });
+      await this.$store.dispatch('sensor/publish', {
+        sensor,
+        userId: this.$props.userId,
+      });
+      return sensor;
     },
 
     onDeleteSensor(sensor) {
@@ -293,7 +289,7 @@ export default {
 
     updateFilteredSensors(filter) {
       if (filter && filter.key && filter.value) {
-        this.filteredSensors = this.deviceSensors.filter(sensor => {
+        this.filteredSensors = this.deviceSensors.filter((sensor) => {
           sensor[filter.key].toLowerCase() === filter.value;
         });
       } else {

@@ -30,7 +30,7 @@
     </defs>
     <!--  <g :id="links"></g>
     <g :id="nodes"></g> -->
-    <g :id="`tree-${rootNodeId}`"></g>
+    <g :id="`tree-${rootNodeId}`" />
   </svg>
 </template>
 
@@ -242,14 +242,14 @@ export default {
         let graph = {};
         const generateDeviceTree = (devices, showSensors) => {
           if (Array.isArray(devices)) {
-            return devices.map(device => {
+            return devices.map((device) => {
               device.size = 0.4;
               device.group = 1;
               device.show = true;
               // device.children = this.$props.sensors.filter(sensor => {sensor.deviceId.toString() === device.id.toString()})
               if (device.sensors) {
                 if (showSensors) {
-                  device.sensors.forEach(sensor => {
+                  device.sensors.forEach((sensor) => {
                     sensor.size = 0.2;
                     sensor.group = 2;
                   });
@@ -329,39 +329,27 @@ export default {
     },
 
     applyForce(nodes, links) {
-      try {
-        this.nodeSimulation = forceSimulation(nodes)
-          .alphaDecay(0.005)
-          .alpha(0.1)
-          .force(
-            'link',
-            forceLink(links)
-              .id(d => d.id)
-              .distance(this.linkDistance)
-              .strength(0.4)
-              .iterations(2),
-          )
-          .force(
-            'charge',
-            forceManyBody(nodes)
-              .strength(this.nodesCharge)
-              .distanceMin(10)
-              .distanceMax(400),
-          )
-          .force('center', forceCenter(this.updatedWidth / 2, this.updatedHeight / 2))
-          .force(
-            'collisionForce',
-            forceCollide(this.nodeRadius)
-              .strength(0.7)
-              .iterations(1),
-          )
-          .alphaTarget(0.2);
-        //  console.log('links', this.graphLinks);
-        this.nodeSimulation.nodes(nodes).on('tick', this.ticked);
-        return this.nodeSimulation;
-      } catch (error) {
-        throw error;
-      }
+      this.nodeSimulation = forceSimulation(nodes)
+        .alphaDecay(0.005)
+        .alpha(0.1)
+        .force(
+          'link',
+          forceLink(links)
+            .id((d) => d.id)
+            .distance(this.linkDistance)
+            .strength(0.4)
+            .iterations(2),
+        )
+        .force(
+          'charge',
+          forceManyBody(nodes).strength(this.nodesCharge).distanceMin(10).distanceMax(400),
+        )
+        .force('center', forceCenter(this.updatedWidth / 2, this.updatedHeight / 2))
+        .force('collisionForce', forceCollide(this.nodeRadius).strength(0.7).iterations(1))
+        .alphaTarget(0.2);
+      //  console.log('links', this.graphLinks);
+      this.nodeSimulation.nodes(nodes).on('tick', this.ticked);
+      return this.nodeSimulation;
     },
 
     initZoom() {
@@ -480,34 +468,31 @@ export default {
         .append('g')
         .attr('class', 'nodes-group')
         .selectAll('circle')
-        .data(graphNodes, d => d.data.id)
+        .data(graphNodes, (d) => d.data.id)
         .enter()
         .append('circle')
-        .attr('id', d => (d.data.id ? `node-${d.data.id}` : ''))
+        .attr('id', (d) => (d.data.id ? `node-${d.data.id}` : ''))
         .attr('class', this.nodeClass)
         .attr('r', this.nodeRadius)
         .attr('filter', 'url(#circle-shadow)')
         .style('fill', this.nodeFill)
         .style('cursor', 'pointer')
         .on('click', this.mouseClick)
-        .on('mouseover', function() {
+        .on('mouseover', function () {
           select(this).attr('filter', 'url(#circle-shadow-selected)');
         })
-        .on('mouseout', function() {
+        .on('mouseout', function () {
           select(this).attr('filter', 'url(#circle-shadow)');
         })
         .call(
-          drag()
-            .on('start', this.dragStarted)
-            .on('drag', this.dragged)
-            .on('end', this.dragEnded),
+          drag().on('start', this.dragStarted).on('drag', this.dragged).on('end', this.dragEnded),
         );
       return nodes;
     },
 
     removeNodes() {
       // this.svg.selectAll(`.nodes`).exit().remove();
-      [...this.$el.getElementsByClassName('nodes-group')].map(n => n && n.remove());
+      [...this.$el.getElementsByClassName('nodes-group')].map((n) => n && n.remove());
     },
 
     nodeClass(d) {
@@ -569,10 +554,10 @@ export default {
         .append('g')
         .attr('class', 'links-group')
         .selectAll('path.link')
-        .data(graphLinks, d => d.target.data.id)
+        .data(graphLinks, (d) => d.target.data.id)
         .enter()
         .insert('path')
-        .attr('id', d => (d.target.data.id ? `link-${d.target.data.id}` : ''))
+        .attr('id', (d) => (d.target.data.id ? `link-${d.target.data.id}` : ''))
         .attr('class', this.linkClass)
         .style('stroke-width', this.linkWidth)
         .style('stroke', this.colors.lightblue)
@@ -582,7 +567,7 @@ export default {
     },
 
     removeLinks() {
-      [...this.$el.getElementsByClassName('links-group')].map(n => n && n.remove());
+      [...this.$el.getElementsByClassName('links-group')].map((n) => n && n.remove());
     },
 
     linkClass(d) {
@@ -636,31 +621,31 @@ export default {
         .append('g')
         .attr('class', 'images-group')
         .selectAll('image')
-        .data(graphNodes, d => d.data.id)
+        .data(graphNodes, (d) => d.data.id)
         .enter()
         .append('image')
         .attr('class', this.imageClass)
         .attr('xlink:href', this.imageUrl)
         .attr('crossOrigin', 'anonymous')
-        .attr('x', d => `${(-1 * this.nodeRadius(d)) / 2}`)
-        .attr('y', d => `${(-1 * this.nodeRadius(d)) / 2}`)
-        .attr('width', d => `${this.nodeRadius(d)}px`)
-        .attr('height', d => `${this.nodeRadius(d)}px`)
+        .attr('x', (d) => `${(-1 * this.nodeRadius(d)) / 2}`)
+        .attr('y', (d) => `${(-1 * this.nodeRadius(d)) / 2}`)
+        .attr('width', (d) => `${this.nodeRadius(d)}px`)
+        .attr('height', (d) => `${this.nodeRadius(d)}px`)
         .style('cursor', 'pointer')
         .on('click', this.mouseClick)
         .on('mouseenter', this.mouseEnter)
         .on('mouseleave', this.mouseLeave)
-        .on('mouseover', d => {
+        .on('mouseover', (d) => {
           select(`#node-${d.data.id}`).attr('filter', 'url(#circle-shadow-selected)');
         })
-        .on('mouseout', d => {
+        .on('mouseout', (d) => {
           select(`#node-${d.data.id}`).attr('filter', 'url(#circle-shadow)');
         });
       return images;
     },
 
     removeImages() {
-      [...this.$el.getElementsByClassName('images-group')].map(n => n && n.remove());
+      [...this.$el.getElementsByClassName('images-group')].map((n) => n && n.remove());
     },
 
     imageClass(d) {
@@ -687,7 +672,7 @@ export default {
 
     imageUrl(d) {
       if (d.data && d.data.icons) {
-        const whiteIcons = d.data.icons.filter(icon => icon.endsWith('white.png'));
+        const whiteIcons = d.data.icons.filter((icon) => icon.endsWith('white.png'));
         if (!whiteIcons || whiteIcons === null) {
           return d.data.icons[0];
         }
@@ -706,15 +691,15 @@ export default {
         .attr('class', 'descriptions-group')
         .style('display', 'none')
         .selectAll('text')
-        .data(graphLinks, d => d.target.data.id)
+        .data(graphLinks, (d) => d.target.data.id)
         .enter()
         .insert('text')
-        .attr('id', d => (d.target.data.id ? `description-${d.target.data.id}` : ''))
+        .attr('id', (d) => (d.target.data.id ? `description-${d.target.data.id}` : ''))
         .attr('class', this.textClass)
         .attr('font-family', this.fonts.text)
         .attr('fill', this.colors.lightblue)
         .append('textPath')
-        .attr('xlink:href', d => `#link-${d.target.data.id}`)
+        .attr('xlink:href', (d) => `#link-${d.target.data.id}`)
         .attr('text-anchor', 'start')
         .attr('startOffset', '25%')
         .style('font-size', '10px')
@@ -723,7 +708,7 @@ export default {
     },
 
     removeTexts() {
-      [...this.$el.getElementsByClassName('descriptions-group')].map(n => n && n.remove());
+      [...this.$el.getElementsByClassName('descriptions-group')].map((n) => n && n.remove());
     },
 
     textClass(d) {
@@ -772,11 +757,11 @@ export default {
     },
 
     removeTooltip() {
-      [...this.$el.getElementsByClassName('tooltip-group')].map(n => n && n.remove());
+      [...this.$el.getElementsByClassName('tooltip-group')].map((n) => n && n.remove());
     },
 
     showTooltip(d) {
-      [...this.$el.getElementsByClassName('tooltip-class')].map(n => n && n.remove());
+      [...this.$el.getElementsByClassName('tooltip-class')].map((n) => n && n.remove());
       // const tootltip = this.svg.selectAll('.tooltip-group');
       // tootltip.each(function(index) {
       //   const gnode = this.parentNode;
@@ -808,7 +793,7 @@ export default {
 
     hideTooltip() {
       this.tooltip.style('display', 'none');
-      [...this.$el.getElementsByClassName('tooltip-class')].map(n => n && n.remove());
+      [...this.$el.getElementsByClassName('tooltip-class')].map((n) => n && n.remove());
     },
 
     ticked() {

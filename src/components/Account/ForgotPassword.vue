@@ -105,7 +105,7 @@ export default {
           };
           return this.success;
         })
-        .catch(err => {
+        .catch((err) => {
           if (err.details && err.code === 'EMAIL_NOT_FOUND') {
             this.error = {
               code: err.code,

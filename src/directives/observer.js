@@ -46,7 +46,7 @@ const Observer = {
     }
   },
 
-  unbind: el => {
+  unbind: (el) => {
     if (el.observer) el.observer.disconnect();
   },
 };

@@ -156,8 +156,8 @@ export default {
       logger.publish(4, 'search', 'composeFilter:req', filter);
       return this.$store
         .dispatch(`search/search`, filter)
-        .then(res => res)
-        .catch(err => err);
+        .then((res) => res)
+        .catch((err) => err);
     },
 
     async getDevicesByGeolocation(position) {
@@ -174,8 +174,8 @@ export default {
       logger.publish(4, 'search', 'getDevicesByGeolocation:req', filter);
       return this.$store
         .dispatch('search/getDevicesByGeolocation', filter)
-        .then(res => res)
-        .catch(err => err);
+        .then((res) => res)
+        .catch((err) => err);
     },
 
     showLocationError(error) {

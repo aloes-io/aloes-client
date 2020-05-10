@@ -22,7 +22,7 @@ const baseOptions = {
   password: null,
 };
 
-const setSocketId = socketId => {
+const setSocketId = (socketId) => {
   if (Storage) Storage.setItem('socket-id', socketId);
 };
 
@@ -32,13 +32,11 @@ const delSocketId = () => {
 
 const getSocketId = () => Storage && Storage.getItem('socket-id');
 
-socket.setToken = token => {
+socket.setToken = (token) => {
   try {
     logger.publish(3, 'socket', 'setToken:req', token);
     socket.token = token;
-    const clientId = `${token.userId.toString()}-${Math.random()
-      .toString(16)
-      .substr(2, 8)}`;
+    const clientId = `${token.userId.toString()}-${Math.random().toString(16).substr(2, 8)}`;
     const options = {
       ...baseOptions,
       clientId,
@@ -76,7 +74,7 @@ const handleMessage = (packet, cb) => {
     .catch(() => cb());
 };
 
-socket.initSocket = async options => {
+socket.initSocket = async (options) => {
   try {
     logger.publish(3, 'socket', 'initSocket:req', options);
     let socketId = getSocketId();

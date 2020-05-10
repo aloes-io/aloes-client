@@ -171,7 +171,7 @@ export default {
 
   methods: {
     setListeners() {
-      EventBus.$on('onTeamDeleted', async team => {
+      EventBus.$on('onTeamDeleted', async (team) => {
         if (team && this.loaderCounter < 1) {
           this.loaderCounter += 1;
           return setTimeout(async () => {
@@ -181,7 +181,7 @@ export default {
         }
       });
 
-      EventBus.$on('onTeamCreated', team => {
+      EventBus.$on('onTeamCreated', (team) => {
         if (team && this.loaderCounter < 1) {
           this.loaderCounter += 1;
           return setTimeout(async () => {
@@ -191,7 +191,7 @@ export default {
         }
       });
 
-      EventBus.$on('profileSelected', profile => {
+      EventBus.$on('profileSelected', (profile) => {
         if (
           profile &&
           profile !== null &&
@@ -216,11 +216,11 @@ export default {
       this.success = null;
       return this.$store
         .dispatch('team/loadTeams', this.$store.state.auth.account.id)
-        .then(res => {
+        .then((res) => {
           this.loaderCounter = 0;
           return res;
         })
-        .catch(err => {
+        .catch((err) => {
           this.loaderCounter = 0;
           this.error = err;
           return this.error;
@@ -229,7 +229,7 @@ export default {
 
     isTeamMember(teams) {
       if (teams) {
-        const foundFavorite = this.teams.find(team => team.memberId === this.profile.id);
+        const foundFavorite = this.teams.find((team) => team.memberId === this.profile.id);
         if (foundFavorite) {
           logger.publish(4, 'profile', 'isTeamMember:res', true);
           this.memberId = foundFavorite.id;

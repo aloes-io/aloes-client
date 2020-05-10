@@ -117,7 +117,7 @@ export default {
 
   mounted() {
     this.updateBackground();
-    EventBus.$on('applicationSelected', application => {
+    EventBus.$on('applicationSelected', (application) => {
       this.updateBackground(application);
     });
   },

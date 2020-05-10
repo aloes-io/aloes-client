@@ -19,9 +19,9 @@ const updateCollectionProcess = (
       return false;
     };
 
-    const getCollectionIndex = instance => collection.findIndex(s => compareIds(s, instance));
+    const getCollectionIndex = (instance) => collection.findIndex((s) => compareIds(s, instance));
 
-    const updateInstance = instance => {
+    const updateInstance = (instance) => {
       let index;
       switch (operation) {
         case 'create':

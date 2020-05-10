@@ -578,8 +578,8 @@ export default {
         .dispatch('application/delApplication', {
           application: this.application,
         })
-        .then(res => res)
-        .catch(err => err);
+        .then((res) => res)
+        .catch((err) => err);
       return null;
     },
   },

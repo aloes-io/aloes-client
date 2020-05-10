@@ -14,7 +14,7 @@ const File = {
     getUrl(blob) {
       return new Promise((resolve, reject) => {
         if (!blob) return reject(new Error('Invalid arguments'));
-        const onMessage = e => {
+        const onMessage = (e) => {
           if (e.data.error) return reject(new Error(e.data.error.message));
           const url = e.data.url || null;
           if (!url || url === null) return reject(new Error('Invalid url'));
@@ -30,7 +30,7 @@ const File = {
       return new Promise((resolve, reject) => {
         if (!value) return reject(new Error('Invalid arguments'));
         // this.fileWorker = new FileWorker();
-        const onMessage = e => {
+        const onMessage = (e) => {
           // this.fileWorker.terminate();
           if (e.data.error) return reject(new Error(e.data.error.message));
           const blob = e.data.blob || null;

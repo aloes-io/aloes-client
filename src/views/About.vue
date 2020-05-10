@@ -41,7 +41,7 @@ export default {
     tab: {
       type: String,
       default: null,
-      validator: value => ['docs', 'contact', 'news-letter'].indexOf(value) !== -1,
+      validator: (value) => ['docs', 'contact', 'news-letter'].indexOf(value) !== -1,
     },
   },
 
@@ -70,7 +70,7 @@ export default {
       try {
         const staticPageBlob = await fetch(
           `${this.$store.state.clientUrl}/html/${tab}.html`,
-        ).then(res => res.blob());
+        ).then((res) => res.blob());
         const reader = new FileReader();
         reader.onload = () => {
           this.staticPage = reader.result;

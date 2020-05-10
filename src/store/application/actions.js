@@ -13,18 +13,18 @@ export async function findApplicationsByAccount({ state, commit }, ownerId) {
       where: { ownerId },
       limit: 20,
     })
-    .then(apps => {
+    .then((apps) => {
       logger.publish(3, state.collectionName, 'dispatch:findApplicationsByAccount:res', apps);
       commit('setCollection', apps);
       return apps;
     })
-    .catch(err => err);
+    .catch((err) => err);
 }
 
 export async function findApplicationById({ state, commit }, id) {
   return loopback
     .get(`/${state.resources}/${id}`)
-    .then(app => {
+    .then((app) => {
       if (app.id) {
         logger.publish(2, state.collectionName, 'dispatch:findApplicationById:res', app);
         commit('setModel', { viewer: false, app });
@@ -32,7 +32,7 @@ export async function findApplicationById({ state, commit }, id) {
       }
       return null;
     })
-    .catch(err => err);
+    .catch((err) => err);
 }
 
 export async function findApplicationKV({ state, commit }, { key, value }) {
@@ -54,13 +54,13 @@ export async function findApplicationKV({ state, commit }, { key, value }) {
 }
 
 export async function subscribeToApplicationsUpdate({ state }, { userId }) {
-  await state.collection.forEach(async app =>
+  await state.collection.forEach(async (app) =>
     PubSub.subscribeToInstanceUpdate(socket.client, 'Application', userId, app.id),
   );
 }
 
 export async function unsubscribeFromApplicationsUpdate({ state }, { userId }) {
-  await state.collection.forEach(app =>
+  await state.collection.forEach((app) =>
     PubSub.unSubscribeWhere(socket.client, {
       collectionName: 'Application',
       userId,
@@ -80,12 +80,12 @@ export async function saveApplication({ dispatch }, { application }) {
 export async function createApplication({ state, commit }, { application }) {
   return loopback
     .post(`/${state.resources}`, application)
-    .then(res => {
+    .then((res) => {
       logger.publish(4, state.collectionName, 'dispatch:createApplication:res', res);
       commit('setModel', res);
       return res;
     })
-    .catch(err => err);
+    .catch((err) => err);
 }
 
 export async function updateApplication({ state, commit }, { application }) {
@@ -95,12 +95,12 @@ export async function updateApplication({ state, commit }, { application }) {
     loopback
       .put(`/${state.resources}/${applicationId}`, application)
       //  .put(`/${state.resources}/${application.id}`, application)
-      .then(res => {
+      .then((res) => {
         logger.publish(3, state.collectionName, 'dispatch:updateApplication:res', res);
         commit('setModel', res);
         return res;
       })
-      .catch(err => err)
+      .catch((err) => err)
   );
 }
 
@@ -122,10 +122,10 @@ export async function delApplication({ state, commit }, { application }) {
 export async function refreshToken({ state, commit }, application) {
   return loopback
     .post(`/${state.resources}/refresh-token`, { application })
-    .then(res => {
+    .then((res) => {
       logger.publish(4, state.collectionName, 'dispatch:refreshToken:res', res);
       commit('setModel', res);
       return res;
     })
-    .catch(err => err);
+    .catch((err) => err);
 }

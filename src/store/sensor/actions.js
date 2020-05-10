@@ -17,8 +17,7 @@ export async function findByAccount({ state, commit, dispatch }, { ownerId, filt
     });
     logger.publish(4, state.collectionName, 'dispatch:findByAccount:req', filter);
     if (!sensors || sensors === null) sensors = [];
-    // forEach sensor get resources ?
-    await dispatch('attachResourcesToSensors', { sensors });
+    sensors = await dispatch('attachResourcesToSensors', { sensors });
 
     // else sensors = JSON.parse(JSON.stringify(sensors));
     logger.publish(3, state.collectionName, 'dispatch:findByAccount:res', sensors.length);
@@ -47,8 +46,7 @@ export async function findByDevice({ state, dispatch }, { deviceId, filter }) {
     skip: filter.skip || 0,
   });
   if (!sensors || sensors === null) sensors = [];
-  // forEach sensor get resources ?
-  await dispatch('attachResourcesToSensors', { sensors });
+  sensors = await dispatch('attachResourcesToSensors', { sensors });
 
   // else sensors = JSON.parse(JSON.stringify(sensors));
   logger.publish(3, state.collectionName, 'dispatch:findByDevice:res', sensors.length);
@@ -102,22 +100,21 @@ export async function deleteInstance({ state, commit }, { sensor }) {
 
 export async function attachResourcesToSensors({ dispatch }, { sensors }) {
   return Promise.all(
-    sensors.map(async sensor => {
+    sensors.map(async (sensor) => {
       sensor.resources = await dispatch('findResources', { sensorId: sensor.id });
-      return sensor.resources;
+      return sensor;
     }),
   );
 }
 
-export async function findResources({ state, commit }, { sensorId }) {
+export async function findResources({ state }, { sensorId }) {
   try {
     const resources = await loopback.get(`/${state.resources}/${sensorId}/${sensorResources}`);
     // where to store resources ?
     return resources;
   } catch (error) {
     logger.publish(4, state.collectionName, 'dispatch:findResources:err', error);
-    commit('setStateKV', { key: 'error', value: error });
-    throw error;
+    return null;
   }
 }
 
@@ -139,13 +136,13 @@ export async function deleteResources({ state }, { sensorId }) {
 }
 
 export async function subscribeToSensorsUpdate({ state }, { userId }) {
-  return state.collection.map(async sensor =>
+  return state.collection.map(async (sensor) =>
     PubSub.subscribeToInstanceUpdate(socket.client, 'Sensor', userId, sensor.id),
   );
 }
 
 export async function unsubscribeFromSensorsUpdate({ state }, { userId }) {
-  return state.collection.map(async sensor =>
+  return state.collection.map(async (sensor) =>
     PubSub.unSubscribeWhere(socket.client, {
       collection: 'Sensor',
       userId,

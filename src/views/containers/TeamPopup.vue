@@ -91,8 +91,8 @@ export default {
           ownerId: this.$store.state.auth.account.id,
           memberId: this.profile.id,
         })
-        .then(res => res)
-        .catch(err => err);
+        .then((res) => res)
+        .catch((err) => err);
       return this.hideModal();
     },
 
@@ -104,8 +104,8 @@ export default {
           ownerId: this.$store.state.auth.account.id,
           memberId: this.memberId,
         })
-        .then(res => res)
-        .catch(err => err);
+        .then((res) => res)
+        .catch((err) => err);
       return this.hideModal();
     },
   },

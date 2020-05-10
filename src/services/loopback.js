@@ -8,7 +8,7 @@ const Storage = window.sessionStorage;
 const serverUrl = window.settings.VUE_APP_SERVER_URL;
 const restApiRoot = `${window.settings.VUE_APP_ROOT_API}`;
 
-const exportTokenToLocalStorage = token => {
+const exportTokenToLocalStorage = (token) => {
   if (Storage) Storage.setItem('loopback-token', JSON.stringify(token));
 };
 
@@ -16,7 +16,7 @@ const removeTokenFromLocalStorage = () => {
   if (Storage) Storage.removeItem('loopback-token');
 };
 
-const addTokenFromLocalStorage = http => {
+const addTokenFromLocalStorage = (http) => {
   const token = Storage && Storage.getItem('loopback-token');
   if (token) {
     http.setToken(JSON.parse(token), false);
@@ -32,7 +32,7 @@ let setLoading = () => {
   logger.publish(2, 'loopback', 'setLoadingFunction', 'undefined');
 };
 
-http.setLoadingFunction = fn => {
+http.setLoadingFunction = (fn) => {
   setLoading = fn;
 };
 
@@ -50,7 +50,7 @@ http.removeToken = () => {
 
 http.find = (endpoint, filter) => http.get(endpoint, { params: { filter } });
 
-const interceptResErrors = err => {
+const interceptResErrors = (err) => {
   try {
     logger.publish(2, 'loopback', 'listener:interceptResErrors', err);
     setLoading(false, err.config.uid || err.response.config.uid);
@@ -60,7 +60,7 @@ const interceptResErrors = err => {
   }
   return Promise.reject(err);
 };
-const interceptResponse = res => {
+const interceptResponse = (res) => {
   logger.publish(5, 'loopback', 'listener:interceptResponse', res);
   setLoading(false, res.config.uid);
   try {
@@ -75,9 +75,9 @@ http.interceptors.response.use(interceptResponse, interceptResErrors);
 // Set storage Token in http if exists
 addTokenFromLocalStorage(http);
 
-const interceptReqErrors = err => Promise.reject(err);
+const interceptReqErrors = (err) => Promise.reject(err);
 
-const interceptRequest = config => {
+const interceptRequest = (config) => {
   config.uid = setLoading(true, config.uid);
   logger.publish(5, 'loopback', 'listener:interceptRequest', config);
   return config;

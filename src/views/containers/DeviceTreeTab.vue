@@ -398,11 +398,11 @@ export default {
     async appendSensorsToDevices() {
       if (this.devices) {
         const appendSensors = (devices, sensors) => {
-          return devices.map(device => {
+          return devices.map((device) => {
             if (!device || !device.id) return null;
             if (!sensors) return device;
             device.sensors =
-              sensors.filter(sensor => sensor.deviceId.toString() === device.id.toString()) || [];
+              sensors.filter((sensor) => sensor.deviceId.toString() === device.id.toString()) || [];
             return device;
           });
         };
@@ -473,18 +473,14 @@ export default {
     },
 
     async onUpdateSensor(...args) {
-      try {
-        logger.publish(4, 'device', 'onUpdateSensor:req', args);
-        if (!args || !args[0].id) return null;
-        const sensor = await this.updateSensor(args[0], args[1], args[2]);
-        await this.$store.dispatch('sensor/publish', {
-          sensor,
-          userId: this.$props.userId,
-        });
-        return sensor;
-      } catch (error) {
-        throw error;
-      }
+      logger.publish(4, 'device', 'onUpdateSensor:req', args);
+      if (!args || !args[0].id) return null;
+      const sensor = await this.updateSensor(args[0], args[1], args[2]);
+      await this.$store.dispatch('sensor/publish', {
+        sensor,
+        userId: this.$props.userId,
+      });
+      return sensor;
     },
 
     async onUpdateSetting(...args) {

@@ -152,7 +152,7 @@ export default {
   methods: {
     extractSensors(devices) {
       let sensors = [];
-      devices.forEach(device => {
+      devices.forEach((device) => {
         if (device.sensors) {
           sensors = [...sensors, ...device.sensors];
           delete device.sensors;
@@ -222,7 +222,7 @@ export default {
     updateFilteredDevices(filter) {
       if (filter && filter.key && filter.value) {
         this.filteredDevices = this.devices.filter(
-          dev => dev[filter.key].toLowerCase() === filter.value,
+          (dev) => dev[filter.key].toLowerCase() === filter.value,
         );
       } else {
         this.filteredDevices = this.devices;

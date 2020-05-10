@@ -40,7 +40,7 @@
         </b-col>
       </b-row>
     </b-container>
-    <div id="aloes-table"></div>
+    <div id="aloes-table" />
   </div>
 </template>
 
@@ -78,7 +78,7 @@ export default {
   mounted() {
     //  this.tableLoader(`${this.$store.state.clientUrl}${path}`, this.selectedColumns);
     this.tableLoader(omaObjects, this.selectedColumns);
-    this.$on('update:table', source => {
+    this.$on('update:table', (source) => {
       let graph;
       if (source === 'omaObjects') {
         graph = omaObjects;
@@ -174,9 +174,7 @@ export default {
 
     tabulate(obj, titles) {
       this.sortAscending = true;
-      const table = select('#aloes-table')
-        .append('table')
-        .attr('id', 'ipso-table');
+      const table = select('#aloes-table').append('table').attr('id', 'ipso-table');
       this.headers = table
         .append('thead')
         .append('tr')
@@ -185,19 +183,14 @@ export default {
         .data(titles)
         .enter()
         .append('th')
-        .text(d => d)
+        .text((d) => d)
         .attr('class', 'header')
         .on('click', this.sortTables);
-      this.rows = table
-        .append('tbody')
-        .selectAll('tr')
-        .data(obj)
-        .enter()
-        .append('tr');
+      this.rows = table.append('tbody').selectAll('tr').data(obj).enter().append('tr');
       this.rows
         .selectAll('td')
-        .data(row => {
-          return titles.map(column => {
+        .data((row) => {
+          return titles.map((column) => {
             //  return {column, value: row[column]};
             if (column === 'icons') {
               return { column, icons: row[column] };
@@ -214,17 +207,17 @@ export default {
         })
         .enter()
         .append('td')
-        .attr('data-th', d => d.column)
-        .text(d => (d.resources ? d.resources.toString() : d.value))
+        .attr('data-th', (d) => d.column)
+        .text((d) => (d.resources ? d.resources.toString() : d.value))
         .append('div')
         .attr('class', 'cells')
-        .style('background', d =>
+        .style('background', (d) =>
           d.colors ? `linear-gradient(to right,${d.colors[0]},${d.colors[1]})` : 'transparent',
         )
-        .style('opacity', d => (d.colors ? '0.7' : '1'))
+        .style('opacity', (d) => (d.colors ? '0.7' : '1'))
         .append('img')
         .attr('class', 'icons')
-        .attr('src', d => (d.icons ? d.icons[0] : null));
+        .attr('src', (d) => (d.icons ? d.icons[0] : null));
       //  .attr("src", (d) => d.icons.split(",") ? d.icons.split(",")[0] : "");
 
       return table;
