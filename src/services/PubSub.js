@@ -10,7 +10,7 @@ const Storage = window.sessionStorage;
 // const pubsubVersion = process.env.VUE_APP_PUBSUB_API_VERSION;
 const PubSub = { hasListeners: false };
 
-const pushContainer = subscriptionName => {
+const pushContainer = (subscriptionName) => {
   if (!subscriptionName || subscriptionName === null) return false;
   logger.publish(4, 'pubsub', 'pushContainer:req', subscriptionName);
   let container;
@@ -31,10 +31,10 @@ const pushContainer = subscriptionName => {
   return true;
 };
 
-const packetEncoder = options =>
+const packetEncoder = (options) =>
   new Promise((resolve, reject) => {
     if (!options) return reject(new Error('Invalid arguments'));
-    const onMessage = e => {
+    const onMessage = (e) => {
       if (e.data.error) return reject(new Error(e.data.error.message));
       const topic = e.data.topic || null;
       if (!topic) return reject(new Error('Invalid packet encoding'));
@@ -49,7 +49,7 @@ const packetEncoder = options =>
 const packetHandler = (topic, payload) =>
   new Promise((resolve, reject) => {
     if (!topic || !payload) return reject(new Error('Invalid arguments'));
-    const onMessage = e => {
+    const onMessage = (e) => {
       if (e.data.error) return reject(new Error(e.data.error.message));
       const pattern = e.data.pattern || null;
       if (!pattern) return reject(new Error('Invalid packet handling'));
@@ -189,7 +189,7 @@ PubSub.setListeners = async (client, token) => {
   }
 };
 
-PubSub.removeListeners = async client => {
+PubSub.removeListeners = async (client) => {
   try {
     logger.publish(3, 'pubsub', 'removeListeners:req', '');
     if (client && Storage) {

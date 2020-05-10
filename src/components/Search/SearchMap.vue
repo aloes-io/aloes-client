@@ -16,9 +16,9 @@
         <l-marker
           v-if="
             device.address &&
-              device.address.coordinates &&
-              device.address.coordinates.lat &&
-              device.address.coordinates.lng
+            device.address.coordinates &&
+            device.address.coordinates.lat &&
+            device.address.coordinates.lng
           "
           :lat-lng="[device.address.coordinates.lat, device.address.coordinates.lng]"
           @mouseover="highlightDevice(device, true)"
@@ -146,9 +146,9 @@ export default {
 
   methods: {
     setListeners() {
-      EventBus.$on('deviceSelected', device => {
+      EventBus.$on('deviceSelected', (device) => {
         if (device && device !== null) {
-          const hasAddress = Object.getOwnPropertyNames(device).find(key => key === 'address');
+          const hasAddress = Object.getOwnPropertyNames(device).find((key) => key === 'address');
           if (hasAddress && device.address.coordinates) {
             this.currentCenter = [device.address.coordinates.lat, device.address.coordinates.lng];
             return this.currentCenter;

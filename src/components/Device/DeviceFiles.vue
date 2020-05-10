@@ -6,7 +6,7 @@
       <fa-icon icon="spinner" :transform="{ rotate: 42 }" size="lg" />
       uploading {{ fileCount }} files...
     </div>
-    <b-row v-else-if="!isSaving" align-h="center"> </b-row>
+    <b-row v-else-if="!isSaving" align-h="center" />
     <b-row align-h="center">
       <b-col cols="6" sm="6">
         <b-form

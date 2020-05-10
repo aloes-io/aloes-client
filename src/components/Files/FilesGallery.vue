@@ -160,59 +160,47 @@ export default {
     },
 
     async getFilesMeta(userId, name) {
-      try {
-        if (!userId) throw new Error('Missing user Id');
-        const filesMeta = await this.$store.dispatch('files/getFilesMetaByOwner', {
-          ownerId: userId,
-          name,
-        });
-        if (filesMeta) {
-          this.filesMeta = filesMeta;
-        } else {
-          this.filesMeta = [];
-        }
-        return true;
-      } catch (error) {
-        throw error;
+      if (!userId) throw new Error('Missing user Id');
+      const filesMeta = await this.$store.dispatch('files/getFilesMetaByOwner', {
+        ownerId: userId,
+        name,
+      });
+      if (filesMeta) {
+        this.filesMeta = filesMeta;
+      } else {
+        this.filesMeta = [];
       }
+      return true;
     },
 
     async getFile(userId, meta) {
-      try {
-        if (!userId || !meta || !meta.name) throw new Error('Missing arguments');
-        //  console.log('getFile', meta);
-        const file = await this.$store.dispatch('files/getFile', {
-          ownerId: userId,
-          name: meta.name,
-        });
-        if (file && file !== null) {
-          this.file = file;
-        } else {
-          this.file = null;
-        }
-        return true;
-      } catch (error) {
-        throw error;
+      if (!userId || !meta || !meta.name) throw new Error('Missing arguments');
+      //  console.log('getFile', meta);
+      const file = await this.$store.dispatch('files/getFile', {
+        ownerId: userId,
+        name: meta.name,
+      });
+      if (file && file !== null) {
+        this.file = file;
+      } else {
+        this.file = null;
       }
+      return true;
     },
 
     async assignRoleToFile(userId, fileMeta, role) {
-      try {
-        if (!userId || !fileMeta || !role) throw new Error('Missing params');
-        fileMeta.role = role;
-        const updatedMeta = await this.$store.dispatch('files/updateFileMeta', {
-          ownerType: this.$props.userType,
-          fileMeta,
-        });
-        // console.log('updatedMeta', updatedMeta);
-        if (updatedMeta && updatedMeta !== null) {
-          //  this.files = result.files;
-          //  return this.updateCollection('filesMeta', 'update', updatedMeta);
-        }
-        return false;
-      } catch (error) {
-        throw error;
+      if (!userId || !fileMeta || !role) throw new Error('Missing params');
+      fileMeta.role = role;
+      const updatedMeta = await this.$store.dispatch('files/updateFileMeta', {
+        ownerType: this.$props.userType,
+        fileMeta,
+      });
+      // console.log('updatedMeta', updatedMeta);
+      if (updatedMeta && updatedMeta !== null) {
+        //  this.files = result.files;
+        //  return this.updateCollection('filesMeta', 'update', updatedMeta);
       }
+      return false;
     },
   },
 };

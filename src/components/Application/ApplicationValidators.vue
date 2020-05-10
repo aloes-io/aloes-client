@@ -186,7 +186,7 @@ export default {
             };
           }
         });
-        changes.forEach(change => {
+        changes.forEach((change) => {
           if (!change || !change.newValue || !change.oldValue) return null;
           const newKey = this.formatField(change.newValue);
           const oldKey = this.formatField(change.oldValue);
@@ -202,7 +202,7 @@ export default {
             ];
             //  console.log('validators1', validators[newKey]);
           } else {
-            validators[oldKey].forEach(validator => {
+            validators[oldKey].forEach((validator) => {
               validator.field = change.newValue;
               return validator;
             });

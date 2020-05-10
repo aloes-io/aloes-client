@@ -325,7 +325,7 @@ export default {
       // if (evt) evt.stopPropagation();
       return this.$store
         .dispatch('address/verifyAddress', this.$props.ownerType)
-        .then(res => {
+        .then((res) => {
           if (res.message) {
             this.verifiedAddress = false;
             this.verify = res;
@@ -343,7 +343,7 @@ export default {
           };
           return false;
         })
-        .catch(err => {
+        .catch((err) => {
           this.verifiedAddress = false;
           this.verify = err;
           this.$refs.addressModal.show();

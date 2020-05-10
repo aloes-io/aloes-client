@@ -136,7 +136,7 @@ export default {
       if (evt) evt.preventDefault();
       if (evt) evt.stopPropagation();
       if (this.favoriteColor) {
-        const found = this.favoriteColors.find(practice => practice === this.favoriteColor);
+        const found = this.favoriteColors.find((practice) => practice === this.favoriteColor);
         if (!found) {
           this.favoriteColors = this.favoriteColor;
         }

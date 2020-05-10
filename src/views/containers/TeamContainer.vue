@@ -110,7 +110,7 @@ export default {
 
   methods: {
     setListeners() {
-      EventBus.$on('onTeamCreated', async team => {
+      EventBus.$on('onTeamCreated', async (team) => {
         if (team && this.loaderCounter < 1) {
           this.loaderCounter += 1;
           return setTimeout(async () => {
@@ -119,7 +119,7 @@ export default {
         }
       });
 
-      EventBus.$on('onTeamDeleted', team => {
+      EventBus.$on('onTeamDeleted', (team) => {
         if (team && this.loaderCounter < 1) {
           this.loaderCounter += 1;
           return setTimeout(async () => {
@@ -134,19 +134,19 @@ export default {
       this.success = null;
       const teams = await this.$store
         .dispatch('team/loadTeams', this.$props.account.id)
-        .then(res => res)
-        .catch(err => {
+        .then((res) => res)
+        .catch((err) => {
           this.loaderCounter = 0;
           this.error = err;
           return this.error;
         });
       this.teamsProfiles = await this.$store
         .dispatch('team/loadTeamsProfiles', teams)
-        .then(res => {
+        .then((res) => {
           this.loaderCounter = 0;
           return res;
         })
-        .catch(err => {
+        .catch((err) => {
           this.loaderCounter = 0;
           this.error = err;
           return this.error;

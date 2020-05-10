@@ -26,7 +26,7 @@ module.exports = {
     },
   },
 
-  chainWebpack: config => {
+  chainWebpack: (config) => {
     config.plugins.delete('prefetch');
 
     config.plugin('MiniCssExtractPlugin').use(
@@ -57,7 +57,7 @@ module.exports = {
       .test(/\.worker\.js$/i)
       .use('worker-loader')
       .loader('worker-loader')
-      .tap(options => {
+      .tap((options) => {
         if (!options) options = {};
         // options.publicPath = '/workers/';
         if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {

@@ -113,22 +113,22 @@ export async function deleteInstance({ state, commit }, { device }) {
 export async function refreshToken({ state, commit }, device) {
   return loopback
     .post(`/${state.resources}/refresh-token`, { device })
-    .then(res => {
+    .then((res) => {
       logger.publish(4, state.collectionName, 'dispatch:refreshToken:res', res);
       commit('setModel', res);
       return res;
     })
-    .catch(err => err);
+    .catch((err) => err);
 }
 
 export async function subscribeToDevicesUpdate({ state }, { userId }) {
-  return state.collection.map(async device =>
+  return state.collection.map(async (device) =>
     PubSub.subscribeToInstanceUpdate(socket.client, 'Device', userId, device.id),
   );
 }
 
 export async function unsubscribeFromDevicesUpdate({ state }, { ownerId }) {
-  return state.collection.map(async device =>
+  return state.collection.map(async (device) =>
     PubSub.unSubscribeWhere(socket.client, {
       collection: 'Device',
       userId: ownerId,

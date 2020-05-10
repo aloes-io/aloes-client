@@ -328,13 +328,9 @@ export default {
   },
 
   async mounted() {
-    try {
-      this.editorMode = false;
-      await this.loadTeams();
-      return this.isTeamMember(this.favorites);
-    } catch (error) {
-      throw error;
-    }
+    this.editorMode = false;
+    await this.loadTeams();
+    return this.isTeamMember(this.favorites);
   },
 
   beforeDestroy() {
@@ -358,7 +354,7 @@ export default {
 
     isTeamMember(teams) {
       if (this.viewer && teams) {
-        const foundFavorite = this.teams.find(team => team.memberId === this.profile.id);
+        const foundFavorite = this.teams.find((team) => team.memberId === this.profile.id);
         if (foundFavorite) {
           logger.publish(4, 'profile', 'isTeamMember:res', true);
           this.memberId = foundFavorite.id;
@@ -372,29 +368,21 @@ export default {
     },
 
     async onTeamCreated(team) {
-      try {
-        if (team && this.loaderCounter < 1) {
-          this.loaderCounter += 1;
-          await this.loadTeams();
-          this.isTeamMember(this.teams);
-        }
-        return;
-      } catch (error) {
-        throw error;
+      if (team && this.loaderCounter < 1) {
+        this.loaderCounter += 1;
+        await this.loadTeams();
+        this.isTeamMember(this.teams);
       }
+      return;
     },
 
     async onTeamDeleted(team) {
-      try {
-        if (team && this.loaderCounter < 1) {
-          this.loaderCounter += 1;
-          await this.loadTeams();
-          this.isTeamMember(this.teams);
-        }
-        return;
-      } catch (error) {
-        throw error;
+      if (team && this.loaderCounter < 1) {
+        this.loaderCounter += 1;
+        await this.loadTeams();
+        this.isTeamMember(this.teams);
       }
+      return;
     },
 
     setListeners() {

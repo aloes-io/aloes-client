@@ -228,19 +228,19 @@ export default {
     },
 
     setListeners() {
-      EventBus.$on('onApplicationDeleted', application => {
+      EventBus.$on('onApplicationDeleted', (application) => {
         if (application && !this.loading) {
           return setTimeout(this.loadApplications, 200);
         }
       });
 
-      EventBus.$on('onApplicationCreated', application => {
+      EventBus.$on('onApplicationCreated', (application) => {
         if (application && !this.loading) {
           return setTimeout(this.loadApplications, 200);
         }
       });
 
-      EventBus.$on('onApplicationUpdated', application => {
+      EventBus.$on('onApplicationUpdated', (application) => {
         if (application && !this.loading) {
           return setTimeout(this.loadApplications, 200);
         }

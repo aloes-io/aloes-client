@@ -28,53 +28,25 @@ const formatLog = (collectionName, command, content) => {
 const sendFormatedLog = (collectionName, command, fullContent) => {
   switch (collectionName.toUpperCase()) {
     case 'PUBSUB':
-      tiza
-        .color('#fff')
-        .bgColor('#8ac8a3')
-        .text(fullContent)
-        .log();
+      tiza.color('#fff').bgColor('#8ac8a3').text(fullContent).log();
       break;
     case 'LOOPBACK':
-      tiza
-        .color('#686868')
-        .bgColor('#8ac8a3')
-        .text(fullContent)
-        .log();
+      tiza.color('#686868').bgColor('#8ac8a3').text(fullContent).log();
       break;
     case 'ACCOUNT':
-      tiza
-        .color('#8ac8a3')
-        .bgColor('#fff')
-        .text(fullContent)
-        .log();
+      tiza.color('#8ac8a3').bgColor('#fff').text(fullContent).log();
       break;
     case 'DEVICE':
-      tiza
-        .color('#7ebcaf')
-        .bgColor('#fff')
-        .text(fullContent)
-        .log();
+      tiza.color('#7ebcaf').bgColor('#fff').text(fullContent).log();
       break;
     case 'SENSOR':
-      tiza
-        .color('#528fa2')
-        .bgColor('#fff')
-        .text(fullContent)
-        .log();
+      tiza.color('#528fa2').bgColor('#fff').text(fullContent).log();
       break;
     case 'FILES':
-      tiza
-        .color('#444b4e')
-        .bgColor('#fff')
-        .text(fullContent)
-        .log();
+      tiza.color('#444b4e').bgColor('#fff').text(fullContent).log();
       break;
     default:
-      tiza
-        .color('#686868')
-        .bgColor('#fff')
-        .text(fullContent)
-        .log();
+      tiza.color('#686868').bgColor('#fff').text(fullContent).log();
   }
 };
 

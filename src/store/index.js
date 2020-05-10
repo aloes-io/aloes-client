@@ -21,7 +21,7 @@ Vue.use(Vuex);
 const profileStorage = new VuexPersistence({
   key: 'profile',
   storage: window.localStorage,
-  reducer: state => ({
+  reducer: (state) => ({
     account: state.auth.account,
     address: state.address.profileAddress,
   }),
@@ -30,10 +30,10 @@ const profileStorage = new VuexPersistence({
 const deviceStorage = new VuexPersistence({
   key: 'devices',
   storage: window.localStorage,
-  reducer: state => ({
+  reducer: (state) => ({
     collection: state.device.collection,
   }),
-  filter: mutation => mutation.type === 'setStateKV',
+  filter: (mutation) => mutation.type === 'setStateKV',
   asyncStorage: false,
 });
 

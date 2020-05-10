@@ -56,8 +56,8 @@ export function syncToken({ commit, dispatch }) {
 
 function evaluateRoute(state, to, from, next) {
   //   await store.restored
-  return sessionError => {
-    if (to.matched.some(record => record.meta.requiresAuth)) {
+  return (sessionError) => {
+    if (to.matched.some((record) => record.meta.requiresAuth)) {
       logger.publish(4, 'Router', 'evaluateRoute:res', '1');
       if (
         (to.name === 'account' ||
@@ -141,12 +141,12 @@ export async function loadAccount({ state, commit }, userId) {
 export async function findAccountById({ state, commit }, { userId, viewer }) {
   return loopback
     .get(`/${state.resources}/${userId}`)
-    .then(account => {
+    .then((account) => {
       logger.publish(3, state.collectionName, 'dispatch:findAccountById:res', account);
       commit('setAccount', { viewer, account });
       return account;
     })
-    .catch(err => err);
+    .catch((err) => err);
 }
 
 export async function signIn({ state, commit, dispatch }, { email, password, save }) {
@@ -297,10 +297,10 @@ export async function updatePasswordFromToken(ctx, { accessToken, newPassword })
 export async function updateAccount({ commit, state }, user) {
   return loopback
     .patch(`/${state.resources}/${user.id}`, user)
-    .then(res => {
+    .then((res) => {
       logger.publish(3, state.collectionName, 'dispatch:updateAccount:res', res);
       commit('setAccount', { viewer: false, account: res });
       return res;
     })
-    .catch(err => err);
+    .catch((err) => err);
 }

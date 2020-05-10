@@ -523,48 +523,44 @@ export default {
     },
 
     async onUpdateSensor(...args) {
-      try {
-        if (!args || !args[0].id) return null;
-        let sensor = args[0];
-        logger.publish(2, 'demo-device', 'onUpdateSensor:req', {
-          type: args[0].type,
-          resource: args[1],
-          value: args[2],
-        });
-        // TESTS
-        if (args[0].type === 3349 && args[1] === 5911) {
-          const buffer = await this.cameraTest(1);
-          args[1] = 5910;
-          args[2] = buffer;
-        } else if (args[0].type === 3339 && args[1] === 5523) {
-          const buffer = await this.audioTest(1);
-          args[1] = 5522;
-          args[2] = buffer;
-        } else if (sensor.type === 3340) {
-          if (args[1] === 5523) {
-            if (args[2] === 'start') {
-              this.startTimerTest(1000, sensor.resources['5521']);
-            } else if (args[2] === 'restart') {
-              this.startTimerTest(1000, sensor.resources['5538']);
-            } else if (args[2] === 'stop') {
-              this.stopTimerTest();
-            } else if (args[2] === 'pause') {
-              this.stopTimerTest();
-            }
-          } else if (args[1] === 5850) {
-            // if (args[2] === true) {
-            //   this.startTimerTest(1000, sensor.resources['5538']);
-            // } else if (args[2] === false) {
-            //   this.stopTimerTest();
-            // }
+      if (!args || !args[0].id) return null;
+      let sensor = args[0];
+      logger.publish(2, 'demo-device', 'onUpdateSensor:req', {
+        type: args[0].type,
+        resource: args[1],
+        value: args[2],
+      });
+      // TESTS
+      if (args[0].type === 3349 && args[1] === 5911) {
+        const buffer = await this.cameraTest(1);
+        args[1] = 5910;
+        args[2] = buffer;
+      } else if (args[0].type === 3339 && args[1] === 5523) {
+        const buffer = await this.audioTest(1);
+        args[1] = 5522;
+        args[2] = buffer;
+      } else if (sensor.type === 3340) {
+        if (args[1] === 5523) {
+          if (args[2] === 'start') {
+            this.startTimerTest(1000, sensor.resources['5521']);
+          } else if (args[2] === 'restart') {
+            this.startTimerTest(1000, sensor.resources['5538']);
+          } else if (args[2] === 'stop') {
+            this.stopTimerTest();
+          } else if (args[2] === 'pause') {
+            this.stopTimerTest();
           }
+        } else if (args[1] === 5850) {
+          // if (args[2] === true) {
+          //   this.startTimerTest(1000, sensor.resources['5538']);
+          // } else if (args[2] === false) {
+          //   this.stopTimerTest();
+          // }
         }
-        sensor = await this.updateSensor(args[0], args[1], args[2]);
-        this.debouncedUpdateSensor(sensor);
-        return sensor;
-      } catch (error) {
-        throw error;
       }
+      sensor = await this.updateSensor(args[0], args[1], args[2]);
+      this.debouncedUpdateSensor(sensor);
+      return sensor;
     },
 
     onDeleteSensor(sensor) {
@@ -704,62 +700,54 @@ export default {
     arrayBufferToBase64(buffer) {
       let binary = '';
       const bytes = [].slice.call(new Uint8Array(buffer));
-      bytes.forEach(b => (binary += String.fromCharCode(b)));
+      bytes.forEach((b) => (binary += String.fromCharCode(b)));
       return window.btoa(binary);
     },
 
     async audioTest(testNumber) {
-      try {
-        if (this.sensor.type !== 3339) return null;
-        logger.publish(3, 'demo-device', 'startAudioTest', '');
-        const randomSound = this.randomSounds[Math.floor(Math.random() * this.randomSounds.length)];
-        return fetch(`${randomSound}`)
-          .then(response => {
-            if (!response.ok) {
-              throw new Error('HTTP error, status = ' + response.status);
-            }
-            return response.arrayBuffer();
-          })
-          .then(res => {
-            if (testNumber === 1) {
-              return Buffer.from(res);
-            } else if (testNumber === 1) {
-              return this.arrayBufferToBase64(res);
-            }
-            return res;
-          });
-        // return this.$refs[`sensorSnap-${this.updatedSensor.id}`].sendCommand(
-        //   'playSound',
-        //   result,
-        // );
-      } catch (error) {
-        return error;
-      }
+      if (this.sensor.type !== 3339) return null;
+      logger.publish(3, 'demo-device', 'startAudioTest', '');
+      const randomSound = this.randomSounds[Math.floor(Math.random() * this.randomSounds.length)];
+      return fetch(`${randomSound}`)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error('HTTP error, status = ' + response.status);
+          }
+          return response.arrayBuffer();
+        })
+        .then((res) => {
+          if (testNumber === 1) {
+            return Buffer.from(res);
+          } else if (testNumber === 2) {
+            return this.arrayBufferToBase64(res);
+          }
+          return res;
+        });
+      // return this.$refs[`sensorSnap-${this.updatedSensor.id}`].sendCommand(
+      //   'playSound',
+      //   result,
+      // );
     },
 
     async cameraTest(testNumber) {
-      try {
-        if (this.sensor.type !== 3349) return null;
-        logger.publish(3, 'demo-device', 'startCameraTest', '');
-        const randomPic = this.randomPics[Math.floor(Math.random() * this.randomPics.length)];
-        return fetch(`${randomPic}`)
-          .then(response => {
-            if (!response.ok) {
-              throw new Error('HTTP error, status = ' + response.status);
-            }
-            return response.arrayBuffer();
-          })
-          .then(buffer => {
-            if (testNumber === 1) {
-              return Buffer.from(buffer);
-            } else if (testNumber === 2) {
-              return this.arrayBufferToBase64(buffer);
-            }
-            return buffer;
-          });
-      } catch (error) {
-        throw error;
-      }
+      if (this.sensor.type !== 3349) return null;
+      logger.publish(3, 'demo-device', 'startCameraTest', '');
+      const randomPic = this.randomPics[Math.floor(Math.random() * this.randomPics.length)];
+      return fetch(`${randomPic}`)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error('HTTP error, status = ' + response.status);
+          }
+          return response.arrayBuffer();
+        })
+        .then((buffer) => {
+          if (testNumber === 1) {
+            return Buffer.from(buffer);
+          } else if (testNumber === 2) {
+            return this.arrayBufferToBase64(buffer);
+          }
+          return buffer;
+        });
     },
 
     linkBlink(id, wait, dur) {

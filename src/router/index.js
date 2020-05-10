@@ -15,7 +15,7 @@ const routes = [
   {
     path: '/about',
     name: 'about',
-    props: route => ({
+    props: (route) => ({
       tab: route.query.tab,
     }),
     component: () => import(/* webpackChunkName: "about" */ '../views/About.vue'),
@@ -31,7 +31,7 @@ const routes = [
     name: 'auth',
     meta: { requiresAuth: false },
     component: () => import(/* webpackChunkName: "auth" */ '../views/Auth.vue'),
-    props: route => ({
+    props: (route) => ({
       'access-token': route.query['access-token'],
       'user-id': route.query['user-id'],
     }),
@@ -41,7 +41,7 @@ const routes = [
     name: 'account',
     meta: { requiresAuth: true },
     component: () => import(/* webpackChunkName: "account" */ '../views/Account.vue'),
-    props: route => ({
+    props: (route) => ({
       'access-token': route.query['access-token'],
       'user-id': route.query['user-id'],
     }),
@@ -50,7 +50,7 @@ const routes = [
     path: '/profile',
     name: 'profile',
     meta: { requiresAuth: true },
-    props: route => ({
+    props: (route) => ({
       profileType: route.query.profileType,
       profileId: route.query.profileId,
     }),
@@ -59,7 +59,7 @@ const routes = [
   {
     path: '/reset-password',
     name: 'reset-password',
-    props: route => ({
+    props: (route) => ({
       'access-token': route.query['access-token'],
       'user-id': route.query['user-id'],
     }),
@@ -69,7 +69,7 @@ const routes = [
     path: '/device',
     name: 'device',
     meta: { requiresAuth: true },
-    props: route => ({
+    props: (route) => ({
       'access-token': route.query['access-token'],
       'user-id': route.query['user-id'],
       deviceId: route.query.deviceId,
@@ -80,7 +80,7 @@ const routes = [
     path: '/application',
     name: 'application',
     meta: { requiresAuth: true },
-    props: route => ({
+    props: (route) => ({
       'access-token': route.query['access-token'],
       'user-id': route.query['user-id'],
       applicationId: route.query.applicationId,
@@ -91,7 +91,7 @@ const routes = [
     path: '/search',
     name: 'search',
     meta: { requiresAuth: true },
-    props: route => ({
+    props: (route) => ({
       'access-token': route.query['access-token'],
       'user-id': route.query['user-id'],
     }),
