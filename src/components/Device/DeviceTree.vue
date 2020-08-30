@@ -40,8 +40,7 @@ import { json } from 'd3-fetch';
 import { forceSimulation, forceCenter, forceCollide, forceLink, forceManyBody } from 'd3-force';
 import { hierarchy } from 'd3-hierarchy';
 import { interpolate } from 'd3-interpolate';
-import { event, select } from 'd3-selection';
-// import { transition } from 'd3-transition';
+import { select } from 'd3-selection';
 import { zoom } from 'd3-zoom';
 import debounce from 'lodash.debounce';
 
@@ -362,7 +361,7 @@ export default {
         .scaleExtent([1, 8])
         .translateExtent(extent)
         .extent(extent)
-        .on('zoom', this.zoomed(this.svgGroup));
+        .on('zoom', (event) => this.zoomed(event, this.svgGroup));
       // .on('wheel', (e) => e.preventDefault());
     },
 
@@ -635,10 +634,10 @@ export default {
         .on('click', this.mouseClick)
         .on('mouseenter', this.mouseEnter)
         .on('mouseleave', this.mouseLeave)
-        .on('mouseover', (d) => {
+        .on('mouseover', (event, d) => {
           select(`#node-${d.data.id}`).attr('filter', 'url(#circle-shadow-selected)');
         })
-        .on('mouseout', (d) => {
+        .on('mouseout', (event, d) => {
           select(`#node-${d.data.id}`).attr('filter', 'url(#circle-shadow)');
         });
       return images;
@@ -818,33 +817,35 @@ export default {
       this.svg.selectAll(`.descriptions-group`).style('display', display);
     },
 
-    mouseClick(d) {
+    mouseClick(event, d) {
+      // console.log('mouseClick', { event, d });
       this.$emit('node-clicked', d);
     },
 
-    mouseEnter(d) {
-      //  console.log('mouseEnter', d);
+    mouseEnter(event, d) {
+      // console.log('mouseEnter', { event, d });
       this.showTooltip(d);
       this.$emit('node-selected', d);
     },
 
-    mouseLeave(d) {
+    mouseLeave(event, d) {
+      // console.log('mouseLeave', { event, d });
       //  this.hideTooltip(d);
       this.$emit('node-deselected', d);
     },
 
-    dragStarted(d) {
+    dragStarted(event, d) {
       if (!event.active) this.nodeSimulation.alphaTarget(0.3).restart();
       d.fx = d.x;
       d.fy = d.y;
     },
 
-    dragged(d) {
+    dragged(event, d) {
       d.fx = event.x;
       d.fy = event.y;
     },
 
-    dragEnded(d) {
+    dragEnded(event, d) {
       if (!this.nodeLockedMode) {
         if (!event.active) this.nodeSimulation.alphaTarget(0);
         // d.fx = null;
@@ -854,8 +855,9 @@ export default {
       }
     },
 
-    zoomed(g) {
+    zoomed(event, g) {
       return () => {
+        console.log('zoomed', { event });
         const transform = event.transform;
         const size = { width: this.updatedWidth, height: this.updatedHeight };
         //  console.log('zoomed', transform, size);

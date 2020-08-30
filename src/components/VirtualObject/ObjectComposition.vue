@@ -39,7 +39,7 @@ import { drag } from 'd3-drag';
 import { json } from 'd3-fetch';
 import { forceSimulation, forceCenter, forceLink, forceManyBody, forceRadial } from 'd3-force';
 import { hierarchy } from 'd3-hierarchy';
-import { event, select } from 'd3-selection';
+import { select } from 'd3-selection';
 
 export default {
   name: 'ObjectComposition',
@@ -283,18 +283,18 @@ export default {
       this.$emit('node-deselected', ...args);
     },
 
-    dragstarted(d) {
+    dragstarted(event, d) {
       if (!event.active) this.objectCompositionSimulation.alphaTarget(0.3).restart();
       d.fx = d.x;
       d.fy = d.y;
     },
 
-    dragged(d) {
+    dragged(event, d) {
       d.fx = event.x;
       d.fy = event.y;
     },
 
-    dragended(d) {
+    dragended(event, d) {
       if (!event.active) this.objectCompositionSimulation.alphaTarget(0);
       d.fx = null;
       d.fy = null;

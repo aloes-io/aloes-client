@@ -243,9 +243,7 @@
           Easily create new device on any Linux machine (
           <a :href="`${$store.state.repoUrl2}/node-red-device`" target="_blank">node-red-device</a>
           ) or on ESP8266 / ESP32 microcrontrollers (
-          <a :href="`${$store.state.repoUrl2}/arduino-device-mqtt`" target="_blank"
-            >arduino-device-mqtt</a
-          >
+          <a :href="`${$store.state.repoUrl2}/arduino-device`" target="_blank">arduino-device</a>
           ).
         </p>
       </b-col>
@@ -392,7 +390,12 @@
               <a :href="`${$store.state.repoUrl2}/node-red-bridge`" target="_blank"
                 >node-red-bridge</a
               >
-              to create custom scenarios where you can set interaction rules inside your network.
+              and
+              <a :href="`${$store.state.repoUrl}/node-red-contrib-aloes`" target="_blank"
+                >node-red-contrib-aloes</a
+              >
+              library to create custom scenarios where you can set interaction rules inside your
+              network.
             </p>
           </div>
         </b-col>
@@ -411,12 +414,9 @@
 <script type="text/javascript">
 import { interpolate } from 'd3-interpolate';
 import { select } from 'd3-selection';
-// import { transition } from 'd3-transition';
 import debounce from 'lodash.debounce';
 import Collection from '@/mixins/collection';
 import logger from '@/services/logger';
-
-// const debounce = () => import('lodash.debounce');
 
 export default {
   name: 'HomeContainer',
@@ -751,20 +751,26 @@ export default {
     },
 
     linkBlink(id, wait, dur) {
-      select(`#link-${id}`)
-        .transition()
-        .delay(wait)
-        .duration(dur)
-        .styleTween('stroke', () => interpolate(this.colors.yellow, this.colors.lightblue))
-        .styleTween('opacity', () => interpolate(1, 0.4));
+      const selection = select(`#link-${id}`);
+      if (selection) {
+        selection
+          .transition()
+          .delay(wait)
+          .duration(dur)
+          .styleTween('stroke', () => interpolate(this.colors.yellow, this.colors.lightblue))
+          .styleTween('opacity', () => interpolate(1, 0.4));
+      }
     },
 
     nodeBlink(id, wait, dur) {
-      select(`#node-${id}`)
-        .transition()
-        .delay(wait)
-        .duration(dur)
-        .styleTween('fill', () => interpolate(this.colors.yellow, this.colors.green));
+      const selection = select(`#node-${id}`);
+      if (selection) {
+        selection
+          .transition()
+          .delay(wait)
+          .duration(dur)
+          .styleTween('fill', () => interpolate(this.colors.yellow, this.colors.green));
+      }
     },
 
     playScenario() {
