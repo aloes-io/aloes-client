@@ -252,7 +252,9 @@ PubSub.handler = async (topic, payload) => {
   try {
     logger.publish(5, 'PubSub', 'handler:req', topic);
     const decoded = await packetHandler(topic, payload.toString());
-    if (!decoded || !decoded.pattern) throw new Error('Invalid protocol parsing');
+    if (!decoded || !decoded.pattern) {
+      throw new Error('Invalid protocol parsing');
+    }
     const { pattern, method, collection, payload: decodedPayload } = decoded;
     logger.publish(3, 'PubSub', 'handler:res', pattern);
 
