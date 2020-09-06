@@ -56,7 +56,7 @@
     "oma-json": "^1.1.3",
     "qrcode-generator": "^1.4.4",
     "register-service-worker": "^1.7.1",
-    "sensor-snap": "^0.3.2",
+    "sensor-snap": "^0.3.3",
     "tiza": "^2.2.1",
     "uid": "0.0.2",
     "vue": "^2.6.12",
